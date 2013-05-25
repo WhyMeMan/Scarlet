@@ -23,7 +23,7 @@ public class Mod
 		this.name = name;
 		this.key = key;
 		Properties p = new Properties();
-		p.setBypassed(true);
+		p.setBypassed(false);
 		p.setDisabled(false);
 		p.setType(PropertyType.TYPE_HACK);
 		this.setProperties(p);
