@@ -32,8 +32,8 @@ public class Config
     public static final String OF_NAME = "OptiFine";
     public static final String MC_VERSION = "1.5.2";
     public static final String OF_EDITION = "HD_U";
-    public static final String OF_RELEASE = "D2";
-    public static final String VERSION = "OptiFine_1.5.2_HD_U_D2";
+    public static final String OF_RELEASE = "D3";
+    public static final String VERSION = "OptiFine_1.5.2_HD_U_D3";
     private static String newRelease = null;
     private static GameSettings gameSettings = null;
     private static Minecraft minecraft = null;
@@ -59,7 +59,7 @@ public class Config
 
     public static String getVersion()
     {
-        return "OptiFine_1.5.2_HD_U_D2";
+        return "OptiFine_1.5.2_HD_U_D3";
     }
 
     private static void checkOpenGlCaps()

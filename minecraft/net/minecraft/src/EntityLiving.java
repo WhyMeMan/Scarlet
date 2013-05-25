@@ -172,7 +172,7 @@ public abstract class EntityLiving extends Entity
 
     /** Whether this entity should NOT despawn. */
     private boolean persistenceRequired = false;
-    protected final CombatTracker field_94063_bt = new CombatTracker(this);
+    public final CombatTracker field_94063_bt = new CombatTracker(this);
 
     /**
      * The number of updates over which the new position and rotation are to be applied to the entity.

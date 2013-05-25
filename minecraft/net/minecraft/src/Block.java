@@ -446,11 +446,10 @@ public class Block
      */
     public float getBlockBrightness(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
     {
-    	//Wallhack wall = (Wallhack)ModManager.getModByName("Wallhack");
-    	Wallhack wall = (Wallhack)ModManager.getModByName("Wallhack");
-    	if (wall.getActive())
+    	Wallhack wallhack = (Wallhack)ModManager.getModByName("Wallhack");
+    	if (wallhack.getActive())
     	{
-    		if (wall.enabledOres.contains(blockID))
+    		if (wallhack.enabledOres.contains(blockID))
     			this.setLightValue(1f);
     		return 1000F;
     	}
@@ -462,14 +461,14 @@ public class Block
      */
     public int getMixedBrightnessForBlock(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
     {
-    	Wallhack wall = (Wallhack)ModManager.getModByName("Wallhack");
-    	
-    	if (wall.getActive())
+    	Wallhack wallhack = (Wallhack)ModManager.getModByName("Wallhack");
+    	if (wallhack.getActive())
     	{
-    		if (wall.enabledOres.contains(blockID))
+    		if (wallhack.enabledOres.contains(blockID))
     			this.setLightValue(1f);
     		return 1000;
     	}
+    	
         return par1IBlockAccess.getLightBrightnessForSkyBlocks(par2, par3, par4, lightValue[par1IBlockAccess.getBlockId(par2, par3, par4)]);
     }
 
@@ -871,9 +870,9 @@ public class Block
      */
     public int getRenderBlockPass()
     {
-    	Wallhack wall = (Wallhack)ModManager.getModByName("Wallhack");
-    	if (wall.getActive())
-    		return wall.enabledOres.contains(blockID) ? 0 : 1;
+    	Wallhack wallhack = (Wallhack)ModManager.getModByName("Wallhack");
+    	if (wallhack.getActive())
+    		return wallhack.enabledOres.contains(blockID) ? 0 : 1;
         return 0;
     }
 

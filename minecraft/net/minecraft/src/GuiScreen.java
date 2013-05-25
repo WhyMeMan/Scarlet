@@ -160,10 +160,7 @@ public class GuiScreen extends Gui
     /**
      * Adds the buttons (and other controls) to the screen in question.
      */
-    public void initGui() 
-    {
-
-    }
+    public void initGui() {}
 
     /**
      * Delegates mouse and keyboard input.

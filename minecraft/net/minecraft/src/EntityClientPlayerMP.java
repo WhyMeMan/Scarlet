@@ -113,7 +113,7 @@ public class EntityClientPlayerMP extends EntityPlayerSP
         	this.onGround = true;
         	this.isJumping = true;
         }
-        
+
         if (this.ridingEntity != null)
         {
             this.sendQueue.addToSendQueue(new Packet13PlayerLookMove(this.motionX, -999.0D, -999.0D, this.motionZ, this.rotationYaw, this.rotationPitch, this.onGround));
@@ -139,7 +139,7 @@ public class EntityClientPlayerMP extends EntityPlayerSP
         ++this.field_71168_co;
         onGround = oldGround;
         this.wasOnGround = this.onGround;
-
+        
         if (var13)
         {
             this.oldPosX = this.posX;

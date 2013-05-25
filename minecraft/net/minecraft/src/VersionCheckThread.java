@@ -26,16 +26,16 @@ public class VersionCheckThread extends Thread
                 var3.close();
                 String[] var5 = Config.tokenize(var4, "\n\r");
 
-                if (var5.length < 1)
+                if (var5.length >= 1)
                 {
-                    return;
-                }
+                    String var6 = var5[0];
+                    Config.dbg("Version found: " + var6);
 
-                String var6 = var5[0];
-                Config.dbg("Version found: " + var6);
+                    if (Config.compareRelease(var6, "D3") <= 0)
+                    {
+                        return;
+                    }
 
-                if (Config.compareRelease(var6, "D2") > 0)
-                {
                     Config.setNewRelease(var6);
                     return;
                 }

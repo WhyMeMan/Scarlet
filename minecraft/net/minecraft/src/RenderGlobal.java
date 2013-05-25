@@ -433,6 +433,7 @@ public class RenderGlobal implements IWorldAccess
     	Nuker nuker = (Nuker)ModManager.getModByName("Nuker");
     	if (nuker.getActive())
     		nuker.draw(par3);
+    	
         if (this.renderEntitiesStartupCounter > 0)
         {
             --this.renderEntitiesStartupCounter;

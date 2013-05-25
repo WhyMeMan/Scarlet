@@ -1496,7 +1496,7 @@ public abstract class Minecraft implements Runnable, IPlayerUsage
             {
                 try
                 {
-                	this.currentScreen.guiParticles.update();
+                    this.currentScreen.guiParticles.update();
                 }
                 catch (Throwable var5)
                 {

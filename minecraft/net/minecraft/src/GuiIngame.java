@@ -37,13 +37,13 @@ public class GuiIngame extends Gui
     /** The ItemStack that is currently being highlighted */
     private ItemStack highlightingItemStack;
     
-    private Scarlet nero;
+    private Scarlet scarlet;
 
     public GuiIngame(Minecraft par1Minecraft)
     {
         this.mc = par1Minecraft;
         this.persistantChatGUI = new GuiNewChat(par1Minecraft);
-        nero = new Scarlet();
+        scarlet = new Scarlet();
     }
 
     /**
@@ -479,7 +479,7 @@ public class GuiIngame extends Gui
             this.mc.mcProfiler.endSection();
         }
         else
-        	nero.update();
+        	scarlet.update();
 
         if (this.recordPlayingUpFor > 0)
         {

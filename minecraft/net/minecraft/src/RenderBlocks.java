@@ -393,9 +393,11 @@ public class RenderBlocks
     public boolean renderBlockByRenderType(Block par1Block, int par2, int par3, int par4)
     {
         int var5 = par1Block.getRenderType();
-        Wallhack wall = (Wallhack)ModManager.getModByName("Wallhack");
-        if(wall.getActive())
-        	renderAllFaces = wall.enabledOres.contains(par1Block.blockID);
+
+        Wallhack wallhack = (Wallhack)ModManager.getModByName("Wallhack");
+        if(wallhack.getActive())
+        	renderAllFaces = wallhack.enabledOres.contains(par1Block.blockID);
+        
         if (var5 == -1)
         {
             return false;

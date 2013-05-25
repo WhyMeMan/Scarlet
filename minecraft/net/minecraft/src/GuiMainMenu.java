@@ -195,7 +195,9 @@ public class GuiMainMenu extends GuiScreen
             this.buttonList.add(new GuiButton(4, this.width / 2 + 2, var4 + 72 + 12, 98, 20, var2.translateKey("menu.quit")));
         }
 
+        //this.buttonList.add(new GuiButtonLanguage(5, this.width / 2 - 124, var4 + 72 + 12));
         this.buttonList.add(new GuiButton(5, this.width / 2 - 100, var4 + 72/2 + 13, "Change Login"));
+        
         Object var5 = this.field_104025_t;
 
         synchronized (this.field_104025_t)

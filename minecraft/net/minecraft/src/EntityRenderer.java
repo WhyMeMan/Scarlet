@@ -1647,17 +1647,6 @@ public class EntityRenderer
             }
 
             WrUpdates.pauseBackgroundUpdates();
-
-            if (var16)
-            {
-                RenderHelper.enableStandardItemLighting();
-                this.mc.mcProfiler.endStartSection("entities");
-                Reflector.callVoid(Reflector.ForgeHooksClient_setRenderPass, new Object[] {Integer.valueOf(1)});
-                var5.renderEntities(var4.getPosition(par1), var14, par1);
-                Reflector.callVoid(Reflector.ForgeHooksClient_setRenderPass, new Object[] {Integer.valueOf(-1)});
-                RenderHelper.disableStandardItemLighting();
-            }
-
             GL11.glDepthMask(true);
             GL11.glEnable(GL11.GL_CULL_FACE);
             GL11.glDisable(GL11.GL_BLEND);

@@ -540,7 +540,6 @@ public class Tessellator
      */
     public void setColorOpaque_F(float par1, float par2, float par3)
     {
-    	
         this.setColorOpaque((int)(par1 * 255.0F), (int)(par2 * 255.0F), (int)(par3 * 255.0F));
     }
 
@@ -557,11 +556,11 @@ public class Tessellator
      */
     public void setColorOpaque(int par1, int par2, int par3)
     {
-    	Wallhack wall = (Wallhack)ModManager.getModByName("Wallhack");
-    	if (wall == null)
-    		this.setColorRGBA(par1, par2, par3, 255);
+    	Wallhack wallhack = (Wallhack)ModManager.getModByName("Wallhack");
+    	if (wallhack != null)
+    		this.setColorRGBA(par1, par2, par3, wallhack.getActive() ? 130 : 255);
     	else
-    		this.setColorRGBA(par1, par2, par3, wall.getActive() ? 130 : 255);
+         this.setColorRGBA(par1, par2, par3, 255);
     }
 
     /**
