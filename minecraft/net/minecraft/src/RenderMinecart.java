@@ -6,11 +6,13 @@ public class RenderMinecart extends Render
 {
     /** instance of ModelMinecart for rendering */
     protected ModelBase modelMinecart;
+    protected final RenderBlocks field_94145_f;
 
     public RenderMinecart()
     {
         this.shadowSize = 0.5F;
         this.modelMinecart = new ModelMinecart();
+        this.field_94145_f = new RenderBlocks();
     }
 
     /**
@@ -63,48 +65,49 @@ public class RenderMinecart extends Render
         GL11.glTranslatef((float)par2, (float)par4, (float)par6);
         GL11.glRotatef(180.0F - par8, 0.0F, 1.0F, 0.0F);
         GL11.glRotatef(-var24, 0.0F, 0.0F, 1.0F);
-        float var28 = (float)par1EntityMinecart.getRollingAmplitude() - par9;
-        float var30 = (float)par1EntityMinecart.getDamage() - par9;
+        float var31 = (float)par1EntityMinecart.getRollingAmplitude() - par9;
+        float var33 = (float)par1EntityMinecart.getDamage() - par9;
 
-        if (var30 < 0.0F)
+        if (var33 < 0.0F)
         {
-            var30 = 0.0F;
+            var33 = 0.0F;
         }
 
-        if (var28 > 0.0F)
+        if (var31 > 0.0F)
         {
-            GL11.glRotatef(MathHelper.sin(var28) * var28 * var30 / 10.0F * (float)par1EntityMinecart.getRollingDirection(), 1.0F, 0.0F, 0.0F);
+            GL11.glRotatef(MathHelper.sin(var31) * var31 * var33 / 10.0F * (float)par1EntityMinecart.getRollingDirection(), 1.0F, 0.0F, 0.0F);
         }
 
-        if (par1EntityMinecart.minecartType != 0)
+        int var32 = par1EntityMinecart.getDisplayTileOffset();
+        Block var28 = par1EntityMinecart.getDisplayTile();
+        int var29 = par1EntityMinecart.getDisplayTileData();
+
+        if (var28 != null)
         {
+            GL11.glPushMatrix();
             this.loadTexture("/terrain.png");
-            float var29 = 0.75F;
-            GL11.glScalef(var29, var29, var29);
-
-            if (par1EntityMinecart.minecartType == 1)
-            {
-                GL11.glTranslatef(0.0F, 0.5F, 0.0F);
-                (new RenderBlocks()).renderBlockAsItem(Block.chest, 0, par1EntityMinecart.getBrightness(par9));
-                GL11.glRotatef(-90.0F, 0.0F, 1.0F, 0.0F);
-                GL11.glTranslatef(0.5F, 0.0F, -0.5F);
-                GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-            }
-            else if (par1EntityMinecart.minecartType == 2)
-            {
-                GL11.glTranslatef(0.0F, 0.3125F, 0.0F);
-                (new RenderBlocks()).renderBlockAsItem(Block.stoneOvenIdle, 0, par1EntityMinecart.getBrightness(par9));
-                GL11.glRotatef(-90.0F, 0.0F, 1.0F, 0.0F);
-                GL11.glTranslatef(0.0F, -0.3125F, 0.0F);
-                GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-            }
-
-            GL11.glScalef(1.0F / var29, 1.0F / var29, 1.0F / var29);
+            float var30 = 0.75F;
+            GL11.glScalef(var30, var30, var30);
+            GL11.glTranslatef(0.0F, (float)var32 / 16.0F, 0.0F);
+            this.renderBlockInMinecart(par1EntityMinecart, par9, var28, var29);
+            GL11.glPopMatrix();
+            GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         }
 
         this.loadTexture("/item/cart.png");
         GL11.glScalef(-1.0F, -1.0F, 1.0F);
         this.modelMinecart.render(par1EntityMinecart, 0.0F, 0.0F, -0.1F, 0.0F, 0.0F, 0.0625F);
+        GL11.glPopMatrix();
+    }
+
+    /**
+     * Renders the block that is inside the minecart.
+     */
+    protected void renderBlockInMinecart(EntityMinecart par1EntityMinecart, float par2, Block par3Block, int par4)
+    {
+        float var5 = par1EntityMinecart.getBrightness(par2);
+        GL11.glPushMatrix();
+        this.field_94145_f.renderBlockAsItem(par3Block, par4, var5);
         GL11.glPopMatrix();
     }
 

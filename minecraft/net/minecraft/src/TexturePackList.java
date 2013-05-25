@@ -111,7 +111,7 @@ public class TexturePackList
         HashMap var3 = new HashMap();
         GuiProgress var4 = new GuiProgress();
         var3.put("X-Minecraft-Username", this.mc.session.username);
-        var3.put("X-Minecraft-Version", "1.4.7");
+        var3.put("X-Minecraft-Version", "1.5.2");
         var3.put("X-Minecraft-Supported-Resolutions", "16");
         this.isDownloading = true;
         this.mc.displayGuiScreen(var4);
@@ -158,7 +158,7 @@ public class TexturePackList
 
                 if (var5 == null)
                 {
-                    var5 = var3.isDirectory() ? new TexturePackFolder(var4, var3) : new TexturePackCustom(var4, var3);
+                    var5 = var3.isDirectory() ? new TexturePackFolder(var4, var3, defaultTexturePack) : new TexturePackCustom(var4, var3, defaultTexturePack);
                     this.texturePackCache.put(var4, var5);
                 }
 
@@ -240,7 +240,7 @@ public class TexturePackList
         }
     }
 
-    static boolean func_77301_a(TexturePackList par0TexturePackList)
+    static boolean isDownloading(TexturePackList par0TexturePackList)
     {
         return par0TexturePackList.isDownloading;
     }
@@ -260,6 +260,11 @@ public class TexturePackList
     static String generateTexturePackID(TexturePackList par0TexturePackList, File par1File)
     {
         return par0TexturePackList.generateTexturePackID(par1File);
+    }
+
+    static ITexturePack func_98143_h()
+    {
+        return defaultTexturePack;
     }
 
     static Minecraft getMinecraft(TexturePackList par0TexturePackList)

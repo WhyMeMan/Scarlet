@@ -34,7 +34,7 @@ public class EntityFootStepFX extends EntityFX
         float var12 = (float)(this.posY - interpPosY);
         float var13 = (float)(this.posZ - interpPosZ);
         float var14 = this.worldObj.getLightBrightness(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posY), MathHelper.floor_double(this.posZ));
-        this.currentFootSteps.bindTexture(this.currentFootSteps.getTexture("/misc/footprint.png"));
+        this.currentFootSteps.bindTexture("/misc/footprint.png");
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         par1Tessellator.startDrawingQuads();

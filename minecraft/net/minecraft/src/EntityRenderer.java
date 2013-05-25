@@ -253,6 +253,7 @@ public class EntityRenderer
     {
         if (this.mc.renderViewEntity != null && this.mc.theWorld != null)
         {
+            this.mc.pointedEntityLiving = null;
             double var2 = (double)this.mc.playerController.getBlockReachDistance();
             this.mc.objectMouseOver = this.mc.renderViewEntity.rayTrace(var2, par1);
             double var4 = var2;
@@ -319,6 +320,11 @@ public class EntityRenderer
             if (this.pointedEntity != null && (var11 < var4 || this.mc.objectMouseOver == null))
             {
                 this.mc.objectMouseOver = new MovingObjectPosition(this.pointedEntity);
+
+                if (this.pointedEntity instanceof EntityLiving)
+                {
+                    this.mc.pointedEntityLiving = (EntityLiving)this.pointedEntity;
+                }
             }
         }
     }
@@ -340,6 +346,16 @@ public class EntityRenderer
 
         this.fovModifierHandPrev = this.fovModifierHand;
         this.fovModifierHand += (this.fovMultiplierTemp - this.fovModifierHand) * 0.5F;
+
+        if (this.fovModifierHand > 1.5F)
+        {
+            this.fovModifierHand = 1.5F;
+        }
+
+        if (this.fovModifierHand < 0.1F)
+        {
+            this.fovModifierHand = 0.1F;
+        }
     }
 
     /**
@@ -614,7 +630,7 @@ public class EntityRenderer
         GLU.gluPerspective(this.getFOVModifier(par1, true), (float)this.mc.displayWidth / (float)this.mc.displayHeight, 0.05F, var4);
         float var5;
 
-        if (this.mc.playerController.func_78747_a())
+        if (this.mc.playerController.enableEverythingIsScrewedUpMode())
         {
             var5 = 0.6666667F;
             GL11.glScalef(1.0F, var5, 1.0F);
@@ -710,7 +726,7 @@ public class EntityRenderer
 
             GLU.gluPerspective(this.getFOVModifier(par1, false), (float)this.mc.displayWidth / (float)this.mc.displayHeight, 0.05F, this.farPlaneDistance * 2.0F);
 
-            if (this.mc.playerController.func_78747_a())
+            if (this.mc.playerController.enableEverythingIsScrewedUpMode())
             {
                 float var4 = 0.6666667F;
                 GL11.glScalef(1.0F, var4, 1.0F);
@@ -732,7 +748,7 @@ public class EntityRenderer
                 this.setupViewBobbing(par1);
             }
 
-            if (this.mc.gameSettings.thirdPersonView == 0 && !this.mc.renderViewEntity.isPlayerSleeping() && !this.mc.gameSettings.hideGUI && !this.mc.playerController.func_78747_a())
+            if (this.mc.gameSettings.thirdPersonView == 0 && !this.mc.renderViewEntity.isPlayerSleeping() && !this.mc.gameSettings.hideGUI && !this.mc.playerController.enableEverythingIsScrewedUpMode())
             {
                 this.enableLightmap((double)par1);
                 this.itemRenderer.renderItemInFirstPerson(par1);
@@ -776,13 +792,14 @@ public class EntityRenderer
         GL11.glScalef(var3, var3, var3);
         GL11.glTranslatef(8.0F, 8.0F, 8.0F);
         GL11.glMatrixMode(GL11.GL_MODELVIEW);
-        this.mc.renderEngine.bindTexture(this.lightmapTexture);
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.lightmapTexture);
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL11.GL_CLAMP);
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL11.GL_CLAMP);
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         GL11.glEnable(GL11.GL_TEXTURE_2D);
+        this.mc.renderEngine.resetBoundTexture();
         OpenGlHelper.setActiveTexture(OpenGlHelper.defaultTexUnit);
     }
 
@@ -995,17 +1012,6 @@ public class EntityRenderer
         RenderBlocks.fancyGrass = Config.isGrassFancy() || Config.isBetterGrassFancy();
         Block.leaves.setGraphicsLevel(Config.isTreesFancy());
 
-        if (!Config.isWeatherEnabled() && var2 != null && var2.worldInfo != null)
-        {
-            var2.worldInfo.setRaining(false);
-            var2.worldInfo.setThundering(false);
-        }
-
-        if (!Config.isTimeDefault())
-        {
-            Config.fixWorldTime(this.mc);
-        }
-
         if (this.lightmapUpdateNeeded)
         {
             this.updateLightmap(par1);
@@ -1106,7 +1112,7 @@ public class EntityRenderer
 
             if (this.mc.currentScreen != null)
             {
-                GL11.glClear(256);
+                GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
 
                 try
                 {
@@ -1245,7 +1251,7 @@ public class EntityRenderer
             this.frameTimes[var7] = var5 - this.prevFrameTimeNano;
             ++this.numRecordedFrameTimes;
             this.prevFrameTimeNano = var5;
-            GL11.glClear(256);
+            GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
             GL11.glMatrixMode(GL11.GL_PROJECTION);
             GL11.glEnable(GL11.GL_COLOR_MATERIAL);
             GL11.glLoadIdentity();
@@ -1481,7 +1487,7 @@ public class EntityRenderer
             this.mc.mcProfiler.endStartSection("clear");
             GL11.glViewport(0, 0, this.mc.displayWidth, this.mc.displayHeight);
             this.updateFogColor(par1);
-            GL11.glClear(16640);
+            GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
             GL11.glEnable(GL11.GL_CULL_FACE);
             this.mc.mcProfiler.endStartSection("camera");
             this.setupCameraTransform(par1, var13);
@@ -1503,7 +1509,7 @@ public class EntityRenderer
             GL11.glEnable(GL11.GL_FOG);
             this.setupFog(1, par1);
 
-            if (this.mc.gameSettings.ambientOcclusion)
+            if (this.mc.gameSettings.ambientOcclusion != 0)
             {
                 GL11.glShadeModel(GL11.GL_SMOOTH);
             }
@@ -1533,9 +1539,10 @@ public class EntityRenderer
                 this.renderCloudsCheck(var5, par1);
             }
 
+            this.mc.mcProfiler.endStartSection("prepareterrain");
             this.setupFog(0, par1);
             GL11.glEnable(GL11.GL_FOG);
-            GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.mc.renderEngine.getTexture("/terrain.png"));
+            this.mc.renderEngine.bindTexture("/terrain.png");
             RenderHelper.disableStandardItemLighting();
             this.mc.mcProfiler.endStartSection("terrain");
             var5.sortAndRender(var4, 0, (double)par1);
@@ -1547,7 +1554,19 @@ public class EntityRenderer
             {
                 RenderHelper.enableStandardItemLighting();
                 this.mc.mcProfiler.endStartSection("entities");
+
+                if (var16)
+                {
+                    Reflector.callVoid(Reflector.ForgeHooksClient_setRenderPass, new Object[] {Integer.valueOf(0)});
+                }
+
                 var5.renderEntities(var4.getPosition(par1), var14, par1);
+
+                if (var16)
+                {
+                    Reflector.callVoid(Reflector.ForgeHooksClient_setRenderPass, new Object[] {Integer.valueOf(-1)});
+                }
+
                 this.enableLightmap((double)par1);
                 this.mc.mcProfiler.endStartSection("litParticles");
                 var6.renderLitParticles(var4, par1);
@@ -1583,14 +1602,14 @@ public class EntityRenderer
             this.setupFog(0, par1);
             GL11.glEnable(GL11.GL_BLEND);
             GL11.glDisable(GL11.GL_CULL_FACE);
-            GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.mc.renderEngine.getTexture("/terrain.png"));
+            this.mc.renderEngine.bindTexture("/terrain.png");
             WrUpdates.resumeBackgroundUpdates();
 
             if (Config.isWaterFancy())
             {
                 this.mc.mcProfiler.endStartSection("water");
 
-                if (this.mc.gameSettings.ambientOcclusion)
+                if (this.mc.gameSettings.ambientOcclusion != 0)
                 {
                     GL11.glShadeModel(GL11.GL_SMOOTH);
                 }
@@ -1628,6 +1647,17 @@ public class EntityRenderer
             }
 
             WrUpdates.pauseBackgroundUpdates();
+
+            if (var16)
+            {
+                RenderHelper.enableStandardItemLighting();
+                this.mc.mcProfiler.endStartSection("entities");
+                Reflector.callVoid(Reflector.ForgeHooksClient_setRenderPass, new Object[] {Integer.valueOf(1)});
+                var5.renderEntities(var4.getPosition(par1), var14, par1);
+                Reflector.callVoid(Reflector.ForgeHooksClient_setRenderPass, new Object[] {Integer.valueOf(-1)});
+                RenderHelper.disableStandardItemLighting();
+            }
+
             GL11.glDepthMask(true);
             GL11.glEnable(GL11.GL_CULL_FACE);
             GL11.glDisable(GL11.GL_BLEND);
@@ -1674,7 +1704,7 @@ public class EntityRenderer
 
             if (this.cameraZoom == 1.0D)
             {
-                GL11.glClear(256);
+                GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
                 this.renderHand(par1, var13);
             }
 
@@ -1839,7 +1869,7 @@ public class EntityRenderer
             GL11.glEnable(GL11.GL_BLEND);
             GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
             GL11.glAlphaFunc(GL11.GL_GREATER, 0.01F);
-            GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.mc.renderEngine.getTexture("/environment/snow.png"));
+            this.mc.renderEngine.bindTexture("/environment/snow.png");
             double var9 = var41.lastTickPosX + (var41.posX - var41.lastTickPosX) * (double)par1;
             double var11 = var41.lastTickPosY + (var41.posY - var41.lastTickPosY) * (double)par1;
             double var13 = var41.lastTickPosZ + (var41.posZ - var41.lastTickPosZ) * (double)par1;
@@ -1913,7 +1943,7 @@ public class EntityRenderer
                                     }
 
                                     var18 = 0;
-                                    GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.mc.renderEngine.getTexture("/environment/rain.png"));
+                                    this.mc.renderEngine.bindTexture("/environment/rain.png");
                                     var8.startDrawingQuads();
                                 }
 
@@ -1941,7 +1971,7 @@ public class EntityRenderer
                                     }
 
                                     var18 = 1;
-                                    GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.mc.renderEngine.getTexture("/environment/snow.png"));
+                                    this.mc.renderEngine.bindTexture("/environment/snow.png");
                                     var8.startDrawingQuads();
                                 }
 
@@ -1984,7 +2014,7 @@ public class EntityRenderer
     public void setupOverlayRendering()
     {
         ScaledResolution var1 = new ScaledResolution(this.mc.gameSettings, this.mc.displayWidth, this.mc.displayHeight);
-        GL11.glClear(256);
+        GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
         GL11.glMatrixMode(GL11.GL_PROJECTION);
         GL11.glLoadIdentity();
         GL11.glOrtho(0.0D, var1.getScaledWidth_double(), var1.getScaledHeight_double(), 0.0D, 1000.0D, 3000.0D);
@@ -2066,26 +2096,26 @@ public class EntityRenderer
         this.fogColorRed += (var7 - this.fogColorRed) * var4;
         this.fogColorGreen += (var8 - this.fogColorGreen) * var4;
         this.fogColorBlue += (var9 - this.fogColorBlue) * var4;
-        float var21 = var2.getRainStrength(par1);
-        float var22;
+        float var23 = var2.getRainStrength(par1);
+        float var24;
 
-        if (var21 > 0.0F)
+        if (var23 > 0.0F)
         {
-            var11 = 1.0F - var21 * 0.5F;
-            var22 = 1.0F - var21 * 0.4F;
+            var11 = 1.0F - var23 * 0.5F;
+            var24 = 1.0F - var23 * 0.4F;
             this.fogColorRed *= var11;
             this.fogColorGreen *= var11;
-            this.fogColorBlue *= var22;
+            this.fogColorBlue *= var24;
         }
 
         var11 = var2.getWeightedThunderStrength(par1);
 
         if (var11 > 0.0F)
         {
-            var22 = 1.0F - var11 * 0.5F;
-            this.fogColorRed *= var22;
-            this.fogColorGreen *= var22;
-            this.fogColorBlue *= var22;
+            var24 = 1.0F - var11 * 0.5F;
+            this.fogColorRed *= var24;
+            this.fogColorGreen *= var24;
+            this.fogColorBlue *= var24;
         }
 
         int var14 = ActiveRenderInfo.getBlockIdAtEntityViewpoint(this.mc.theWorld, var3, par1);
@@ -2093,7 +2123,7 @@ public class EntityRenderer
 
         if (this.cloudFog)
         {
-            var15 = var2.drawClouds(par1);
+            var15 = var2.getCloudColour(par1);
             this.fogColorRed = (float)var15.xCoord;
             this.fogColorGreen = (float)var15.yCoord;
             this.fogColorBlue = (float)var15.zCoord;
@@ -2119,79 +2149,86 @@ public class EntityRenderer
             this.fogColorBlue = 0.0F;
         }
 
-        float var23 = this.fogColor2 + (this.fogColor1 - this.fogColor2) * par1;
-        this.fogColorRed *= var23;
-        this.fogColorGreen *= var23;
-        this.fogColorBlue *= var23;
-        double var16 = (var3.lastTickPosY + (var3.posY - var3.lastTickPosY) * (double)par1) * var2.provider.getVoidFogYFactor();
+        float var25 = this.fogColor2 + (this.fogColor1 - this.fogColor2) * par1;
+        this.fogColorRed *= var25;
+        this.fogColorGreen *= var25;
+        this.fogColorBlue *= var25;
+        double var16 = var2.provider.getVoidFogYFactor();
+
+        if (!Config.isDepthFog())
+        {
+            var16 = 1.0D;
+        }
+
+        double var18 = (var3.lastTickPosY + (var3.posY - var3.lastTickPosY) * (double)par1) * var16;
 
         if (var3.isPotionActive(Potion.blindness))
         {
-            int var18 = var3.getActivePotionEffect(Potion.blindness).getDuration();
+            int var20 = var3.getActivePotionEffect(Potion.blindness).getDuration();
 
-            if (var18 < 20)
+            if (var20 < 20)
             {
-                var16 *= (double)(1.0F - (float)var18 / 20.0F);
+                var18 *= (double)(1.0F - (float)var20 / 20.0F);
             }
             else
             {
-                var16 = 0.0D;
+                var18 = 0.0D;
             }
         }
 
-        if (var16 < 1.0D)
+        if (var18 < 1.0D)
         {
-            if (var16 < 0.0D)
+            if (var18 < 0.0D)
             {
-                var16 = 0.0D;
+                var18 = 0.0D;
             }
 
-            var16 *= var16;
-            this.fogColorRed = (float)((double)this.fogColorRed * var16);
-            this.fogColorGreen = (float)((double)this.fogColorGreen * var16);
-            this.fogColorBlue = (float)((double)this.fogColorBlue * var16);
+            var18 *= var18;
+            this.fogColorRed = (float)((double)this.fogColorRed * var18);
+            this.fogColorGreen = (float)((double)this.fogColorGreen * var18);
+            this.fogColorBlue = (float)((double)this.fogColorBlue * var18);
         }
 
-        float var24;
+        float var26;
 
         if (this.field_82831_U > 0.0F)
         {
-            var24 = this.field_82832_V + (this.field_82831_U - this.field_82832_V) * par1;
-            this.fogColorRed = this.fogColorRed * (1.0F - var24) + this.fogColorRed * 0.7F * var24;
-            this.fogColorGreen = this.fogColorGreen * (1.0F - var24) + this.fogColorGreen * 0.6F * var24;
-            this.fogColorBlue = this.fogColorBlue * (1.0F - var24) + this.fogColorBlue * 0.6F * var24;
+            var26 = this.field_82832_V + (this.field_82831_U - this.field_82832_V) * par1;
+            this.fogColorRed = this.fogColorRed * (1.0F - var26) + this.fogColorRed * 0.7F * var26;
+            this.fogColorGreen = this.fogColorGreen * (1.0F - var26) + this.fogColorGreen * 0.6F * var26;
+            this.fogColorBlue = this.fogColorBlue * (1.0F - var26) + this.fogColorBlue * 0.6F * var26;
         }
 
-        float var19;
+        float var21;
 
         if (var3.isPotionActive(Potion.nightVision))
         {
-            var24 = this.getNightVisionBrightness(this.mc.thePlayer, par1);
-            var19 = 1.0F / this.fogColorRed;
+            var26 = this.getNightVisionBrightness(this.mc.thePlayer, par1);
+            var21 = 1.0F / this.fogColorRed;
 
-            if (var19 > 1.0F / this.fogColorGreen)
+            if (var21 > 1.0F / this.fogColorGreen)
             {
-                var19 = 1.0F / this.fogColorGreen;
+                var21 = 1.0F / this.fogColorGreen;
             }
 
-            if (var19 > 1.0F / this.fogColorBlue)
+            if (var21 > 1.0F / this.fogColorBlue)
             {
-                var19 = 1.0F / this.fogColorBlue;
+                var21 = 1.0F / this.fogColorBlue;
             }
 
-            this.fogColorRed = this.fogColorRed * (1.0F - var24) + this.fogColorRed * var19 * var24;
-            this.fogColorGreen = this.fogColorGreen * (1.0F - var24) + this.fogColorGreen * var19 * var24;
-            this.fogColorBlue = this.fogColorBlue * (1.0F - var24) + this.fogColorBlue * var19 * var24;
+            this.fogColorRed = this.fogColorRed * (1.0F - var26) + this.fogColorRed * var21 * var26;
+            this.fogColorGreen = this.fogColorGreen * (1.0F - var26) + this.fogColorGreen * var21 * var26;
+            this.fogColorBlue = this.fogColorBlue * (1.0F - var26) + this.fogColorBlue * var21 * var26;
         }
 
         if (this.mc.gameSettings.anaglyph)
         {
-            var24 = (this.fogColorRed * 30.0F + this.fogColorGreen * 59.0F + this.fogColorBlue * 11.0F) / 100.0F;
-            var19 = (this.fogColorRed * 30.0F + this.fogColorGreen * 70.0F) / 100.0F;
-            float var20 = (this.fogColorRed * 30.0F + this.fogColorBlue * 70.0F) / 100.0F;
-            this.fogColorRed = var24;
-            this.fogColorGreen = var19;
-            this.fogColorBlue = var20;
+            var26 = (this.fogColorRed * 30.0F + this.fogColorGreen * 59.0F + this.fogColorBlue * 11.0F) / 100.0F;
+            var21 = (this.fogColorRed * 30.0F + this.fogColorGreen * 70.0F) / 100.0F;
+            float var22 = (this.fogColorRed * 30.0F + this.fogColorBlue * 70.0F) / 100.0F;
+            this.fogColorRed = var26;
+            this.fogColorGreen = var21;
+            this.fogColorBlue = var22;
         }
 
         GL11.glClearColor(this.fogColorRed, this.fogColorGreen, this.fogColorBlue, 0.0F);

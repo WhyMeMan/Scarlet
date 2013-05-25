@@ -4,6 +4,7 @@ public class EntityTNTPrimed extends Entity
 {
     /** How long the fuse is */
     public int fuse;
+    private EntityLiving tntPlacedBy;
 
     public EntityTNTPrimed(World par1World)
     {
@@ -14,18 +15,19 @@ public class EntityTNTPrimed extends Entity
         this.yOffset = this.height / 2.0F;
     }
 
-    public EntityTNTPrimed(World par1World, double par2, double par4, double par6)
+    public EntityTNTPrimed(World par1World, double par2, double par4, double par6, EntityLiving par8EntityLiving)
     {
         this(par1World);
         this.setPosition(par2, par4, par6);
-        float var8 = (float)(Math.random() * Math.PI * 2.0D);
-        this.motionX = (double)(-((float)Math.sin((double)var8)) * 0.02F);
+        float var9 = (float)(Math.random() * Math.PI * 2.0D);
+        this.motionX = (double)(-((float)Math.sin((double)var9)) * 0.02F);
         this.motionY = 0.20000000298023224D;
-        this.motionZ = (double)(-((float)Math.cos((double)var8)) * 0.02F);
+        this.motionZ = (double)(-((float)Math.cos((double)var9)) * 0.02F);
         this.fuse = 80;
         this.prevPosX = par2;
         this.prevPosY = par4;
         this.prevPosZ = par6;
+        this.tntPlacedBy = par8EntityLiving;
     }
 
     protected void entityInit() {}
@@ -86,7 +88,7 @@ public class EntityTNTPrimed extends Entity
     private void explode()
     {
         float var1 = 4.0F;
-        this.worldObj.createExplosion((Entity)null, this.posX, this.posY, this.posZ, var1, true);
+        this.worldObj.createExplosion(this, this.posX, this.posY, this.posZ, var1, true);
     }
 
     /**
@@ -108,5 +110,13 @@ public class EntityTNTPrimed extends Entity
     public float getShadowSize()
     {
         return 0.0F;
+    }
+
+    /**
+     * returns null or the entityliving it was placed or ignited by
+     */
+    public EntityLiving getTntPlacedBy()
+    {
+        return this.tntPlacedBy;
     }
 }

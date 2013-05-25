@@ -50,21 +50,21 @@ public class WorldGenDungeons extends WorldGenerator
                     {
                         if (var10 != par3 - var7 - 1 && var11 != par4 - 1 && var12 != par5 - var8 - 1 && var10 != par3 + var7 + 1 && var11 != par4 + var6 + 1 && var12 != par5 + var8 + 1)
                         {
-                            par1World.setBlockWithNotify(var10, var11, var12, 0);
+                            par1World.setBlockToAir(var10, var11, var12);
                         }
                         else if (var11 >= 0 && !par1World.getBlockMaterial(var10, var11 - 1, var12).isSolid())
                         {
-                            par1World.setBlockWithNotify(var10, var11, var12, 0);
+                            par1World.setBlockToAir(var10, var11, var12);
                         }
                         else if (par1World.getBlockMaterial(var10, var11, var12).isSolid())
                         {
                             if (var11 == par4 - 1 && par2Random.nextInt(4) != 0)
                             {
-                                par1World.setBlockWithNotify(var10, var11, var12, Block.cobblestoneMossy.blockID);
+                                par1World.setBlock(var10, var11, var12, Block.cobblestoneMossy.blockID, 0, 2);
                             }
                             else
                             {
-                                par1World.setBlockWithNotify(var10, var11, var12, Block.cobblestone.blockID);
+                                par1World.setBlock(var10, var11, var12, Block.cobblestone.blockID, 0, 2);
                             }
                         }
                     }
@@ -112,7 +112,7 @@ public class WorldGenDungeons extends WorldGenerator
 
                                 if (var15 == 1)
                                 {
-                                    par1World.setBlockWithNotify(var12, par4, var14, Block.chest.blockID);
+                                    par1World.setBlock(var12, par4, var14, Block.chest.blockID, 0, 2);
                                     TileEntityChest var16 = (TileEntityChest)par1World.getBlockTileEntity(var12, par4, var14);
 
                                     if (var16 != null)
@@ -142,12 +142,12 @@ public class WorldGenDungeons extends WorldGenerator
                 }
             }
 
-            par1World.setBlockWithNotify(par3, par4, par5, Block.mobSpawner.blockID);
+            par1World.setBlock(par3, par4, par5, Block.mobSpawner.blockID, 0, 2);
             TileEntityMobSpawner var19 = (TileEntityMobSpawner)par1World.getBlockTileEntity(par3, par4, par5);
 
             if (var19 != null)
             {
-                var19.setMobID(this.pickMobSpawner(par2Random));
+                var19.func_98049_a().setMobID(this.pickMobSpawner(par2Random));
             }
             else
             {

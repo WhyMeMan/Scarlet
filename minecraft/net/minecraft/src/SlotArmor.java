@@ -39,8 +39,8 @@ class SlotArmor extends Slot
     /**
      * Returns the icon index on items.png that is used as background image of the slot.
      */
-    public int getBackgroundIconIndex()
+    public Icon getBackgroundIconIndex()
     {
-        return 15 + this.armorType * 16;
+        return ItemArmor.func_94602_b(this.armorType);
     }
 }

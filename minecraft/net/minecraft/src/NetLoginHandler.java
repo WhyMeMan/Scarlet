@@ -10,25 +10,21 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
-import java.util.logging.Logger;
 import javax.crypto.SecretKey;
 import net.minecraft.server.MinecraftServer;
 
 public class NetLoginHandler extends NetHandler
 {
+    /** The Random object used to generate serverId hex strings. */
+    private static Random rand = new Random();
+
     /** The 4 byte verify token read from a Packet252SharedKey */
     private byte[] verifyToken;
 
-    /** The Minecraft logger. */
-    public static Logger logger = Logger.getLogger("Minecraft");
-
-    /** The Random object used to generate serverId hex strings. */
-    private static Random rand = new Random();
-    public TcpConnection myTCPConnection;
-    public boolean connectionComplete = false;
-
     /** Reference to the MinecraftServer object. */
-    private MinecraftServer mcServer;
+    private final MinecraftServer mcServer;
+    public final TcpConnection myTCPConnection;
+    public boolean connectionComplete = false;
     private int connectionTimer = 0;
     private String clientUsername = null;
     private volatile boolean field_72544_i = false;
@@ -43,7 +39,7 @@ public class NetLoginHandler extends NetHandler
     public NetLoginHandler(MinecraftServer par1MinecraftServer, Socket par2Socket, String par3Str) throws IOException
     {
         this.mcServer = par1MinecraftServer;
-        this.myTCPConnection = new TcpConnection(par2Socket, par3Str, this, par1MinecraftServer.getKeyPair().getPrivate());
+        this.myTCPConnection = new TcpConnection(par1MinecraftServer.getLogAgent(), par2Socket, par3Str, this, par1MinecraftServer.getKeyPair().getPrivate());
         this.myTCPConnection.field_74468_e = 0;
     }
 
@@ -72,7 +68,7 @@ public class NetLoginHandler extends NetHandler
     {
         try
         {
-            logger.info("Disconnecting " + this.getUsernameAndAddress() + ": " + par1Str);
+            this.mcServer.getLogAgent().logInfo("Disconnecting " + this.getUsernameAndAddress() + ": " + par1Str);
             this.myTCPConnection.addToSendQueue(new Packet255KickDisconnect(par1Str));
             this.myTCPConnection.serverShutdown();
             this.connectionComplete = true;
@@ -95,9 +91,9 @@ public class NetLoginHandler extends NetHandler
         {
             PublicKey var2 = this.mcServer.getKeyPair().getPublic();
 
-            if (par1Packet2ClientProtocol.getProtocolVersion() != 51)
+            if (par1Packet2ClientProtocol.getProtocolVersion() != 61)
             {
-                if (par1Packet2ClientProtocol.getProtocolVersion() > 51)
+                if (par1Packet2ClientProtocol.getProtocolVersion() > 61)
                 {
                     this.raiseErrorAndDisconnect("Outdated server!");
                 }
@@ -180,7 +176,7 @@ public class NetLoginHandler extends NetHandler
 
     public void handleErrorMessage(String par1Str, Object[] par2ArrayOfObj)
     {
-        logger.info(this.getUsernameAndAddress() + " lost connection");
+        this.mcServer.getLogAgent().logInfo(this.getUsernameAndAddress() + " lost connection");
         this.connectionComplete = true;
     }
 
@@ -194,9 +190,9 @@ public class NetLoginHandler extends NetHandler
             ServerConfigurationManager var2 = this.mcServer.getConfigurationManager();
             String var3 = null;
 
-            if (par1Packet254ServerPing.field_82559_a == 1)
+            if (par1Packet254ServerPing.readSuccessfully == 1)
             {
-                List var4 = Arrays.asList(new Serializable[] {Integer.valueOf(1), Integer.valueOf(51), this.mcServer.getMinecraftVersion(), this.mcServer.getMOTD(), Integer.valueOf(var2.getCurrentPlayerCount()), Integer.valueOf(var2.getMaxPlayers())});
+                List var4 = Arrays.asList(new Serializable[] {Integer.valueOf(1), Integer.valueOf(61), this.mcServer.getMinecraftVersion(), this.mcServer.getMOTD(), Integer.valueOf(var2.getCurrentPlayerCount()), Integer.valueOf(var2.getMaxPlayers())});
                 Object var6;
 
                 for (Iterator var5 = var4.iterator(); var5.hasNext(); var3 = var3 + var6.toString().replaceAll("\u0000", ""))

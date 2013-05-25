@@ -45,8 +45,8 @@ public class CommandServerMessage extends CommandBase
             else
             {
                 String var4 = func_82361_a(par1ICommandSender, par2ArrayOfStr, 1, !(par1ICommandSender instanceof EntityPlayer));
-                var3.sendChatToPlayer("\u00a77\u00a7o" + var3.translateString("commands.message.display.incoming", new Object[] {par1ICommandSender.getCommandSenderName(), var4}));
-                par1ICommandSender.sendChatToPlayer("\u00a77\u00a7o" + par1ICommandSender.translateString("commands.message.display.outgoing", new Object[] {var3.getCommandSenderName(), var4}));
+                var3.sendChatToPlayer(EnumChatFormatting.GRAY + "" + EnumChatFormatting.ITALIC + var3.translateString("commands.message.display.incoming", new Object[] {par1ICommandSender.getCommandSenderName(), var4}));
+                par1ICommandSender.sendChatToPlayer(EnumChatFormatting.GRAY + "" + EnumChatFormatting.ITALIC + par1ICommandSender.translateString("commands.message.display.outgoing", new Object[] {var3.getCommandSenderName(), var4}));
             }
         }
     }
@@ -62,8 +62,8 @@ public class CommandServerMessage extends CommandBase
     /**
      * Return whether the specified command parameter index is a username parameter.
      */
-    public boolean isUsernameIndex(int par1)
+    public boolean isUsernameIndex(String[] par1ArrayOfStr, int par2)
     {
-        return par1 == 0;
+        return par2 == 0;
     }
 }

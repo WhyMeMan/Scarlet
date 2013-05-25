@@ -78,10 +78,10 @@ public class WorldGenHugeTrees extends WorldGenerator
 
                 if ((var8 == Block.grass.blockID || var8 == Block.dirt.blockID) && par4 < 256 - var6 - 1)
                 {
-                    par1World.setBlock(par3, par4 - 1, par5, Block.dirt.blockID);
-                    par1World.setBlock(par3 + 1, par4 - 1, par5, Block.dirt.blockID);
-                    par1World.setBlock(par3, par4 - 1, par5 + 1, Block.dirt.blockID);
-                    par1World.setBlock(par3 + 1, par4 - 1, par5 + 1, Block.dirt.blockID);
+                    par1World.setBlock(par3, par4 - 1, par5, Block.dirt.blockID, 0, 2);
+                    par1World.setBlock(par3 + 1, par4 - 1, par5, Block.dirt.blockID, 0, 2);
+                    par1World.setBlock(par3, par4 - 1, par5 + 1, Block.dirt.blockID, 0, 2);
+                    par1World.setBlock(par3 + 1, par4 - 1, par5 + 1, Block.dirt.blockID, 0, 2);
                     this.growLeaves(par1World, par3, par5, par4 + var6, 2, par2Random);
 
                     for (int var14 = par4 + var6 - 2 - par2Random.nextInt(4); var14 > par4 + var6 / 2; var14 -= 2 + par2Random.nextInt(4))
@@ -216,9 +216,14 @@ public class WorldGenHugeTrees extends WorldGenerator
                 {
                     int var14 = var13 - par3;
 
-                    if ((var12 >= 0 || var14 >= 0 || var12 * var12 + var14 * var14 <= var10 * var10) && (var12 <= 0 && var14 <= 0 || var12 * var12 + var14 * var14 <= (var10 + 1) * (var10 + 1)) && (par6Random.nextInt(4) != 0 || var12 * var12 + var14 * var14 <= (var10 - 1) * (var10 - 1)) && !Block.opaqueCubeLookup[par1World.getBlockId(var11, var8, var13)])
+                    if ((var12 >= 0 || var14 >= 0 || var12 * var12 + var14 * var14 <= var10 * var10) && (var12 <= 0 && var14 <= 0 || var12 * var12 + var14 * var14 <= (var10 + 1) * (var10 + 1)) && (par6Random.nextInt(4) != 0 || var12 * var12 + var14 * var14 <= (var10 - 1) * (var10 - 1)))
                     {
-                        this.setBlockAndMetadata(par1World, var11, var8, var13, Block.leaves.blockID, this.leavesMetadata);
+                        int var15 = par1World.getBlockId(var11, var8, var13);
+
+                        if (var15 == 0 || var15 == Block.leaves.blockID)
+                        {
+                            this.setBlockAndMetadata(par1World, var11, var8, var13, Block.leaves.blockID, this.leavesMetadata);
+                        }
                     }
                 }
             }

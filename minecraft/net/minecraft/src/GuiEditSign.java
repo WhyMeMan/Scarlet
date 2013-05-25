@@ -22,6 +22,9 @@ public class GuiEditSign extends GuiScreen
     /** The number of the line that is being edited. */
     private int editLine = 0;
 
+    /** "Done" button for the GUI. */
+    private GuiButton doneBtn;
+
     public GuiEditSign(TileEntitySign par1TileEntitySign)
     {
         this.entitySign = par1TileEntitySign;
@@ -32,9 +35,9 @@ public class GuiEditSign extends GuiScreen
      */
     public void initGui()
     {
-        this.controlList.clear();
+        this.buttonList.clear();
         Keyboard.enableRepeatEvents(true);
-        this.controlList.add(new GuiButton(0, this.width / 2 - 100, this.height / 4 + 120, "Done"));
+        this.buttonList.add(this.doneBtn = new GuiButton(0, this.width / 2 - 100, this.height / 4 + 120, "Done"));
         this.entitySign.setEditable(false);
     }
 
@@ -44,7 +47,7 @@ public class GuiEditSign extends GuiScreen
     public void onGuiClosed()
     {
         Keyboard.enableRepeatEvents(false);
-        NetClientHandler var1 = this.mc.getSendQueue();
+        NetClientHandler var1 = this.mc.getNetHandler();
 
         if (var1 != null)
         {
@@ -100,6 +103,11 @@ public class GuiEditSign extends GuiScreen
         if (allowedCharacters.indexOf(par1) >= 0 && this.entitySign.signText[this.editLine].length() < 15)
         {
             this.entitySign.signText[this.editLine] = this.entitySign.signText[this.editLine] + par1;
+        }
+
+        if (par2 == 1)
+        {
+            this.actionPerformed(this.doneBtn);
         }
     }
 

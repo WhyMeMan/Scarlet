@@ -40,15 +40,15 @@ public class GuiSelectWorld extends GuiScreen
     /** set to true if you arein the process of deleteing a world/save */
     private boolean deleting;
 
-    /** the rename button in the world selection gui */
-    private GuiButton buttonRename;
+    /** The delete button in the world selection GUI */
+    private GuiButton buttonDelete;
 
     /** the select button in the world selection gui */
     private GuiButton buttonSelect;
 
-    /** the delete button in the world selection gui */
-    private GuiButton buttonDelete;
-    private GuiButton field_82316_w;
+    /** The rename button in the world selection GUI */
+    private GuiButton buttonRename;
+    private GuiButton buttonRecreate;
 
     public GuiSelectWorld(GuiScreen par1GuiScreen)
     {
@@ -62,21 +62,32 @@ public class GuiSelectWorld extends GuiScreen
     {
         StringTranslate var1 = StringTranslate.getInstance();
         this.screenTitle = var1.translateKey("selectWorld.title");
+
+        try
+        {
+            this.loadSaves();
+        }
+        catch (AnvilConverterException var3)
+        {
+            var3.printStackTrace();
+            this.mc.displayGuiScreen(new GuiErrorScreen("Unable to load words", var3.getMessage()));
+            return;
+        }
+
         this.localizedWorldText = var1.translateKey("selectWorld.world");
         this.localizedMustConvertText = var1.translateKey("selectWorld.conversion");
         this.localizedGameModeText[EnumGameType.SURVIVAL.getID()] = var1.translateKey("gameMode.survival");
         this.localizedGameModeText[EnumGameType.CREATIVE.getID()] = var1.translateKey("gameMode.creative");
         this.localizedGameModeText[EnumGameType.ADVENTURE.getID()] = var1.translateKey("gameMode.adventure");
-        this.loadSaves();
         this.worldSlotContainer = new GuiWorldSlot(this);
-        this.worldSlotContainer.registerScrollButtons(this.controlList, 4, 5);
+        this.worldSlotContainer.registerScrollButtons(this.buttonList, 4, 5);
         this.initButtons();
     }
 
     /**
      * loads the saves
      */
-    private void loadSaves()
+    private void loadSaves() throws AnvilConverterException
     {
         ISaveFormat var1 = this.mc.getSaveLoader();
         this.saveList = var1.getSaveList();
@@ -114,16 +125,16 @@ public class GuiSelectWorld extends GuiScreen
     public void initButtons()
     {
         StringTranslate var1 = StringTranslate.getInstance();
-        this.controlList.add(this.buttonSelect = new GuiButton(1, this.width / 2 - 154, this.height - 52, 150, 20, var1.translateKey("selectWorld.select")));
-        this.controlList.add(new GuiButton(3, this.width / 2 + 4, this.height - 52, 150, 20, var1.translateKey("selectWorld.create")));
-        this.controlList.add(this.buttonDelete = new GuiButton(6, this.width / 2 - 154, this.height - 28, 72, 20, var1.translateKey("selectWorld.rename")));
-        this.controlList.add(this.buttonRename = new GuiButton(2, this.width / 2 - 76, this.height - 28, 72, 20, var1.translateKey("selectWorld.delete")));
-        this.controlList.add(this.field_82316_w = new GuiButton(7, this.width / 2 + 4, this.height - 28, 72, 20, var1.translateKey("selectWorld.recreate")));
-        this.controlList.add(new GuiButton(0, this.width / 2 + 82, this.height - 28, 72, 20, var1.translateKey("gui.cancel")));
+        this.buttonList.add(this.buttonSelect = new GuiButton(1, this.width / 2 - 154, this.height - 52, 150, 20, var1.translateKey("selectWorld.select")));
+        this.buttonList.add(new GuiButton(3, this.width / 2 + 4, this.height - 52, 150, 20, var1.translateKey("selectWorld.create")));
+        this.buttonList.add(this.buttonRename = new GuiButton(6, this.width / 2 - 154, this.height - 28, 72, 20, var1.translateKey("selectWorld.rename")));
+        this.buttonList.add(this.buttonDelete = new GuiButton(2, this.width / 2 - 76, this.height - 28, 72, 20, var1.translateKey("selectWorld.delete")));
+        this.buttonList.add(this.buttonRecreate = new GuiButton(7, this.width / 2 + 4, this.height - 28, 72, 20, var1.translateKey("selectWorld.recreate")));
+        this.buttonList.add(new GuiButton(0, this.width / 2 + 82, this.height - 28, 72, 20, var1.translateKey("gui.cancel")));
         this.buttonSelect.enabled = false;
-        this.buttonRename.enabled = false;
         this.buttonDelete.enabled = false;
-        this.field_82316_w.enabled = false;
+        this.buttonRename.enabled = false;
+        this.buttonRecreate.enabled = false;
     }
 
     /**
@@ -218,7 +229,15 @@ public class GuiSelectWorld extends GuiScreen
                 ISaveFormat var3 = this.mc.getSaveLoader();
                 var3.flushCache();
                 var3.deleteWorldDirectory(this.getSaveFileName(par2));
-                this.loadSaves();
+
+                try
+                {
+                    this.loadSaves();
+                }
+                catch (AnvilConverterException var5)
+                {
+                    var5.printStackTrace();
+                }
             }
 
             this.mc.displayGuiScreen(this);
@@ -283,7 +302,7 @@ public class GuiSelectWorld extends GuiScreen
      */
     static GuiButton getRenameButton(GuiSelectWorld par0GuiSelectWorld)
     {
-        return par0GuiSelectWorld.buttonRename;
+        return par0GuiSelectWorld.buttonDelete;
     }
 
     /**
@@ -291,12 +310,12 @@ public class GuiSelectWorld extends GuiScreen
      */
     static GuiButton getDeleteButton(GuiSelectWorld par0GuiSelectWorld)
     {
-        return par0GuiSelectWorld.buttonDelete;
+        return par0GuiSelectWorld.buttonRename;
     }
 
     static GuiButton func_82312_f(GuiSelectWorld par0GuiSelectWorld)
     {
-        return par0GuiSelectWorld.field_82316_w;
+        return par0GuiSelectWorld.buttonRecreate;
     }
 
     static String func_82313_g(GuiSelectWorld par0GuiSelectWorld)

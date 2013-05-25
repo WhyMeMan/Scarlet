@@ -146,7 +146,7 @@ public class ItemInWorldManager
             }
             else
             {
-                this.theWorld.extinguishFire(this.thisPlayerMP, par1, par2, par3, par4);
+                this.theWorld.extinguishFire((EntityPlayer)null, par1, par2, par3, par4);
                 this.initialDamage = this.curblockDamage;
                 float var5 = 1.0F;
                 int var6 = this.theWorld.getBlockId(par1, par2, par3);
@@ -228,7 +228,7 @@ public class ItemInWorldManager
             var4.onBlockHarvested(this.theWorld, par1, par2, par3, var5, this.thisPlayerMP);
         }
 
-        boolean var6 = this.theWorld.setBlockWithNotify(par1, par2, par3, 0);
+        boolean var6 = this.theWorld.setBlockToAir(par1, par2, par3);
 
         if (var4 != null && var6)
         {

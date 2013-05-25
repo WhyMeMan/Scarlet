@@ -7,15 +7,15 @@ public class BlockSand extends Block
     /** Do blocks fall instantly to where they stop or do they fall over time */
     public static boolean fallInstantly = false;
 
-    public BlockSand(int par1, int par2)
+    public BlockSand(int par1)
     {
-        super(par1, par2, Material.sand);
+        super(par1, Material.sand);
         this.setCreativeTab(CreativeTabs.tabBlock);
     }
 
-    public BlockSand(int par1, int par2, Material par3Material)
+    public BlockSand(int par1, Material par2Material)
     {
-        super(par1, par2, par3Material);
+        super(par1, par2Material);
     }
 
     /**
@@ -23,7 +23,7 @@ public class BlockSand extends Block
      */
     public void onBlockAdded(World par1World, int par2, int par3, int par4)
     {
-        par1World.scheduleBlockUpdate(par2, par3, par4, this.blockID, this.tickRate());
+        par1World.scheduleBlockUpdate(par2, par3, par4, this.blockID, this.tickRate(par1World));
     }
 
     /**
@@ -32,7 +32,7 @@ public class BlockSand extends Block
      */
     public void onNeighborBlockChange(World par1World, int par2, int par3, int par4, int par5)
     {
-        par1World.scheduleBlockUpdate(par2, par3, par4, this.blockID, this.tickRate());
+        par1World.scheduleBlockUpdate(par2, par3, par4, this.blockID, this.tickRate(par1World));
     }
 
     /**
@@ -66,7 +66,7 @@ public class BlockSand extends Block
             }
             else
             {
-                par1World.setBlockWithNotify(par2, par3, par4, 0);
+                par1World.setBlockToAir(par2, par3, par4);
 
                 while (canFallBelow(par1World, par2, par3 - 1, par4) && par3 > 0)
                 {
@@ -75,7 +75,7 @@ public class BlockSand extends Block
 
                 if (par3 > 0)
                 {
-                    par1World.setBlockWithNotify(par2, par3, par4, this.blockID);
+                    par1World.setBlock(par2, par3, par4, this.blockID);
                 }
             }
         }
@@ -89,9 +89,9 @@ public class BlockSand extends Block
     /**
      * How many world ticks before ticking
      */
-    public int tickRate()
+    public int tickRate(World par1World)
     {
-        return 5;
+        return 2;
     }
 
     /**

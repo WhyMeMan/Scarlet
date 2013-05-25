@@ -379,14 +379,14 @@ public class EntityDragon extends EntityLiving implements IBossDisplayData, IEnt
             {
                 if (!this.worldObj.isRemote)
                 {
-                    this.attackEntityFromPart(this.dragonPartHead, DamageSource.explosion, 10);
+                    this.attackEntityFromPart(this.dragonPartHead, DamageSource.setExplosionSource((Explosion)null), 10);
                 }
 
                 this.healingEnderCrystal = null;
             }
-            else if (this.ticksExisted % 10 == 0 && this.health < this.getMaxHealth())
+            else if (this.ticksExisted % 10 == 0 && this.getHealth() < this.getMaxHealth())
             {
-                ++this.health;
+                this.setEntityHealth(this.getHealth() + 1);
             }
         }
 
@@ -518,10 +518,9 @@ public class EntityDragon extends EntityLiving implements IBossDisplayData, IEnt
 
                     if (var13 != 0)
                     {
-                        if (var13 != Block.obsidian.blockID && var13 != Block.whiteStone.blockID && var13 != Block.bedrock.blockID)
+                        if (var13 != Block.obsidian.blockID && var13 != Block.whiteStone.blockID && var13 != Block.bedrock.blockID && this.worldObj.getGameRules().getGameRuleBooleanValue("mobGriefing"))
                         {
-                            var9 = true;
-                            this.worldObj.setBlockWithNotify(var10, var11, var12, 0);
+                            var9 = this.worldObj.setBlockToAir(var10, var11, var12) || var9;
                         }
                         else
                         {
@@ -558,7 +557,7 @@ public class EntityDragon extends EntityLiving implements IBossDisplayData, IEnt
         this.targetZ = this.posZ - (double)(var6 * 5.0F) + (double)((this.rand.nextFloat() - 0.5F) * 2.0F);
         this.target = null;
 
-        if (par2DamageSource.getEntity() instanceof EntityPlayer || par2DamageSource == DamageSource.explosion)
+        if (par2DamageSource.getEntity() instanceof EntityPlayer || par2DamageSource.isExplosion())
         {
             this.func_82195_e(par2DamageSource, par3);
         }
@@ -661,35 +660,35 @@ public class EntityDragon extends EntityLiving implements IBossDisplayData, IEnt
                         {
                             if (var12 <= ((double)(var4 - 1) - 0.5D) * ((double)(var4 - 1) - 0.5D))
                             {
-                                this.worldObj.setBlockWithNotify(var6, var5, var7, Block.bedrock.blockID);
+                                this.worldObj.setBlock(var6, var5, var7, Block.bedrock.blockID);
                             }
                         }
                         else if (var5 > var3)
                         {
-                            this.worldObj.setBlockWithNotify(var6, var5, var7, 0);
+                            this.worldObj.setBlock(var6, var5, var7, 0);
                         }
                         else if (var12 > ((double)(var4 - 1) - 0.5D) * ((double)(var4 - 1) - 0.5D))
                         {
-                            this.worldObj.setBlockWithNotify(var6, var5, var7, Block.bedrock.blockID);
+                            this.worldObj.setBlock(var6, var5, var7, Block.bedrock.blockID);
                         }
                         else
                         {
-                            this.worldObj.setBlockWithNotify(var6, var5, var7, Block.endPortal.blockID);
+                            this.worldObj.setBlock(var6, var5, var7, Block.endPortal.blockID);
                         }
                     }
                 }
             }
         }
 
-        this.worldObj.setBlockWithNotify(par1, var3 + 0, par2, Block.bedrock.blockID);
-        this.worldObj.setBlockWithNotify(par1, var3 + 1, par2, Block.bedrock.blockID);
-        this.worldObj.setBlockWithNotify(par1, var3 + 2, par2, Block.bedrock.blockID);
-        this.worldObj.setBlockWithNotify(par1 - 1, var3 + 2, par2, Block.torchWood.blockID);
-        this.worldObj.setBlockWithNotify(par1 + 1, var3 + 2, par2, Block.torchWood.blockID);
-        this.worldObj.setBlockWithNotify(par1, var3 + 2, par2 - 1, Block.torchWood.blockID);
-        this.worldObj.setBlockWithNotify(par1, var3 + 2, par2 + 1, Block.torchWood.blockID);
-        this.worldObj.setBlockWithNotify(par1, var3 + 3, par2, Block.bedrock.blockID);
-        this.worldObj.setBlockWithNotify(par1, var3 + 4, par2, Block.dragonEgg.blockID);
+        this.worldObj.setBlock(par1, var3 + 0, par2, Block.bedrock.blockID);
+        this.worldObj.setBlock(par1, var3 + 1, par2, Block.bedrock.blockID);
+        this.worldObj.setBlock(par1, var3 + 2, par2, Block.bedrock.blockID);
+        this.worldObj.setBlock(par1 - 1, var3 + 2, par2, Block.torchWood.blockID);
+        this.worldObj.setBlock(par1 + 1, var3 + 2, par2, Block.torchWood.blockID);
+        this.worldObj.setBlock(par1, var3 + 2, par2 - 1, Block.torchWood.blockID);
+        this.worldObj.setBlock(par1, var3 + 2, par2 + 1, Block.torchWood.blockID);
+        this.worldObj.setBlock(par1, var3 + 3, par2, Block.bedrock.blockID);
+        this.worldObj.setBlock(par1, var3 + 4, par2, Block.dragonEgg.blockID);
         BlockEndPortal.bossDefeated = false;
     }
 
@@ -717,7 +716,7 @@ public class EntityDragon extends EntityLiving implements IBossDisplayData, IEnt
     /**
      * Returns the health points of the dragon.
      */
-    public int getDragonHealth()
+    public int getBossHealth()
     {
         return this.dataWatcher.getWatchableObjectInt(16);
     }

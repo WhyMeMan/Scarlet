@@ -5,18 +5,15 @@ import java.util.Random;
 
 public class BlockLeaves extends BlockLeavesBase
 {
-    /**
-     * The base index in terrain.png corresponding to the fancy version of the leaf texture. This is stored so we can
-     * switch the displayed version between fancy and fast graphics (fast is this index + 1).
-     */
-    private int baseIndexInPNG;
     public static final String[] LEAF_TYPES = new String[] {"oak", "spruce", "birch", "jungle"};
+    public static final String[][] field_94396_b = new String[][] {{"leaves", "leaves_spruce", "leaves", "leaves_jungle"}, {"leaves_opaque", "leaves_spruce_opaque", "leaves_opaque", "leaves_jungle_opaque"}};
+    private int field_94394_cP;
+    private Icon[][] iconArray = new Icon[2][];
     int[] adjacentTreeBlocks;
 
-    protected BlockLeaves(int par1, int par2)
+    protected BlockLeaves(int par1)
     {
-        super(par1, par2, Material.leaves, false);
-        this.baseIndexInPNG = par2;
+        super(par1, Material.leaves, false);
         this.setTickRandomly(true);
         this.setCreativeTab(CreativeTabs.tabDecorations);
     }
@@ -94,7 +91,7 @@ public class BlockLeaves extends BlockLeavesBase
                         if (var12 == Block.leaves.blockID)
                         {
                             int var13 = par1World.getBlockMetadata(par2 + var9, par3 + var10, par4 + var11);
-                            par1World.setBlockMetadata(par2 + var9, par3 + var10, par4 + var11, var13 | 8);
+                            par1World.setBlockMetadataWithNotify(par2 + var9, par3 + var10, par4 + var11, var13 | 8, 4);
                         }
                     }
                 }
@@ -206,7 +203,7 @@ public class BlockLeaves extends BlockLeavesBase
 
                 if (var12 >= 0)
                 {
-                    par1World.setBlockMetadata(par2, par3, par4, var6 & -9);
+                    par1World.setBlockMetadataWithNotify(par2, par3, par4, var6 & -9, 4);
                 }
                 else
                 {
@@ -233,7 +230,7 @@ public class BlockLeaves extends BlockLeavesBase
     private void removeLeaves(World par1World, int par2, int par3, int par4)
     {
         this.dropBlockAsItem(par1World, par2, par3, par4, par1World.getBlockMetadata(par2, par3, par4), 0);
-        par1World.setBlockWithNotify(par2, par3, par4, 0);
+        par1World.setBlockToAir(par2, par3, par4);
     }
 
     /**
@@ -259,11 +256,21 @@ public class BlockLeaves extends BlockLeavesBase
     {
         if (!par1World.isRemote)
         {
-            byte var8 = 20;
+            int var8 = 20;
 
             if ((par5 & 3) == 3)
             {
                 var8 = 40;
+            }
+
+            if (par7 > 0)
+            {
+                var8 -= 2 << par7;
+
+                if (var8 < 10)
+                {
+                    var8 = 10;
+                }
             }
 
             if (par1World.rand.nextInt(var8) == 0)
@@ -272,7 +279,19 @@ public class BlockLeaves extends BlockLeavesBase
                 this.dropBlockAsItem_do(par1World, par2, par3, par4, new ItemStack(var9, 1, this.damageDropped(par5)));
             }
 
-            if ((par5 & 3) == 0 && par1World.rand.nextInt(200) == 0)
+            var8 = 200;
+
+            if (par7 > 0)
+            {
+                var8 -= 10 << par7;
+
+                if (var8 < 40)
+                {
+                    var8 = 40;
+                }
+            }
+
+            if ((par5 & 3) == 0 && par1World.rand.nextInt(var8) == 0)
             {
                 this.dropBlockAsItem_do(par1World, par2, par3, par4, new ItemStack(Item.appleRed, 1, 0));
             }
@@ -316,9 +335,9 @@ public class BlockLeaves extends BlockLeavesBase
     /**
      * From the specified side and block metadata retrieves the blocks texture. Args: side, metadata
      */
-    public int getBlockTextureFromSideAndMetadata(int par1, int par2)
+    public Icon getIcon(int par1, int par2)
     {
-        return (par2 & 3) == 1 ? this.blockIndexInTexture + 80 : ((par2 & 3) == 3 ? this.blockIndexInTexture + 144 : this.blockIndexInTexture);
+        return (par2 & 3) == 1 ? this.iconArray[this.field_94394_cP][1] : ((par2 & 3) == 3 ? this.iconArray[this.field_94394_cP][3] : this.iconArray[this.field_94394_cP][0]);
     }
 
     /**
@@ -327,7 +346,7 @@ public class BlockLeaves extends BlockLeavesBase
     public void setGraphicsLevel(boolean par1)
     {
         this.graphicsLevel = par1;
-        this.blockIndexInTexture = this.baseIndexInPNG + (par1 ? 0 : 1);
+        this.field_94394_cP = par1 ? 0 : 1;
     }
 
     /**
@@ -348,5 +367,22 @@ public class BlockLeaves extends BlockLeavesBase
     protected ItemStack createStackedBlock(int par1)
     {
         return new ItemStack(this.blockID, 1, par1 & 3);
+    }
+
+    /**
+     * When this method is called, your block should register all the icons it needs with the given IconRegister. This
+     * is the only chance you get to register icons.
+     */
+    public void registerIcons(IconRegister par1IconRegister)
+    {
+        for (int var2 = 0; var2 < field_94396_b.length; ++var2)
+        {
+            this.iconArray[var2] = new Icon[field_94396_b[var2].length];
+
+            for (int var3 = 0; var3 < field_94396_b[var2].length; ++var3)
+            {
+                this.iconArray[var2][var3] = par1IconRegister.registerIcon(field_94396_b[var2][var3]);
+            }
+        }
     }
 }

@@ -1,16 +1,24 @@
 package net.minecraft.src;
 
-import java.awt.Dimension;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Properties;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 public class ConnectedTextures
 {
     private static ConnectedProperties[][] blockProperties = (ConnectedProperties[][])null;
-    private static ConnectedProperties[][] terrainProperties = (ConnectedProperties[][])null;
-    private static boolean matchingCtmPng = false;
+    private static ConnectedProperties[][] tileProperties = (ConnectedProperties[][])null;
+    private static boolean multipass = false;
+    private static boolean defaultGlassTexture = false;
     private static final int BOTTOM = 0;
     private static final int TOP = 1;
     private static final int EAST = 2;
@@ -18,159 +26,181 @@ public class ConnectedTextures
     private static final int NORTH = 4;
     private static final int SOUTH = 5;
     private static final String[] propSuffixes = new String[] {"", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"};
+    private static final int[] ctmIndexes = new int[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0, 0, 0, 0, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 0, 0, 0, 0, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 0, 0, 0, 0, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 0, 0, 0, 0, 0};
 
-    public static void update(RenderEngine var0)
-    {
-        blockProperties = (ConnectedProperties[][])null;
-        terrainProperties = (ConnectedProperties[][])null;
-        matchingCtmPng = false;
-        blockProperties = readConnectedProperties("/ctm/block", 256, var0, 1);
-        terrainProperties = readConnectedProperties("/ctm/terrain", 256, var0, 2);
-        matchingCtmPng = getMatchingCtmPng(var0);
-        Config.dbg("MatchingCtmPng: " + matchingCtmPng);
-
-        if (blockProperties == null && terrainProperties == null && matchingCtmPng)
-        {
-            Config.dbg("Registering default ConnectedTextures");
-            blockProperties = new ConnectedProperties[256][];
-            blockProperties[Block.glass.blockID] = new ConnectedProperties[1];
-            blockProperties[Block.glass.blockID][0] = makeDefaultProperties("ctm", var0);
-            blockProperties[Block.bookShelf.blockID] = new ConnectedProperties[1];
-            blockProperties[Block.bookShelf.blockID][0] = makeDefaultProperties("horizontal", var0);
-            terrainProperties = new ConnectedProperties[256][];
-            terrainProperties[Block.sandStone.blockIndexInTexture] = new ConnectedProperties[1];
-            terrainProperties[Block.sandStone.blockIndexInTexture][0] = makeDefaultProperties("top", var0);
-        }
-    }
+    public static void update(RenderEngine var0) {}
 
     private static ConnectedProperties[][] readConnectedProperties(String var0, int var1, RenderEngine var2, int var3)
     {
-        ConnectedProperties[][] var4 = (ConnectedProperties[][])null;
-        int var5 = 0;
-
-        while (var5 < var1)
-        {
-            ArrayList var6 = new ArrayList();
-            int var7 = 0;
-
-            while (true)
-            {
-                if (var7 < propSuffixes.length)
-                {
-                    String var8 = propSuffixes[var7];
-                    String var9 = var0 + var5 + var8 + ".properties";
-                    InputStream var10 = var2.texturePack.getSelectedTexturePack().getResourceAsStream(var9);
-
-                    if (var10 != null)
-                    {
-                        try
-                        {
-                            Properties var11 = new Properties();
-                            var11.load(var10);
-                            Config.dbg("Connected texture: " + var9);
-                            ConnectedProperties var12 = new ConnectedProperties(var11);
-
-                            if (var12.connect == 0)
-                            {
-                                var12.connect = var3;
-                            }
-
-                            if (var12.isValid(var9))
-                            {
-                                TextureUtils.addAtlasName(var12.source);
-                                var12.textureId = var2.getTexture(var12.source);
-                                var6.add(var12);
-                                var10.close();
-                            }
-                        }
-                        catch (IOException var13)
-                        {
-                            var13.printStackTrace();
-                        }
-
-                        ++var7;
-                        continue;
-                    }
-                }
-
-                if (var6.size() > 0)
-                {
-                    if (var4 == null)
-                    {
-                        var4 = new ConnectedProperties[var1][0];
-                    }
-
-                    var4[var5] = (ConnectedProperties[])((ConnectedProperties[])var6.toArray(new ConnectedProperties[var6.size()]));
-                }
-
-                ++var5;
-                break;
-            }
-        }
-
-        return var4;
+        return (ConnectedProperties[][])null;
     }
 
-    public static int getConnectedTexture(IBlockAccess var0, Block var1, int var2, int var3, int var4, int var5, int var6)
+    public static Icon getConnectedTexture(IBlockAccess var0, Block var1, int var2, int var3, int var4, int var5, Icon var6)
     {
         if (var0 == null)
         {
-            return -1;
+            return var6;
         }
         else
         {
-            int var7 = -1;
+            Icon var7 = getConnectedTextureSingle(var0, var1, var2, var3, var4, var5, var6, true);
 
-            if (terrainProperties != null && Tessellator.instance.defaultTexture && var6 >= 0 && var6 < terrainProperties.length)
+            if (!multipass)
             {
-                ConnectedProperties[] var8 = terrainProperties[var6];
+                return var7;
+            }
+            else if (var7 == var6)
+            {
+                return var7;
+            }
+            else
+            {
+                Icon var8 = var7;
 
-                if (var8 != null)
+                for (int var9 = 0; var9 < 3; ++var9)
                 {
-                    if (var7 < 0)
+                    Icon var10 = getConnectedTextureSingle(var0, var1, var2, var3, var4, var5, var8, false);
+
+                    if (var10 == var8)
                     {
-                        var7 = var0.getBlockMetadata(var2, var3, var4);
+                        break;
                     }
 
-                    int var9 = getConnectedTexture(var8, var0, var1, var2, var3, var4, var5, var6, var7);
+                    var8 = var10;
+                }
 
-                    if (var9 >= 0)
+                return var8;
+            }
+        }
+    }
+
+    public static Icon getConnectedTextureSingle(IBlockAccess var0, Block var1, int var2, int var3, int var4, int var5, Icon var6, boolean var7)
+    {
+        if (!(var6 instanceof TextureStitched))
+        {
+            return var6;
+        }
+        else
+        {
+            TextureStitched var8 = (TextureStitched)var6;
+            int var9 = var8.getIndexInMap();
+            int var10 = -1;
+
+            if (tileProperties != null && Tessellator.instance.defaultTexture && var9 >= 0 && var9 < tileProperties.length)
+            {
+                ConnectedProperties[] var11 = tileProperties[var9];
+
+                if (var11 != null)
+                {
+                    if (var10 < 0)
                     {
-                        return var9;
+                        var10 = var0.getBlockMetadata(var2, var3, var4);
+                    }
+
+                    Icon var12 = getConnectedTexture(var11, var0, var1, var2, var3, var4, var5, var8, var10);
+
+                    if (var12 != null)
+                    {
+                        return var12;
+                    }
+                }
+            }
+
+            if (blockProperties != null && var7)
+            {
+                int var14 = var1.blockID;
+
+                if (var14 >= 0 && var14 < blockProperties.length)
+                {
+                    ConnectedProperties[] var15 = blockProperties[var14];
+
+                    if (var15 != null)
+                    {
+                        if (var10 < 0)
+                        {
+                            var10 = var0.getBlockMetadata(var2, var3, var4);
+                        }
+
+                        Icon var13 = getConnectedTexture(var15, var0, var1, var2, var3, var4, var5, var8, var10);
+
+                        if (var13 != null)
+                        {
+                            return var13;
+                        }
+                    }
+                }
+            }
+
+            return var6;
+        }
+    }
+
+    public static ConnectedProperties getConnectedProperties(IBlockAccess var0, Block var1, int var2, int var3, int var4, int var5, Icon var6)
+    {
+        if (var0 == null)
+        {
+            return null;
+        }
+        else if (!(var6 instanceof TextureStitched))
+        {
+            return null;
+        }
+        else
+        {
+            TextureStitched var7 = (TextureStitched)var6;
+            int var8 = var7.getIndexInMap();
+            int var9 = -1;
+
+            if (tileProperties != null && Tessellator.instance.defaultTexture && var8 >= 0 && var8 < tileProperties.length)
+            {
+                ConnectedProperties[] var10 = tileProperties[var8];
+
+                if (var10 != null)
+                {
+                    if (var9 < 0)
+                    {
+                        var9 = var0.getBlockMetadata(var2, var3, var4);
+                    }
+
+                    ConnectedProperties var11 = getConnectedProperties(var10, var0, var1, var2, var3, var4, var5, var7, var9);
+
+                    if (var11 != null)
+                    {
+                        return var11;
                     }
                 }
             }
 
             if (blockProperties != null)
             {
-                int var11 = var1.blockID;
+                int var14 = var1.blockID;
 
-                if (var11 >= 0 && var11 < blockProperties.length)
+                if (var14 >= 0 && var14 < blockProperties.length)
                 {
-                    ConnectedProperties[] var12 = blockProperties[var11];
+                    ConnectedProperties[] var13 = blockProperties[var14];
 
-                    if (var12 != null)
+                    if (var13 != null)
                     {
-                        if (var7 < 0)
+                        if (var9 < 0)
                         {
-                            var7 = var0.getBlockMetadata(var2, var3, var4);
+                            var9 = var0.getBlockMetadata(var2, var3, var4);
                         }
 
-                        int var10 = getConnectedTexture(var12, var0, var1, var2, var3, var4, var5, var6, var7);
+                        ConnectedProperties var12 = getConnectedProperties(var13, var0, var1, var2, var3, var4, var5, var7, var9);
 
-                        if (var10 >= 0)
+                        if (var12 != null)
                         {
-                            return var10;
+                            return var12;
                         }
                     }
                 }
             }
 
-            return -1;
+            return null;
         }
     }
 
-    private static int getConnectedTexture(ConnectedProperties[] var0, IBlockAccess var1, Block var2, int var3, int var4, int var5, int var6, int var7, int var8)
+    private static Icon getConnectedTexture(ConnectedProperties[] var0, IBlockAccess var1, Block var2, int var3, int var4, int var5, int var6, Icon var7, int var8)
     {
         for (int var9 = 0; var9 < var0.length; ++var9)
         {
@@ -178,87 +208,139 @@ public class ConnectedTextures
 
             if (var10 != null)
             {
-                int var11 = getConnectedTexture(var10, var1, var2, var3, var4, var5, var6, var7, var8);
+                Icon var11 = getConnectedTexture(var10, var1, var2, var3, var4, var5, var6, var7, var8);
 
-                if (var11 >= 0)
+                if (var11 != null)
                 {
                     return var11;
                 }
             }
         }
 
-        return -1;
+        return null;
     }
 
-    private static int getConnectedTexture(ConnectedProperties var0, IBlockAccess var1, Block var2, int var3, int var4, int var5, int var6, int var7, int var8)
+    private static ConnectedProperties getConnectedProperties(ConnectedProperties[] var0, IBlockAccess var1, Block var2, int var3, int var4, int var5, int var6, Icon var7, int var8)
     {
-        boolean var9 = var2 instanceof BlockLog;
-        int var10;
-
-        if (var6 >= 0 && var0.faces != 63)
+        for (int var9 = 0; var9 < var0.length; ++var9)
         {
-            var10 = var6;
+            ConnectedProperties var10 = var0[var9];
 
-            if (var9)
+            if (var10 != null)
             {
-                var10 = fixWoodSide(var1, var3, var4, var5, var6, var8);
-            }
+                Icon var11 = getConnectedTexture(var10, var1, var2, var3, var4, var5, var6, var7, var8);
 
-            if ((1 << var10 & var0.faces) == 0)
-            {
-                return -1;
-            }
-        }
-
-        var10 = var8;
-
-        if (var9)
-        {
-            var10 = var8 & 3;
-        }
-
-        if (var0.metadatas != null)
-        {
-            int[] var11 = var0.metadatas;
-            boolean var12 = false;
-
-            for (int var13 = 0; var13 < var11.length; ++var13)
-            {
-                if (var11[var13] == var10)
+                if (var11 != null)
                 {
-                    var12 = true;
-                    break;
+                    return var10;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private static Icon getConnectedTexture(ConnectedProperties var0, IBlockAccess var1, Block var2, int var3, int var4, int var5, int var6, Icon var7, int var8)
+    {
+        if (var4 >= var0.minHeight && var4 <= var0.maxHeight)
+        {
+            if (var0.biomes != null)
+            {
+                BiomeGenBase var9 = var1.getBiomeGenForCoords(var3, var5);
+                boolean var10 = false;
+
+                for (int var11 = 0; var11 < var0.biomes.length; ++var11)
+                {
+                    BiomeGenBase var12 = var0.biomes[var11];
+
+                    if (var9 == var12)
+                    {
+                        var10 = true;
+                        break;
+                    }
+                }
+
+                if (!var10)
+                {
+                    return null;
                 }
             }
 
-            if (!var12)
+            boolean var14 = var2 instanceof BlockLog;
+            int var15;
+
+            if (var6 >= 0 && var0.faces != 63)
             {
-                return -1;
+                var15 = var6;
+
+                if (var14)
+                {
+                    var15 = fixWoodSide(var1, var3, var4, var5, var6, var8);
+                }
+
+                if ((1 << var15 & var0.faces) == 0)
+                {
+                    return null;
+                }
+            }
+
+            var15 = var8;
+
+            if (var14)
+            {
+                var15 = var8 & 3;
+            }
+
+            if (var0.metadatas != null)
+            {
+                int[] var17 = var0.metadatas;
+                boolean var16 = false;
+
+                for (int var13 = 0; var13 < var17.length; ++var13)
+                {
+                    if (var17[var13] == var15)
+                    {
+                        var16 = true;
+                        break;
+                    }
+                }
+
+                if (!var16)
+                {
+                    return null;
+                }
+            }
+
+            switch (var0.method)
+            {
+                case 1:
+                    return getConnectedTextureCtm(var0, var1, var2, var3, var4, var5, var6, var7, var8);
+
+                case 2:
+                    return getConnectedTextureHorizontal(var0, var1, var2, var3, var4, var5, var6, var7, var8);
+
+                case 3:
+                    return getConnectedTextureTop(var0, var1, var2, var3, var4, var5, var6, var7, var8);
+
+                case 4:
+                    return getConnectedTextureRandom(var0, var3, var4, var5, var6);
+
+                case 5:
+                    return getConnectedTextureRepeat(var0, var3, var4, var5, var6);
+
+                case 6:
+                    return getConnectedTextureVertical(var0, var1, var2, var3, var4, var5, var6, var7, var8);
+
+                case 7:
+                    return getConnectedTextureFixed(var0);
+
+                default:
+                    return null;
             }
         }
-
-        switch (var0.method)
+        else
         {
-            case 1:
-                return getConnectedTextureCtm(var0, var1, var2, var3, var4, var5, var6, var7, var8);
-
-            case 2:
-                return getConnectedTextureHorizontal(var0, var1, var2, var3, var4, var5, var6, var7, var8);
-
-            case 3:
-                return getConnectedTextureTop(var0, var1, var2, var3, var4, var5, var6, var7, var8);
-
-            case 4:
-                return getConnectedTextureRandom(var0, var3, var4, var5, var6);
-
-            case 5:
-                return getConnectedTextureRepeat(var0, var3, var4, var5, var6);
-
-            case 6:
-                return getConnectedTextureVertical(var0, var1, var2, var3, var4, var5, var6, var7, var8);
-
-            default:
-                return -1;
+            return null;
         }
     }
 
@@ -319,11 +401,11 @@ public class ConnectedTextures
         }
     }
 
-    private static int getConnectedTextureRandom(ConnectedProperties var0, int var1, int var2, int var3, int var4)
+    private static Icon getConnectedTextureRandom(ConnectedProperties var0, int var1, int var2, int var3, int var4)
     {
-        if (var0.tiles.length == 1)
+        if (var0.tileIcons.length == 1)
         {
-            return var0.textureId * 256 + var0.tiles[0];
+            return var0.tileIcons[0];
         }
         else
         {
@@ -333,7 +415,7 @@ public class ConnectedTextures
 
             if (var0.weights == null)
             {
-                var7 = var6 % var0.tiles.length;
+                var7 = var6 % var0.tileIcons.length;
             }
             else
             {
@@ -350,15 +432,20 @@ public class ConnectedTextures
                 }
             }
 
-            return var0.textureId * 256 + var0.tiles[var7];
+            return var0.tileIcons[var7];
         }
     }
 
-    private static int getConnectedTextureRepeat(ConnectedProperties var0, int var1, int var2, int var3, int var4)
+    private static Icon getConnectedTextureFixed(ConnectedProperties var0)
     {
-        if (var0.tiles.length == 1)
+        return var0.tileIcons[0];
+    }
+
+    private static Icon getConnectedTextureRepeat(ConnectedProperties var0, int var1, int var2, int var3, int var4)
+    {
+        if (var0.tileIcons.length == 1)
         {
-            return var0.textureId * 256 + var0.tiles[0];
+            return var0.tileIcons[0];
         }
         else
         {
@@ -411,328 +498,328 @@ public class ConnectedTextures
             }
 
             int var7 = var6 * var0.width + var5;
-            return var0.textureId * 256 + var0.tiles[var7];
+            return var0.tileIcons[var7];
         }
     }
 
-    private static int getConnectedTextureCtm(ConnectedProperties var0, IBlockAccess var1, Block var2, int var3, int var4, int var5, int var6, int var7, int var8)
+    private static Icon getConnectedTextureCtm(ConnectedProperties var0, IBlockAccess var1, Block var2, int var3, int var4, int var5, int var6, Icon var7, int var8)
     {
         boolean[] var9 = new boolean[6];
-        int var10 = var2.blockID;
 
         switch (var6)
         {
             case 0:
             case 1:
-                var9[0] = isNeighbour(var0, var1, var3 - 1, var4, var5, var10, var6, var7, var8);
-                var9[1] = isNeighbour(var0, var1, var3 + 1, var4, var5, var10, var6, var7, var8);
-                var9[2] = isNeighbour(var0, var1, var3, var4, var5 + 1, var10, var6, var7, var8);
-                var9[3] = isNeighbour(var0, var1, var3, var4, var5 - 1, var10, var6, var7, var8);
+                var9[0] = isNeighbour(var0, var1, var2, var3 - 1, var4, var5, var6, var7, var8);
+                var9[1] = isNeighbour(var0, var1, var2, var3 + 1, var4, var5, var6, var7, var8);
+                var9[2] = isNeighbour(var0, var1, var2, var3, var4, var5 + 1, var6, var7, var8);
+                var9[3] = isNeighbour(var0, var1, var2, var3, var4, var5 - 1, var6, var7, var8);
                 break;
 
             case 2:
-                var9[0] = isNeighbour(var0, var1, var3 + 1, var4, var5, var10, var6, var7, var8);
-                var9[1] = isNeighbour(var0, var1, var3 - 1, var4, var5, var10, var6, var7, var8);
-                var9[2] = isNeighbour(var0, var1, var3, var4 - 1, var5, var10, var6, var7, var8);
-                var9[3] = isNeighbour(var0, var1, var3, var4 + 1, var5, var10, var6, var7, var8);
+                var9[0] = isNeighbour(var0, var1, var2, var3 + 1, var4, var5, var6, var7, var8);
+                var9[1] = isNeighbour(var0, var1, var2, var3 - 1, var4, var5, var6, var7, var8);
+                var9[2] = isNeighbour(var0, var1, var2, var3, var4 - 1, var5, var6, var7, var8);
+                var9[3] = isNeighbour(var0, var1, var2, var3, var4 + 1, var5, var6, var7, var8);
                 break;
 
             case 3:
-                var9[0] = isNeighbour(var0, var1, var3 - 1, var4, var5, var10, var6, var7, var8);
-                var9[1] = isNeighbour(var0, var1, var3 + 1, var4, var5, var10, var6, var7, var8);
-                var9[2] = isNeighbour(var0, var1, var3, var4 - 1, var5, var10, var6, var7, var8);
-                var9[3] = isNeighbour(var0, var1, var3, var4 + 1, var5, var10, var6, var7, var8);
+                var9[0] = isNeighbour(var0, var1, var2, var3 - 1, var4, var5, var6, var7, var8);
+                var9[1] = isNeighbour(var0, var1, var2, var3 + 1, var4, var5, var6, var7, var8);
+                var9[2] = isNeighbour(var0, var1, var2, var3, var4 - 1, var5, var6, var7, var8);
+                var9[3] = isNeighbour(var0, var1, var2, var3, var4 + 1, var5, var6, var7, var8);
                 break;
 
             case 4:
-                var9[0] = isNeighbour(var0, var1, var3, var4, var5 - 1, var10, var6, var7, var8);
-                var9[1] = isNeighbour(var0, var1, var3, var4, var5 + 1, var10, var6, var7, var8);
-                var9[2] = isNeighbour(var0, var1, var3, var4 - 1, var5, var10, var6, var7, var8);
-                var9[3] = isNeighbour(var0, var1, var3, var4 + 1, var5, var10, var6, var7, var8);
+                var9[0] = isNeighbour(var0, var1, var2, var3, var4, var5 - 1, var6, var7, var8);
+                var9[1] = isNeighbour(var0, var1, var2, var3, var4, var5 + 1, var6, var7, var8);
+                var9[2] = isNeighbour(var0, var1, var2, var3, var4 - 1, var5, var6, var7, var8);
+                var9[3] = isNeighbour(var0, var1, var2, var3, var4 + 1, var5, var6, var7, var8);
                 break;
 
             case 5:
-                var9[0] = isNeighbour(var0, var1, var3, var4, var5 + 1, var10, var6, var7, var8);
-                var9[1] = isNeighbour(var0, var1, var3, var4, var5 - 1, var10, var6, var7, var8);
-                var9[2] = isNeighbour(var0, var1, var3, var4 - 1, var5, var10, var6, var7, var8);
-                var9[3] = isNeighbour(var0, var1, var3, var4 + 1, var5, var10, var6, var7, var8);
+                var9[0] = isNeighbour(var0, var1, var2, var3, var4, var5 + 1, var6, var7, var8);
+                var9[1] = isNeighbour(var0, var1, var2, var3, var4, var5 - 1, var6, var7, var8);
+                var9[2] = isNeighbour(var0, var1, var2, var3, var4 - 1, var5, var6, var7, var8);
+                var9[3] = isNeighbour(var0, var1, var2, var3, var4 + 1, var5, var6, var7, var8);
         }
 
-        byte var11 = 0;
+        byte var10 = 0;
 
         if (var9[0] & !var9[1] & !var9[2] & !var9[3])
         {
-            var11 = 3;
+            var10 = 3;
         }
         else if (!var9[0] & var9[1] & !var9[2] & !var9[3])
         {
-            var11 = 1;
+            var10 = 1;
         }
         else if (!var9[0] & !var9[1] & var9[2] & !var9[3])
         {
-            var11 = 12;
+            var10 = 12;
         }
         else if (!var9[0] & !var9[1] & !var9[2] & var9[3])
         {
-            var11 = 36;
+            var10 = 36;
         }
         else if (var9[0] & var9[1] & !var9[2] & !var9[3])
         {
-            var11 = 2;
+            var10 = 2;
         }
         else if (!var9[0] & !var9[1] & var9[2] & var9[3])
         {
-            var11 = 24;
+            var10 = 24;
         }
         else if (var9[0] & !var9[1] & var9[2] & !var9[3])
         {
-            var11 = 15;
+            var10 = 15;
         }
         else if (var9[0] & !var9[1] & !var9[2] & var9[3])
         {
-            var11 = 39;
+            var10 = 39;
         }
         else if (!var9[0] & var9[1] & var9[2] & !var9[3])
         {
-            var11 = 13;
+            var10 = 13;
         }
         else if (!var9[0] & var9[1] & !var9[2] & var9[3])
         {
-            var11 = 37;
+            var10 = 37;
         }
         else if (!var9[0] & var9[1] & var9[2] & var9[3])
         {
-            var11 = 25;
+            var10 = 25;
         }
         else if (var9[0] & !var9[1] & var9[2] & var9[3])
         {
-            var11 = 27;
+            var10 = 27;
         }
         else if (var9[0] & var9[1] & !var9[2] & var9[3])
         {
-            var11 = 38;
+            var10 = 38;
         }
         else if (var9[0] & var9[1] & var9[2] & !var9[3])
         {
-            var11 = 14;
+            var10 = 14;
         }
         else if (var9[0] & var9[1] & var9[2] & var9[3])
         {
-            var11 = 26;
+            var10 = 26;
         }
 
         if (!Config.isConnectedTexturesFancy())
         {
-            return var0.textureId * 256 + var0.tiles[var11];
+            return var0.tileIcons[var10];
         }
         else
         {
-            boolean[] var12 = new boolean[6];
+            boolean[] var11 = new boolean[6];
 
             switch (var6)
             {
                 case 0:
                 case 1:
-                    var12[0] = !isNeighbour(var0, var1, var3 + 1, var4, var5 + 1, var10, var6, var7, var8);
-                    var12[1] = !isNeighbour(var0, var1, var3 - 1, var4, var5 + 1, var10, var6, var7, var8);
-                    var12[2] = !isNeighbour(var0, var1, var3 + 1, var4, var5 - 1, var10, var6, var7, var8);
-                    var12[3] = !isNeighbour(var0, var1, var3 - 1, var4, var5 - 1, var10, var6, var7, var8);
+                    var11[0] = !isNeighbour(var0, var1, var2, var3 + 1, var4, var5 + 1, var6, var7, var8);
+                    var11[1] = !isNeighbour(var0, var1, var2, var3 - 1, var4, var5 + 1, var6, var7, var8);
+                    var11[2] = !isNeighbour(var0, var1, var2, var3 + 1, var4, var5 - 1, var6, var7, var8);
+                    var11[3] = !isNeighbour(var0, var1, var2, var3 - 1, var4, var5 - 1, var6, var7, var8);
                     break;
 
                 case 2:
-                    var12[0] = !isNeighbour(var0, var1, var3 - 1, var4 - 1, var5, var10, var6, var7, var8);
-                    var12[1] = !isNeighbour(var0, var1, var3 + 1, var4 - 1, var5, var10, var6, var7, var8);
-                    var12[2] = !isNeighbour(var0, var1, var3 - 1, var4 + 1, var5, var10, var6, var7, var8);
-                    var12[3] = !isNeighbour(var0, var1, var3 + 1, var4 + 1, var5, var10, var6, var7, var8);
+                    var11[0] = !isNeighbour(var0, var1, var2, var3 - 1, var4 - 1, var5, var6, var7, var8);
+                    var11[1] = !isNeighbour(var0, var1, var2, var3 + 1, var4 - 1, var5, var6, var7, var8);
+                    var11[2] = !isNeighbour(var0, var1, var2, var3 - 1, var4 + 1, var5, var6, var7, var8);
+                    var11[3] = !isNeighbour(var0, var1, var2, var3 + 1, var4 + 1, var5, var6, var7, var8);
                     break;
 
                 case 3:
-                    var12[0] = !isNeighbour(var0, var1, var3 + 1, var4 - 1, var5, var10, var6, var7, var8);
-                    var12[1] = !isNeighbour(var0, var1, var3 - 1, var4 - 1, var5, var10, var6, var7, var8);
-                    var12[2] = !isNeighbour(var0, var1, var3 + 1, var4 + 1, var5, var10, var6, var7, var8);
-                    var12[3] = !isNeighbour(var0, var1, var3 - 1, var4 + 1, var5, var10, var6, var7, var8);
+                    var11[0] = !isNeighbour(var0, var1, var2, var3 + 1, var4 - 1, var5, var6, var7, var8);
+                    var11[1] = !isNeighbour(var0, var1, var2, var3 - 1, var4 - 1, var5, var6, var7, var8);
+                    var11[2] = !isNeighbour(var0, var1, var2, var3 + 1, var4 + 1, var5, var6, var7, var8);
+                    var11[3] = !isNeighbour(var0, var1, var2, var3 - 1, var4 + 1, var5, var6, var7, var8);
                     break;
 
                 case 4:
-                    var12[0] = !isNeighbour(var0, var1, var3, var4 - 1, var5 + 1, var10, var6, var7, var8);
-                    var12[1] = !isNeighbour(var0, var1, var3, var4 - 1, var5 - 1, var10, var6, var7, var8);
-                    var12[2] = !isNeighbour(var0, var1, var3, var4 + 1, var5 + 1, var10, var6, var7, var8);
-                    var12[3] = !isNeighbour(var0, var1, var3, var4 + 1, var5 - 1, var10, var6, var7, var8);
+                    var11[0] = !isNeighbour(var0, var1, var2, var3, var4 - 1, var5 + 1, var6, var7, var8);
+                    var11[1] = !isNeighbour(var0, var1, var2, var3, var4 - 1, var5 - 1, var6, var7, var8);
+                    var11[2] = !isNeighbour(var0, var1, var2, var3, var4 + 1, var5 + 1, var6, var7, var8);
+                    var11[3] = !isNeighbour(var0, var1, var2, var3, var4 + 1, var5 - 1, var6, var7, var8);
                     break;
 
                 case 5:
-                    var12[0] = !isNeighbour(var0, var1, var3, var4 - 1, var5 - 1, var10, var6, var7, var8);
-                    var12[1] = !isNeighbour(var0, var1, var3, var4 - 1, var5 + 1, var10, var6, var7, var8);
-                    var12[2] = !isNeighbour(var0, var1, var3, var4 + 1, var5 - 1, var10, var6, var7, var8);
-                    var12[3] = !isNeighbour(var0, var1, var3, var4 + 1, var5 + 1, var10, var6, var7, var8);
+                    var11[0] = !isNeighbour(var0, var1, var2, var3, var4 - 1, var5 - 1, var6, var7, var8);
+                    var11[1] = !isNeighbour(var0, var1, var2, var3, var4 - 1, var5 + 1, var6, var7, var8);
+                    var11[2] = !isNeighbour(var0, var1, var2, var3, var4 + 1, var5 - 1, var6, var7, var8);
+                    var11[3] = !isNeighbour(var0, var1, var2, var3, var4 + 1, var5 + 1, var6, var7, var8);
             }
 
-            if (var11 == 13 && var12[0])
+            if (var10 == 13 && var11[0])
             {
-                var11 = 4;
+                var10 = 4;
             }
 
-            if (var11 == 15 && var12[1])
+            if (var10 == 15 && var11[1])
             {
-                var11 = 5;
+                var10 = 5;
             }
 
-            if (var11 == 37 && var12[2])
+            if (var10 == 37 && var11[2])
             {
-                var11 = 16;
+                var10 = 16;
             }
 
-            if (var11 == 39 && var12[3])
+            if (var10 == 39 && var11[3])
             {
-                var11 = 17;
+                var10 = 17;
             }
 
-            if (var11 == 14 && var12[0] && var12[1])
+            if (var10 == 14 && var11[0] && var11[1])
             {
-                var11 = 7;
+                var10 = 7;
             }
 
-            if (var11 == 25 && var12[0] && var12[2])
+            if (var10 == 25 && var11[0] && var11[2])
             {
-                var11 = 6;
+                var10 = 6;
             }
 
-            if (var11 == 27 && var12[3] && var12[1])
+            if (var10 == 27 && var11[3] && var11[1])
             {
-                var11 = 19;
+                var10 = 19;
             }
 
-            if (var11 == 38 && var12[3] && var12[2])
+            if (var10 == 38 && var11[3] && var11[2])
             {
-                var11 = 18;
+                var10 = 18;
             }
 
-            if (var11 == 14 && !var12[0] && var12[1])
+            if (var10 == 14 && !var11[0] && var11[1])
             {
-                var11 = 31;
+                var10 = 31;
             }
 
-            if (var11 == 25 && var12[0] && !var12[2])
+            if (var10 == 25 && var11[0] && !var11[2])
             {
-                var11 = 30;
+                var10 = 30;
             }
 
-            if (var11 == 27 && !var12[3] && var12[1])
+            if (var10 == 27 && !var11[3] && var11[1])
             {
-                var11 = 41;
+                var10 = 41;
             }
 
-            if (var11 == 38 && var12[3] && !var12[2])
+            if (var10 == 38 && var11[3] && !var11[2])
             {
-                var11 = 40;
+                var10 = 40;
             }
 
-            if (var11 == 14 && var12[0] && !var12[1])
+            if (var10 == 14 && var11[0] && !var11[1])
             {
-                var11 = 29;
+                var10 = 29;
             }
 
-            if (var11 == 25 && !var12[0] && var12[2])
+            if (var10 == 25 && !var11[0] && var11[2])
             {
-                var11 = 28;
+                var10 = 28;
             }
 
-            if (var11 == 27 && var12[3] && !var12[1])
+            if (var10 == 27 && var11[3] && !var11[1])
             {
-                var11 = 43;
+                var10 = 43;
             }
 
-            if (var11 == 38 && !var12[3] && var12[2])
+            if (var10 == 38 && !var11[3] && var11[2])
             {
-                var11 = 42;
+                var10 = 42;
             }
 
-            if (var11 == 26 && var12[0] && var12[1] && var12[2] && var12[3])
+            if (var10 == 26 && var11[0] && var11[1] && var11[2] && var11[3])
             {
-                var11 = 46;
+                var10 = 46;
             }
 
-            if (var11 == 26 && !var12[0] && var12[1] && var12[2] && var12[3])
+            if (var10 == 26 && !var11[0] && var11[1] && var11[2] && var11[3])
             {
-                var11 = 9;
+                var10 = 9;
             }
 
-            if (var11 == 26 && var12[0] && !var12[1] && var12[2] && var12[3])
+            if (var10 == 26 && var11[0] && !var11[1] && var11[2] && var11[3])
             {
-                var11 = 21;
+                var10 = 21;
             }
 
-            if (var11 == 26 && var12[0] && var12[1] && !var12[2] && var12[3])
+            if (var10 == 26 && var11[0] && var11[1] && !var11[2] && var11[3])
             {
-                var11 = 8;
+                var10 = 8;
             }
 
-            if (var11 == 26 && var12[0] && var12[1] && var12[2] && !var12[3])
+            if (var10 == 26 && var11[0] && var11[1] && var11[2] && !var11[3])
             {
-                var11 = 20;
+                var10 = 20;
             }
 
-            if (var11 == 26 && var12[0] && var12[1] && !var12[2] && !var12[3])
+            if (var10 == 26 && var11[0] && var11[1] && !var11[2] && !var11[3])
             {
-                var11 = 11;
+                var10 = 11;
             }
 
-            if (var11 == 26 && !var12[0] && !var12[1] && var12[2] && var12[3])
+            if (var10 == 26 && !var11[0] && !var11[1] && var11[2] && var11[3])
             {
-                var11 = 22;
+                var10 = 22;
             }
 
-            if (var11 == 26 && !var12[0] && var12[1] && !var12[2] && var12[3])
+            if (var10 == 26 && !var11[0] && var11[1] && !var11[2] && var11[3])
             {
-                var11 = 23;
+                var10 = 23;
             }
 
-            if (var11 == 26 && var12[0] && !var12[1] && var12[2] && !var12[3])
+            if (var10 == 26 && var11[0] && !var11[1] && var11[2] && !var11[3])
             {
-                var11 = 10;
+                var10 = 10;
             }
 
-            if (var11 == 26 && var12[0] && !var12[1] && !var12[2] && var12[3])
+            if (var10 == 26 && var11[0] && !var11[1] && !var11[2] && var11[3])
             {
-                var11 = 34;
+                var10 = 34;
             }
 
-            if (var11 == 26 && !var12[0] && var12[1] && var12[2] && !var12[3])
+            if (var10 == 26 && !var11[0] && var11[1] && var11[2] && !var11[3])
             {
-                var11 = 35;
+                var10 = 35;
             }
 
-            if (var11 == 26 && var12[0] && !var12[1] && !var12[2] && !var12[3])
+            if (var10 == 26 && var11[0] && !var11[1] && !var11[2] && !var11[3])
             {
-                var11 = 32;
+                var10 = 32;
             }
 
-            if (var11 == 26 && !var12[0] && var12[1] && !var12[2] && !var12[3])
+            if (var10 == 26 && !var11[0] && var11[1] && !var11[2] && !var11[3])
             {
-                var11 = 33;
+                var10 = 33;
             }
 
-            if (var11 == 26 && !var12[0] && !var12[1] && var12[2] && !var12[3])
+            if (var10 == 26 && !var11[0] && !var11[1] && var11[2] && !var11[3])
             {
-                var11 = 44;
+                var10 = 44;
             }
 
-            if (var11 == 26 && !var12[0] && !var12[1] && !var12[2] && var12[3])
+            if (var10 == 26 && !var11[0] && !var11[1] && !var11[2] && var11[3])
             {
-                var11 = 45;
+                var10 = 45;
             }
 
-            return var0.textureId * 256 + var0.tiles[var11];
+            return var0.tileIcons[var10];
         }
     }
 
-    private static boolean isNeighbour(ConnectedProperties var0, IBlockAccess var1, int var2, int var3, int var4, int var5, int var6, int var7, int var8)
+    private static boolean isNeighbour(ConnectedProperties var0, IBlockAccess var1, Block var2, int var3, int var4, int var5, int var6, Icon var7, int var8)
     {
-        int var9 = var1.getBlockId(var2, var3, var4);
+        int var9 = var1.getBlockId(var3, var4, var5);
+        Block var10;
 
         if (var0.connect == 2)
         {
-            Block var10 = Block.blocksList[var9];
+            var10 = Block.blocksList[var9];
 
             if (var10 == null)
             {
@@ -740,156 +827,480 @@ public class ConnectedTextures
             }
             else
             {
-                int var11 = var10.getBlockTexture(var1, var2, var3, var4, var6);
+                Icon var11 = var10.getBlockTexture(var1, var3, var4, var5, var6);
                 return var11 == var7;
             }
         }
+        else if (var0.connect == 3)
+        {
+            var10 = Block.blocksList[var9];
+            return var10 == null ? false : var10.blockMaterial == var2.blockMaterial;
+        }
         else
         {
-            return var9 == var5 && var1.getBlockMetadata(var2, var3, var4) == var8;
+            return var9 == var2.blockID && var1.getBlockMetadata(var3, var4, var5) == var8;
         }
     }
 
-    private static int getConnectedTextureHorizontal(ConnectedProperties var0, IBlockAccess var1, Block var2, int var3, int var4, int var5, int var6, int var7, int var8)
+    private static Icon getConnectedTextureHorizontal(ConnectedProperties var0, IBlockAccess var1, Block var2, int var3, int var4, int var5, int var6, Icon var7, int var8)
     {
         if (var6 != 0 && var6 != 1)
         {
             boolean var9 = false;
             boolean var10 = false;
-            int var11 = var2.blockID;
 
             switch (var6)
             {
                 case 2:
-                    var9 = isNeighbour(var0, var1, var3 + 1, var4, var5, var11, var6, var7, var8);
-                    var10 = isNeighbour(var0, var1, var3 - 1, var4, var5, var11, var6, var7, var8);
+                    var9 = isNeighbour(var0, var1, var2, var3 + 1, var4, var5, var6, var7, var8);
+                    var10 = isNeighbour(var0, var1, var2, var3 - 1, var4, var5, var6, var7, var8);
                     break;
 
                 case 3:
-                    var9 = isNeighbour(var0, var1, var3 - 1, var4, var5, var11, var6, var7, var8);
-                    var10 = isNeighbour(var0, var1, var3 + 1, var4, var5, var11, var6, var7, var8);
+                    var9 = isNeighbour(var0, var1, var2, var3 - 1, var4, var5, var6, var7, var8);
+                    var10 = isNeighbour(var0, var1, var2, var3 + 1, var4, var5, var6, var7, var8);
                     break;
 
                 case 4:
-                    var9 = isNeighbour(var0, var1, var3, var4, var5 - 1, var11, var6, var7, var8);
-                    var10 = isNeighbour(var0, var1, var3, var4, var5 + 1, var11, var6, var7, var8);
+                    var9 = isNeighbour(var0, var1, var2, var3, var4, var5 - 1, var6, var7, var8);
+                    var10 = isNeighbour(var0, var1, var2, var3, var4, var5 + 1, var6, var7, var8);
                     break;
 
                 case 5:
-                    var9 = isNeighbour(var0, var1, var3, var4, var5 + 1, var11, var6, var7, var8);
-                    var10 = isNeighbour(var0, var1, var3, var4, var5 - 1, var11, var6, var7, var8);
+                    var9 = isNeighbour(var0, var1, var2, var3, var4, var5 + 1, var6, var7, var8);
+                    var10 = isNeighbour(var0, var1, var2, var3, var4, var5 - 1, var6, var7, var8);
             }
 
-            boolean var12 = true;
-            byte var13;
+            boolean var11 = true;
+            byte var12;
 
             if (var9)
             {
                 if (var10)
                 {
-                    var13 = 1;
+                    var12 = 1;
                 }
                 else
                 {
-                    var13 = 2;
+                    var12 = 2;
                 }
             }
             else if (var10)
             {
-                var13 = 0;
+                var12 = 0;
             }
             else
             {
-                var13 = 3;
+                var12 = 3;
             }
 
-            return var0.textureId * 256 + var0.tiles[var13];
+            return var0.tileIcons[var12];
         }
         else
         {
-            return -1;
+            return null;
         }
     }
 
-    private static int getConnectedTextureVertical(ConnectedProperties var0, IBlockAccess var1, Block var2, int var3, int var4, int var5, int var6, int var7, int var8)
+    private static Icon getConnectedTextureVertical(ConnectedProperties var0, IBlockAccess var1, Block var2, int var3, int var4, int var5, int var6, Icon var7, int var8)
     {
         if (var6 != 0 && var6 != 1)
         {
-            int var9 = var2.blockID;
-            boolean var10 = isNeighbour(var0, var1, var3, var4 - 1, var5, var9, var6, var7, var8);
-            boolean var11 = isNeighbour(var0, var1, var3, var4 + 1, var5, var9, var6, var7, var8);
-            boolean var12 = true;
-            byte var13;
+            boolean var9 = isNeighbour(var0, var1, var2, var3, var4 - 1, var5, var6, var7, var8);
+            boolean var10 = isNeighbour(var0, var1, var2, var3, var4 + 1, var5, var6, var7, var8);
+            boolean var11 = true;
+            byte var12;
 
-            if (var10)
+            if (var9)
             {
-                if (var11)
+                if (var10)
                 {
-                    var13 = 1;
+                    var12 = 1;
                 }
                 else
                 {
-                    var13 = 2;
+                    var12 = 2;
                 }
             }
-            else if (var11)
+            else if (var10)
             {
-                var13 = 0;
+                var12 = 0;
             }
             else
             {
-                var13 = 3;
+                var12 = 3;
             }
 
-            return var0.textureId * 256 + var0.tiles[var13];
+            return var0.tileIcons[var12];
         }
         else
         {
-            return -1;
+            return null;
         }
     }
 
-    private static int getConnectedTextureTop(ConnectedProperties var0, IBlockAccess var1, Block var2, int var3, int var4, int var5, int var6, int var7, int var8)
+    private static Icon getConnectedTextureTop(ConnectedProperties var0, IBlockAccess var1, Block var2, int var3, int var4, int var5, int var6, Icon var7, int var8)
     {
-        if (var6 != 0 && var6 != 1)
-        {
-            int var9 = var2.blockID;
-            return isNeighbour(var0, var1, var3, var4 + 1, var5, var9, var6, var7, var8) ? var0.textureId * 256 + var0.tiles[0] : -1;
-        }
-        else
-        {
-            return -1;
-        }
+        return var6 != 0 && var6 != 1 ? (isNeighbour(var0, var1, var2, var3, var4 + 1, var5, var6, var7, var8) ? var0.tileIcons[0] : null) : null;
     }
 
     public static boolean isConnectedGlassPanes()
     {
-        return Config.isConnectedTextures() && matchingCtmPng;
+        return Config.isConnectedTextures() && defaultGlassTexture;
     }
 
     private static boolean getMatchingCtmPng(RenderEngine var0)
     {
-        Dimension var1 = var0.getTextureDimensions(var0.getTexture("/ctm.png"));
-
-        if (var1 == null)
-        {
-            return false;
-        }
-        else
-        {
-            Dimension var2 = var0.getTextureDimensions(var0.getTexture("/terrain.png"));
-            return var2 == null ? false : var1.width == var2.width && var1.height == var2.height;
-        }
+        return false;
     }
 
     private static ConnectedProperties makeDefaultProperties(String var0, RenderEngine var1)
     {
-        Properties var2 = new Properties();
-        var2.put("source", "/ctm.png");
-        var2.put("method", var0);
-        ConnectedProperties var3 = new ConnectedProperties(var2);
-        var3.isValid("(default)");
-        var3.textureId = var1.getTexture(var3.source);
-        return var3;
+        return null;
+    }
+
+    public static void updateIcons(TextureMap var0)
+    {
+        blockProperties = (ConnectedProperties[][])null;
+        tileProperties = (ConnectedProperties[][])null;
+        defaultGlassTexture = false;
+        RenderEngine var1 = Config.getRenderEngine();
+
+        if (var1 != null)
+        {
+            ITexturePack var2 = var1.getTexturePack().getSelectedTexturePack();
+
+            if (var2 != null)
+            {
+                boolean var3 = var2.func_98138_b("/textures/blocks/glass.png", false);
+                defaultGlassTexture = !var3;
+                String[] var4 = collectFiles(var2, "ctm/", ".properties");
+                Arrays.sort(var4);
+                ArrayList var5 = new ArrayList();
+                ArrayList var6 = new ArrayList();
+
+                for (int var7 = 0; var7 < var4.length; ++var7)
+                {
+                    String var8 = var4[var7];
+                    Config.dbg("ConnectedTextures: " + var8);
+
+                    try
+                    {
+                        String var9 = "/" + var8;
+                        InputStream var10 = var2.getResourceAsStream(var9);
+
+                        if (var10 == null)
+                        {
+                            Config.dbg("ConnectedTextures file not found: " + var8);
+                        }
+                        else
+                        {
+                            Properties var11 = new Properties();
+                            var11.load(var10);
+                            ConnectedProperties var12 = new ConnectedProperties(var11, var8);
+
+                            if (var12.isValid(var9))
+                            {
+                                var12.updateIcons(var0);
+                                addToTileList(var12, var5);
+                                addToBlockList(var12, var6);
+                            }
+                        }
+                    }
+                    catch (FileNotFoundException var13)
+                    {
+                        Config.dbg("ConnectedTextures file not found: " + var8);
+                    }
+                    catch (IOException var14)
+                    {
+                        var14.printStackTrace();
+                    }
+                }
+
+                blockProperties = propertyListToArray(var6);
+                tileProperties = propertyListToArray(var5);
+                multipass = detectMultipass();
+                Config.dbg("Multipass connected textures: " + multipass);
+            }
+        }
+    }
+
+    private static boolean detectMultipass()
+    {
+        ArrayList var0 = new ArrayList();
+        int var1;
+        ConnectedProperties[] var2;
+
+        for (var1 = 0; var1 < tileProperties.length; ++var1)
+        {
+            var2 = tileProperties[var1];
+
+            if (var2 != null)
+            {
+                var0.addAll(Arrays.asList(var2));
+            }
+        }
+
+        for (var1 = 0; var1 < blockProperties.length; ++var1)
+        {
+            var2 = blockProperties[var1];
+
+            if (var2 != null)
+            {
+                var0.addAll(Arrays.asList(var2));
+            }
+        }
+
+        ConnectedProperties[] var6 = (ConnectedProperties[])((ConnectedProperties[])var0.toArray(new ConnectedProperties[var0.size()]));
+        HashSet var7 = new HashSet();
+        HashSet var3 = new HashSet();
+
+        for (int var4 = 0; var4 < var6.length; ++var4)
+        {
+            ConnectedProperties var5 = var6[var4];
+
+            if (var5.matchTileIcons != null)
+            {
+                var7.addAll(Arrays.asList(var5.matchTileIcons));
+            }
+
+            if (var5.tileIcons != null)
+            {
+                var3.addAll(Arrays.asList(var5.tileIcons));
+            }
+        }
+
+        var7.retainAll(var3);
+        return !var7.isEmpty();
+    }
+
+    private static ConnectedProperties[][] propertyListToArray(List var0)
+    {
+        ConnectedProperties[][] var1 = new ConnectedProperties[var0.size()][];
+
+        for (int var2 = 0; var2 < var0.size(); ++var2)
+        {
+            List var3 = (List)var0.get(var2);
+
+            if (var3 != null)
+            {
+                ConnectedProperties[] var4 = (ConnectedProperties[])((ConnectedProperties[])var3.toArray(new ConnectedProperties[var3.size()]));
+                var1[var2] = var4;
+            }
+        }
+
+        return var1;
+    }
+
+    private static void addToTileList(ConnectedProperties var0, List var1)
+    {
+        if (var0.matchTileIcons != null)
+        {
+            for (int var2 = 0; var2 < var0.matchTileIcons.length; ++var2)
+            {
+                Icon var3 = var0.matchTileIcons[var2];
+
+                if (!(var3 instanceof TextureStitched))
+                {
+                    Config.dbg("Icon is not TextureStitched: " + var3 + ", name: " + var3.getIconName());
+                }
+                else
+                {
+                    TextureStitched var4 = (TextureStitched)var3;
+                    int var5 = var4.getIndexInMap();
+
+                    if (var5 < 0)
+                    {
+                        Config.dbg("Invalid tile ID: " + var5 + ", icon: " + var4.getIconName());
+                    }
+                    else
+                    {
+                        addToList(var0, var1, var5);
+                    }
+                }
+            }
+        }
+    }
+
+    private static void addToBlockList(ConnectedProperties var0, List var1)
+    {
+        if (var0.matchBlocks != null)
+        {
+            for (int var2 = 0; var2 < var0.matchBlocks.length; ++var2)
+            {
+                int var3 = var0.matchBlocks[var2];
+
+                if (var3 < 0)
+                {
+                    Config.dbg("Invalid block ID: " + var3);
+                }
+                else
+                {
+                    addToList(var0, var1, var3);
+                }
+            }
+        }
+    }
+
+    private static void addToList(ConnectedProperties var0, List var1, int var2)
+    {
+        while (var2 >= var1.size())
+        {
+            var1.add((Object)null);
+        }
+
+        Object var3 = (List)var1.get(var2);
+
+        if (var3 == null)
+        {
+            var3 = new ArrayList();
+            var1.set(var2, var3);
+        }
+
+        ((List)var3).add(var0);
+    }
+
+    private static String[] collectFiles(ITexturePack var0, String var1, String var2)
+    {
+        if (!(var0 instanceof TexturePackImplementation))
+        {
+            return new String[0];
+        }
+        else
+        {
+            TexturePackImplementation var3 = (TexturePackImplementation)var0;
+
+            if (var3 instanceof TexturePackDefault)
+            {
+                return collectFilesDefault(var3);
+            }
+            else
+            {
+                File var4 = var3.texturePackFile;
+                return var4 == null ? new String[0] : (var4.isDirectory() ? collectFilesFolder(var4, "", var1, var2) : (var4.isFile() ? collectFilesZIP(var4, var1, var2) : new String[0]));
+            }
+        }
+    }
+
+    private static String[] collectFilesDefault(TexturePackImplementation var0)
+    {
+        ArrayList var1 = new ArrayList();
+        String[] var2 = new String[] {"ctm/default/bookshelf.properties", "ctm/default/glass.properties", "ctm/default/glasspane.properties", "ctm/default/sandstone.properties"};
+
+        for (int var3 = 0; var3 < var2.length; ++var3)
+        {
+            String var4 = var2[var3];
+
+            if (var0.func_98140_c("/" + var4))
+            {
+                var1.add(var4);
+            }
+        }
+
+        String[] var5 = (String[])((String[])var1.toArray(new String[var1.size()]));
+        return var5;
+    }
+
+    private static String[] collectFilesFolder(File var0, String var1, String var2, String var3)
+    {
+        ArrayList var4 = new ArrayList();
+        File[] var5 = var0.listFiles();
+
+        if (var5 == null)
+        {
+            return new String[0];
+        }
+        else
+        {
+            for (int var6 = 0; var6 < var5.length; ++var6)
+            {
+                File var7 = var5[var6];
+                String var8;
+
+                if (var7.isFile())
+                {
+                    var8 = var1 + var7.getName();
+
+                    if (var8.startsWith(var2) && var8.endsWith(var3))
+                    {
+                        var4.add(var8);
+                    }
+                }
+                else if (var7.isDirectory())
+                {
+                    var8 = var1 + var7.getName() + "/";
+                    String[] var9 = collectFilesFolder(var7, var8, var2, var3);
+
+                    for (int var10 = 0; var10 < var9.length; ++var10)
+                    {
+                        String var11 = var9[var10];
+                        var4.add(var11);
+                    }
+                }
+            }
+
+            String[] var12 = (String[])((String[])var4.toArray(new String[var4.size()]));
+            return var12;
+        }
+    }
+
+    private static String[] collectFilesZIP(File var0, String var1, String var2)
+    {
+        ArrayList var3 = new ArrayList();
+
+        try
+        {
+            ZipFile var4 = new ZipFile(var0);
+            Enumeration var5 = var4.entries();
+
+            while (var5.hasMoreElements())
+            {
+                ZipEntry var6 = (ZipEntry)var5.nextElement();
+                String var7 = var6.getName();
+
+                if (var7.startsWith(var1) && var7.endsWith(var2))
+                {
+                    var3.add(var7);
+                }
+            }
+
+            var4.close();
+            String[] var9 = (String[])((String[])var3.toArray(new String[var3.size()]));
+            return var9;
+        }
+        catch (IOException var8)
+        {
+            var8.printStackTrace();
+            return new String[0];
+        }
+    }
+
+    public static int getPaneTextureIndex(boolean var0, boolean var1, boolean var2, boolean var3)
+    {
+        return var1 && var0 ? (var2 ? (var3 ? 34 : 50) : (var3 ? 18 : 2)) : (var1 && !var0 ? (var2 ? (var3 ? 35 : 51) : (var3 ? 19 : 3)) : (!var1 && var0 ? (var2 ? (var3 ? 33 : 49) : (var3 ? 17 : 1)) : (var2 ? (var3 ? 32 : 48) : (var3 ? 16 : 0))));
+    }
+
+    public static int getReversePaneTextureIndex(int var0)
+    {
+        int var1 = var0 % 16;
+        return var1 == 1 ? var0 + 2 : (var1 == 3 ? var0 - 2 : var0);
+    }
+
+    public static Icon getCtmTexture(ConnectedProperties var0, int var1, Icon var2)
+    {
+        if (var0.method != 1)
+        {
+            return var2;
+        }
+        else if (var1 >= 0 && var1 < ctmIndexes.length)
+        {
+            int var3 = ctmIndexes[var1];
+            Icon[] var4 = var0.tileIcons;
+            return var3 >= 0 && var3 < var4.length ? var4[var3] : var2;
+        }
+        else
+        {
+            return var2;
+        }
     }
 }

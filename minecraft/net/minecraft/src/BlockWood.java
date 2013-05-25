@@ -6,32 +6,26 @@ public class BlockWood extends Block
 {
     /** The type of tree this block came from. */
     public static final String[] woodType = new String[] {"oak", "spruce", "birch", "jungle"};
+    public static final String[] woodTextureTypes = new String[] {"wood", "wood_spruce", "wood_birch", "wood_jungle"};
+    private Icon[] iconArray;
 
     public BlockWood(int par1)
     {
-        super(par1, 4, Material.wood);
+        super(par1, Material.wood);
         this.setCreativeTab(CreativeTabs.tabBlock);
     }
 
     /**
      * From the specified side and block metadata retrieves the blocks texture. Args: side, metadata
      */
-    public int getBlockTextureFromSideAndMetadata(int par1, int par2)
+    public Icon getIcon(int par1, int par2)
     {
-        switch (par2)
+        if (par2 < 0 || par2 >= this.iconArray.length)
         {
-            case 1:
-                return 198;
-
-            case 2:
-                return 214;
-
-            case 3:
-                return 199;
-
-            default:
-                return 4;
+            par2 = 0;
         }
+
+        return this.iconArray[par2];
     }
 
     /**
@@ -51,5 +45,19 @@ public class BlockWood extends Block
         par3List.add(new ItemStack(par1, 1, 1));
         par3List.add(new ItemStack(par1, 1, 2));
         par3List.add(new ItemStack(par1, 1, 3));
+    }
+
+    /**
+     * When this method is called, your block should register all the icons it needs with the given IconRegister. This
+     * is the only chance you get to register icons.
+     */
+    public void registerIcons(IconRegister par1IconRegister)
+    {
+        this.iconArray = new Icon[woodTextureTypes.length];
+
+        for (int var2 = 0; var2 < this.iconArray.length; ++var2)
+        {
+            this.iconArray[var2] = par1IconRegister.registerIcon(woodTextureTypes[var2]);
+        }
     }
 }

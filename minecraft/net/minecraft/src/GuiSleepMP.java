@@ -9,7 +9,7 @@ public class GuiSleepMP extends GuiChat
     {
         super.initGui();
         StringTranslate var1 = StringTranslate.getInstance();
-        this.controlList.add(new GuiButton(1, this.width / 2 - 100, this.height - 40, var1.translateKey("multiplayer.stopSleeping")));
+        this.buttonList.add(new GuiButton(1, this.width / 2 - 100, this.height - 40, var1.translateKey("multiplayer.stopSleeping")));
     }
 
     /**

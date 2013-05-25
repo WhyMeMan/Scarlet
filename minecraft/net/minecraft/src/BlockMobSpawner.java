@@ -4,9 +4,9 @@ import java.util.Random;
 
 public class BlockMobSpawner extends BlockContainer
 {
-    protected BlockMobSpawner(int par1, int par2)
+    protected BlockMobSpawner(int par1)
     {
-        super(par1, par2, Material.rock);
+        super(par1, Material.rock);
     }
 
     /**

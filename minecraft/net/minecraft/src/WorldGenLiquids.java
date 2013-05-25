@@ -74,7 +74,7 @@ public class WorldGenLiquids extends WorldGenerator
 
             if (var6 == 3 && var7 == 1)
             {
-                par1World.setBlockWithNotify(par3, par4, par5, this.liquidBlockId);
+                par1World.setBlock(par3, par4, par5, this.liquidBlockId, 0, 2);
                 par1World.scheduledUpdatesAreImmediate = true;
                 Block.blocksList[this.liquidBlockId].updateTick(par1World, par3, par4, par5, par2Random);
                 par1World.scheduledUpdatesAreImmediate = false;

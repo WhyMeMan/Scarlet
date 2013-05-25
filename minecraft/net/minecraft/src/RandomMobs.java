@@ -2,6 +2,7 @@ package net.minecraft.src;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,36 +11,29 @@ import java.util.Random;
 public class RandomMobs
 {
     private static Map textureVariantsMap = new HashMap();
+    private static RenderGlobal renderGlobal = null;
     private static boolean initialized = false;
     private static Random random = new Random();
+    private static boolean working = false;
 
     public static void entityLoaded(Entity var0)
     {
-        if (var0.skinUrl == null)
+        if (var0 instanceof EntityLiving)
         {
-            if (var0 instanceof EntityLiving)
+            if (!(var0 instanceof EntityPlayer))
             {
-                if (!(var0 instanceof EntityPlayer))
+                EntityLiving var1 = (EntityLiving)var0;
+                WorldServer var2 = Config.getWorldServer();
+
+                if (var2 != null)
                 {
-                    EntityLiving var1 = (EntityLiving)var0;
-                    WorldServer var2 = Config.getWorldServer();
+                    Entity var3 = var2.getEntityByID(var0.entityId);
 
-                    if (var2 == null)
+                    if (var3 instanceof EntityLiving)
                     {
-                        var1.skinUrl = "123" + var1.entityId;
-                    }
-                    else
-                    {
-                        Entity var3 = var2.getEntityByID(var0.entityId);
-
-                        if (var3 instanceof EntityLiving)
-                        {
-                            EntityLiving var4 = (EntityLiving)var3;
-                            int var5 = var4.persistentId;
-                            var1.persistentId = var5;
-                            var1.skinUrl = "" + var5;
-                            var4.skinUrl = var1.skinUrl;
-                        }
+                        EntityLiving var4 = (EntityLiving)var3;
+                        int var5 = var4.persistentId;
+                        var1.persistentId = var5;
                     }
                 }
             }
@@ -60,63 +54,99 @@ public class RandomMobs
         }
     }
 
-    public static int getTexture(String var0, String var1)
+    public static String getTexture(String var0)
     {
-        if (!initialized)
+        if (working)
         {
-            initialize();
-        }
-
-        if (var1 == null)
-        {
-            return -1;
-        }
-        else if (var0 == null)
-        {
-            return -1;
-        }
-        else if (var0.length() <= 1)
-        {
-            return -1;
+            return var0;
         }
         else
         {
-            char var2 = var0.charAt(0);
+            String var3;
 
-            if (var2 >= 48 && var2 <= 57)
+            try
             {
-                int var3 = Math.abs(var0.hashCode());
-                String[] var4 = (String[])((String[])textureVariantsMap.get(var1));
+                working = true;
 
-                if (var4 == null)
+                if (!initialized)
                 {
-                    var4 = getTextureVariants(var1);
-                    textureVariantsMap.put(var1, var4);
+                    initialize();
                 }
 
-                if (var4 != null && var4.length > 0)
+                if (renderGlobal == null)
                 {
-                    int var5 = var3 % var4.length;
-                    String var6 = var4[var5];
-                    return Config.getMinecraft().renderEngine.getTexture(var6);
+                    String var7 = var0;
+                    return var7;
                 }
-                else
+
+                Entity var1 = renderGlobal.renderedEntity;
+                String var8;
+
+                if (var1 == null)
                 {
-                    return -1;
+                    var8 = var0;
+                    return var8;
                 }
+
+                if (!(var1 instanceof EntityLiving))
+                {
+                    var8 = var0;
+                    return var8;
+                }
+
+                EntityLiving var2 = (EntityLiving)var1;
+
+                if (!var0.startsWith("/mob/"))
+                {
+                    var3 = var0;
+                    return var3;
+                }
+
+                var3 = getTexture(var0, var2.persistentId);
+            }
+            finally
+            {
+                working = false;
+            }
+
+            return var3;
+        }
+    }
+
+    private static String getTexture(String var0, int var1)
+    {
+        if (var1 <= 0)
+        {
+            return var0;
+        }
+        else
+        {
+            String[] var2 = (String[])((String[])textureVariantsMap.get(var0));
+
+            if (var2 == null)
+            {
+                var2 = getTextureVariants(var0);
+                textureVariantsMap.put(var0, var2);
+            }
+
+            if (var2 != null && var2.length > 0)
+            {
+                int var3 = var1 % var2.length;
+                String var4 = var2[var3];
+                return var4;
             }
             else
             {
-                return -1;
+                return var0;
             }
         }
     }
 
     private static String[] getTextureVariants(String var0)
     {
-        RenderEngine var1 = Config.getMinecraft().renderEngine;
+        RenderEngine var1 = Config.getRenderEngine();
         var1.getTexture(var0);
-        String[] var2 = new String[] {var0};
+        String[] var2 = new String[0];
         int var3 = var0.lastIndexOf(46);
 
         if (var3 < 0)
@@ -154,7 +184,7 @@ public class RandomMobs
 
     private static int getCountTextureVariants(String var0, String var1, String var2)
     {
-        RenderEngine var3 = Config.getMinecraft().renderEngine;
+        RenderEngine var3 = Config.getRenderEngine();
         short var4 = 1000;
 
         for (int var5 = 2; var5 < var4; ++var5)
@@ -193,27 +223,59 @@ public class RandomMobs
 
     private static void initialize()
     {
-        initialized = true;
-        getTexture("100", "/mob/bat.png");
-        getTexture("100", "/mob/cavespider.png");
-        getTexture("100", "/mob/chicken.png");
-        getTexture("100", "/mob/cow.png");
-        getTexture("100", "/mob/creeper.png");
-        getTexture("100", "/mob/enderman.png");
-        getTexture("100", "/mob/ghast.png");
-        getTexture("100", "/mob/ghast_fire.png");
-        getTexture("100", "/mob/lava.png");
-        getTexture("100", "/mob/ozelot.png");
-        getTexture("100", "/mob/pig.png");
-        getTexture("100", "/mob/pigzombie.png");
-        getTexture("100", "/mob/sheep.png");
-        getTexture("100", "/mob/sheep_fur.png");
-        getTexture("100", "/mob/skeleton.png");
-        getTexture("100", "/mob/skeleton_wither.png");
-        getTexture("100", "/mob/slime.png");
-        getTexture("100", "/mob/spider.png");
-        getTexture("100", "/mob/squid.png");
-        getTexture("100", "/mob/wolf.png");
-        getTexture("100", "/mob/zombie.png");
+        renderGlobal = Config.getRenderGlobal();
+
+        if (renderGlobal != null)
+        {
+            initialized = true;
+            ArrayList var0 = new ArrayList();
+            var0.add("bat");
+            var0.add("cat_black");
+            var0.add("cat_red");
+            var0.add("cat_siamese");
+            var0.add("cavespider");
+            var0.add("chicken");
+            var0.add("cow");
+            var0.add("creeper");
+            var0.add("enderman");
+            var0.add("enderman_eyes");
+            var0.add("fire");
+            var0.add("ghast");
+            var0.add("ghast_fire");
+            var0.add("lava");
+            var0.add("ozelot");
+            var0.add("pig");
+            var0.add("pigman");
+            var0.add("pigzombie");
+            var0.add("redcow");
+            var0.add("saddle");
+            var0.add("sheep");
+            var0.add("sheep_fur");
+            var0.add("silverfish");
+            var0.add("skeleton");
+            var0.add("skeleton_wither");
+            var0.add("slime");
+            var0.add("snowman");
+            var0.add("spider");
+            var0.add("spider_eyes");
+            var0.add("squid");
+            var0.add("villager");
+            var0.add("villager_golem");
+            var0.add("wither");
+            var0.add("wither_invul");
+            var0.add("wolf");
+            var0.add("wolf_angry");
+            var0.add("wolf_collar");
+            var0.add("wolf_tame");
+            var0.add("zombie");
+            var0.add("zombie_villager");
+
+            for (int var1 = 0; var1 < var0.size(); ++var1)
+            {
+                String var2 = (String)var0.get(var1);
+                String var3 = "/mob/" + var2 + ".png";
+                getTexture(var3, 100);
+            }
+        }
     }
 }

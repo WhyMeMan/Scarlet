@@ -7,7 +7,7 @@ public class BlockFurnace extends BlockContainer
     /**
      * Is the random generator used by furnace to drop the inventory contents in random directions.
      */
-    private Random furnaceRand = new Random();
+    private final Random furnaceRand = new Random();
 
     /** True if this is an active furnace, false if idle */
     private final boolean isActive;
@@ -17,12 +17,13 @@ public class BlockFurnace extends BlockContainer
      * furnace block changes from idle to active and vice-versa.
      */
     private static boolean keepFurnaceInventory = false;
+    private Icon furnaceIconTop;
+    private Icon furnaceIconFront;
 
     protected BlockFurnace(int par1, boolean par2)
     {
         super(par1, Material.rock);
         this.isActive = par2;
-        this.blockIndexInTexture = 45;
     }
 
     /**
@@ -30,7 +31,7 @@ public class BlockFurnace extends BlockContainer
      */
     public int idDropped(int par1, Random par2Random, int par3)
     {
-        return Block.stoneOvenIdle.blockID;
+        return Block.furnaceIdle.blockID;
     }
 
     /**
@@ -75,28 +76,27 @@ public class BlockFurnace extends BlockContainer
                 var9 = 4;
             }
 
-            par1World.setBlockMetadataWithNotify(par2, par3, par4, var9);
+            par1World.setBlockMetadataWithNotify(par2, par3, par4, var9, 2);
         }
     }
 
     /**
-     * Retrieves the block texture to use based on the display side. Args: iBlockAccess, x, y, z, side
+     * From the specified side and block metadata retrieves the blocks texture. Args: side, metadata
      */
-    public int getBlockTexture(IBlockAccess par1IBlockAccess, int par2, int par3, int par4, int par5)
+    public Icon getIcon(int par1, int par2)
     {
-        if (par5 == 1)
-        {
-            return this.blockIndexInTexture + 17;
-        }
-        else if (par5 == 0)
-        {
-            return this.blockIndexInTexture + 17;
-        }
-        else
-        {
-            int var6 = par1IBlockAccess.getBlockMetadata(par2, par3, par4);
-            return par5 != var6 ? this.blockIndexInTexture : (this.isActive ? this.blockIndexInTexture + 16 : this.blockIndexInTexture - 1);
-        }
+        return par1 == 1 ? this.furnaceIconTop : (par1 == 0 ? this.furnaceIconTop : (par1 != par2 ? this.blockIcon : this.furnaceIconFront));
+    }
+
+    /**
+     * When this method is called, your block should register all the icons it needs with the given IconRegister. This
+     * is the only chance you get to register icons.
+     */
+    public void registerIcons(IconRegister par1IconRegister)
+    {
+        this.blockIcon = par1IconRegister.registerIcon("furnace_side");
+        this.furnaceIconFront = par1IconRegister.registerIcon(this.isActive ? "furnace_front_lit" : "furnace_front");
+        this.furnaceIconTop = par1IconRegister.registerIcon("furnace_top");
     }
 
     /**
@@ -137,14 +137,6 @@ public class BlockFurnace extends BlockContainer
     }
 
     /**
-     * Returns the block texture based on the side being looked at.  Args: side
-     */
-    public int getBlockTextureFromSide(int par1)
-    {
-        return par1 == 1 ? this.blockIndexInTexture + 17 : (par1 == 0 ? this.blockIndexInTexture + 17 : (par1 == 3 ? this.blockIndexInTexture - 1 : this.blockIndexInTexture));
-    }
-
-    /**
      * Called upon block activation (right click on the block.)
      */
     public boolean onBlockActivated(World par1World, int par2, int par3, int par4, EntityPlayer par5EntityPlayer, int par6, float par7, float par8, float par9)
@@ -177,15 +169,15 @@ public class BlockFurnace extends BlockContainer
 
         if (par0)
         {
-            par1World.setBlockWithNotify(par2, par3, par4, Block.stoneOvenActive.blockID);
+            par1World.setBlock(par2, par3, par4, Block.furnaceBurning.blockID);
         }
         else
         {
-            par1World.setBlockWithNotify(par2, par3, par4, Block.stoneOvenIdle.blockID);
+            par1World.setBlock(par2, par3, par4, Block.furnaceIdle.blockID);
         }
 
         keepFurnaceInventory = false;
-        par1World.setBlockMetadataWithNotify(par2, par3, par4, var5);
+        par1World.setBlockMetadataWithNotify(par2, par3, par4, var5, 2);
 
         if (var6 != null)
         {
@@ -205,28 +197,33 @@ public class BlockFurnace extends BlockContainer
     /**
      * Called when the block is placed in the world.
      */
-    public void onBlockPlacedBy(World par1World, int par2, int par3, int par4, EntityLiving par5EntityLiving)
+    public void onBlockPlacedBy(World par1World, int par2, int par3, int par4, EntityLiving par5EntityLiving, ItemStack par6ItemStack)
     {
-        int var6 = MathHelper.floor_double((double)(par5EntityLiving.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
+        int var7 = MathHelper.floor_double((double)(par5EntityLiving.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
 
-        if (var6 == 0)
+        if (var7 == 0)
         {
-            par1World.setBlockMetadataWithNotify(par2, par3, par4, 2);
+            par1World.setBlockMetadataWithNotify(par2, par3, par4, 2, 2);
         }
 
-        if (var6 == 1)
+        if (var7 == 1)
         {
-            par1World.setBlockMetadataWithNotify(par2, par3, par4, 5);
+            par1World.setBlockMetadataWithNotify(par2, par3, par4, 5, 2);
         }
 
-        if (var6 == 2)
+        if (var7 == 2)
         {
-            par1World.setBlockMetadataWithNotify(par2, par3, par4, 3);
+            par1World.setBlockMetadataWithNotify(par2, par3, par4, 3, 2);
         }
 
-        if (var6 == 3)
+        if (var7 == 3)
         {
-            par1World.setBlockMetadataWithNotify(par2, par3, par4, 4);
+            par1World.setBlockMetadataWithNotify(par2, par3, par4, 4, 2);
+        }
+
+        if (par6ItemStack.hasDisplayName())
+        {
+            ((TileEntityFurnace)par1World.getBlockTileEntity(par2, par3, par4)).func_94129_a(par6ItemStack.getDisplayName());
         }
     }
 
@@ -276,9 +273,37 @@ public class BlockFurnace extends BlockContainer
                         }
                     }
                 }
+
+                par1World.func_96440_m(par2, par3, par4, par5);
             }
         }
 
         super.breakBlock(par1World, par2, par3, par4, par5, par6);
+    }
+
+    /**
+     * If this returns true, then comparators facing away from this block will use the value from
+     * getComparatorInputOverride instead of the actual redstone signal strength.
+     */
+    public boolean hasComparatorInputOverride()
+    {
+        return true;
+    }
+
+    /**
+     * If hasComparatorInputOverride returns true, the return value from this is used instead of the redstone signal
+     * strength when this block inputs to a comparator.
+     */
+    public int getComparatorInputOverride(World par1World, int par2, int par3, int par4, int par5)
+    {
+        return Container.calcRedstoneFromInventory((IInventory)par1World.getBlockTileEntity(par2, par3, par4));
+    }
+
+    /**
+     * only called by clickMiddleMouseButton , and passed to inventory.setCurrentItem (along with isCreative)
+     */
+    public int idPicked(World par1World, int par2, int par3, int par4)
+    {
+        return Block.furnaceIdle.blockID;
     }
 }

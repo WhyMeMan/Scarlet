@@ -14,14 +14,14 @@ public class FlatGeneratorInfo
 
     /** List of world features enabled on this preset. */
     private final Map worldFeatures = new HashMap();
-    private int field_82654_c = 0;
+    private int biomeToUse = 0;
 
     /**
      * Return the biome used on this preset.
      */
     public int getBiome()
     {
-        return this.field_82654_c;
+        return this.biomeToUse;
     }
 
     /**
@@ -29,7 +29,7 @@ public class FlatGeneratorInfo
      */
     public void setBiome(int par1)
     {
-        this.field_82654_c = par1;
+        this.biomeToUse = par1;
     }
 
     /**
@@ -78,7 +78,7 @@ public class FlatGeneratorInfo
         }
 
         var1.append(";");
-        var1.append(this.field_82654_c);
+        var1.append(this.biomeToUse);
 
         if (!this.worldFeatures.isEmpty())
         {

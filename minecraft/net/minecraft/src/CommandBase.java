@@ -1,6 +1,7 @@
 package net.minecraft.src;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import net.minecraft.server.MinecraftServer;
@@ -87,7 +88,10 @@ public abstract class CommandBase implements ICommand
         }
     }
 
-    public static double func_82363_b(ICommandSender par0ICommandSender, String par1Str)
+    /**
+     * Parses a double from the given string or throws an exception if it's not a double.
+     */
+    public static double parseDouble(ICommandSender par0ICommandSender, String par1Str)
     {
         try
         {
@@ -134,6 +138,24 @@ public abstract class CommandBase implements ICommand
             {
                 return var2;
             }
+        }
+    }
+
+    public static String func_96332_d(ICommandSender par0ICommandSender, String par1Str)
+    {
+        EntityPlayerMP var2 = PlayerSelector.matchOnePlayer(par0ICommandSender, par1Str);
+
+        if (var2 != null)
+        {
+            return var2.getEntityName();
+        }
+        else if (PlayerSelector.hasArguments(par1Str))
+        {
+            throw new PlayerNotFoundException();
+        }
+        else
+        {
+            return par1Str;
         }
     }
 
@@ -204,6 +226,11 @@ public abstract class CommandBase implements ICommand
         return var1.toString();
     }
 
+    public static String func_96333_a(Collection par0Collection)
+    {
+        return joinNiceString(par0Collection.toArray(new String[0]));
+    }
+
     /**
      * Returns true if the given substring is exactly equal to the start of the given string (case insensitive).
      */
@@ -262,7 +289,7 @@ public abstract class CommandBase implements ICommand
     /**
      * Return whether the specified command parameter index is a username parameter.
      */
-    public boolean isUsernameIndex(int par1)
+    public boolean isUsernameIndex(String[] par1ArrayOfStr, int par2)
     {
         return false;
     }
@@ -291,13 +318,13 @@ public abstract class CommandBase implements ICommand
     /**
      * Compares the name of this command to the name of the given command.
      */
-    public int compareNameTo(ICommand par1ICommand)
+    public int compareTo(ICommand par1ICommand)
     {
         return this.getCommandName().compareTo(par1ICommand.getCommandName());
     }
 
     public int compareTo(Object par1Obj)
     {
-        return this.compareNameTo((ICommand)par1Obj);
+        return this.compareTo((ICommand)par1Obj);
     }
 }

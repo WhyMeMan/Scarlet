@@ -10,7 +10,7 @@ class EnumOptionsHelper
         {
             enumOptionsMappingHelperArray[EnumOptions.INVERT_MOUSE.ordinal()] = 1;
         }
-        catch (NoSuchFieldError var15)
+        catch (NoSuchFieldError var14)
         {
             ;
         }
@@ -19,7 +19,7 @@ class EnumOptionsHelper
         {
             enumOptionsMappingHelperArray[EnumOptions.VIEW_BOBBING.ordinal()] = 2;
         }
-        catch (NoSuchFieldError var14)
+        catch (NoSuchFieldError var13)
         {
             ;
         }
@@ -28,7 +28,7 @@ class EnumOptionsHelper
         {
             enumOptionsMappingHelperArray[EnumOptions.ANAGLYPH.ordinal()] = 3;
         }
-        catch (NoSuchFieldError var13)
+        catch (NoSuchFieldError var12)
         {
             ;
         }
@@ -37,15 +37,6 @@ class EnumOptionsHelper
         {
             enumOptionsMappingHelperArray[EnumOptions.ADVANCED_OPENGL.ordinal()] = 4;
         }
-        catch (NoSuchFieldError var12)
-        {
-            ;
-        }
-
-        try
-        {
-            enumOptionsMappingHelperArray[EnumOptions.AMBIENT_OCCLUSION.ordinal()] = 5;
-        }
         catch (NoSuchFieldError var11)
         {
             ;
@@ -53,7 +44,7 @@ class EnumOptionsHelper
 
         try
         {
-            enumOptionsMappingHelperArray[EnumOptions.RENDER_CLOUDS.ordinal()] = 6;
+            enumOptionsMappingHelperArray[EnumOptions.RENDER_CLOUDS.ordinal()] = 5;
         }
         catch (NoSuchFieldError var10)
         {
@@ -62,7 +53,7 @@ class EnumOptionsHelper
 
         try
         {
-            enumOptionsMappingHelperArray[EnumOptions.CHAT_COLOR.ordinal()] = 7;
+            enumOptionsMappingHelperArray[EnumOptions.CHAT_COLOR.ordinal()] = 6;
         }
         catch (NoSuchFieldError var9)
         {
@@ -71,7 +62,7 @@ class EnumOptionsHelper
 
         try
         {
-            enumOptionsMappingHelperArray[EnumOptions.CHAT_LINKS.ordinal()] = 8;
+            enumOptionsMappingHelperArray[EnumOptions.CHAT_LINKS.ordinal()] = 7;
         }
         catch (NoSuchFieldError var8)
         {
@@ -80,7 +71,7 @@ class EnumOptionsHelper
 
         try
         {
-            enumOptionsMappingHelperArray[EnumOptions.CHAT_LINKS_PROMPT.ordinal()] = 9;
+            enumOptionsMappingHelperArray[EnumOptions.CHAT_LINKS_PROMPT.ordinal()] = 8;
         }
         catch (NoSuchFieldError var7)
         {
@@ -89,7 +80,7 @@ class EnumOptionsHelper
 
         try
         {
-            enumOptionsMappingHelperArray[EnumOptions.USE_SERVER_TEXTURES.ordinal()] = 10;
+            enumOptionsMappingHelperArray[EnumOptions.USE_SERVER_TEXTURES.ordinal()] = 9;
         }
         catch (NoSuchFieldError var6)
         {
@@ -98,7 +89,7 @@ class EnumOptionsHelper
 
         try
         {
-            enumOptionsMappingHelperArray[EnumOptions.SNOOPER_ENABLED.ordinal()] = 11;
+            enumOptionsMappingHelperArray[EnumOptions.SNOOPER_ENABLED.ordinal()] = 10;
         }
         catch (NoSuchFieldError var5)
         {
@@ -107,7 +98,7 @@ class EnumOptionsHelper
 
         try
         {
-            enumOptionsMappingHelperArray[EnumOptions.USE_FULLSCREEN.ordinal()] = 12;
+            enumOptionsMappingHelperArray[EnumOptions.USE_FULLSCREEN.ordinal()] = 11;
         }
         catch (NoSuchFieldError var4)
         {
@@ -116,7 +107,7 @@ class EnumOptionsHelper
 
         try
         {
-            enumOptionsMappingHelperArray[EnumOptions.ENABLE_VSYNC.ordinal()] = 13;
+            enumOptionsMappingHelperArray[EnumOptions.ENABLE_VSYNC.ordinal()] = 12;
         }
         catch (NoSuchFieldError var3)
         {
@@ -125,7 +116,7 @@ class EnumOptionsHelper
 
         try
         {
-            enumOptionsMappingHelperArray[EnumOptions.SHOW_CAPE.ordinal()] = 14;
+            enumOptionsMappingHelperArray[EnumOptions.SHOW_CAPE.ordinal()] = 13;
         }
         catch (NoSuchFieldError var2)
         {
@@ -134,7 +125,7 @@ class EnumOptionsHelper
 
         try
         {
-            enumOptionsMappingHelperArray[EnumOptions.TOUCHSCREEN.ordinal()] = 15;
+            enumOptionsMappingHelperArray[EnumOptions.TOUCHSCREEN.ordinal()] = 14;
         }
         catch (NoSuchFieldError var1)
         {

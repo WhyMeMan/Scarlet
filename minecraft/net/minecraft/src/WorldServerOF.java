@@ -13,9 +13,9 @@ public class WorldServerOF extends WorldServer
     private NextTickHashSet nextTickHashSet = null;
     private TreeSet pendingTickList = null;
 
-    public WorldServerOF(MinecraftServer var1, ISaveHandler var2, String var3, int var4, WorldSettings var5, Profiler var6)
+    public WorldServerOF(MinecraftServer var1, ISaveHandler var2, String var3, int var4, WorldSettings var5, Profiler var6, ILogAgent var7)
     {
-        super(var1, var2, var3, var4, var5, var6);
+        super(var1, var2, var3, var4, var5, var6, var7);
         this.fixSetNextTicks();
     }
 
@@ -90,6 +90,74 @@ public class WorldServerOF extends WorldServer
         else
         {
             return super.getPendingBlockUpdates(var1, var2);
+        }
+    }
+
+    /**
+     * Updates all weather states.
+     */
+    protected void updateWeather()
+    {
+        if (Config.isWeatherEnabled())
+        {
+            super.updateWeather();
+        }
+        else
+        {
+            this.fixWorldWeather();
+        }
+
+        if (!Config.isTimeDefault())
+        {
+            this.fixWorldTime();
+        }
+    }
+
+    private void fixWorldWeather()
+    {
+        if (this.worldInfo.isRaining() || this.worldInfo.isThundering())
+        {
+            this.worldInfo.setRainTime(0);
+            this.worldInfo.setRaining(false);
+            this.setRainStrength(0.0F);
+            this.worldInfo.setThunderTime(0);
+            this.worldInfo.setThundering(false);
+            this.getMinecraftServer().getConfigurationManager().sendPacketToAllPlayers(new Packet70GameEvent(2, 0));
+        }
+    }
+
+    private void fixWorldTime()
+    {
+        if (this.worldInfo.getGameType().getID() == 1)
+        {
+            long var1 = this.getWorldTime();
+            long var3 = var1 % 24000L;
+
+            if (Config.isTimeDayOnly())
+            {
+                if (var3 <= 1000L)
+                {
+                    this.setWorldTime(var1 - var3 + 1001L);
+                }
+
+                if (var3 >= 11000L)
+                {
+                    this.setWorldTime(var1 - var3 + 24001L);
+                }
+            }
+
+            if (Config.isTimeNightOnly())
+            {
+                if (var3 <= 14000L)
+                {
+                    this.setWorldTime(var1 - var3 + 14001L);
+                }
+
+                if (var3 >= 22000L)
+                {
+                    this.setWorldTime(var1 - var3 + 24000L + 14001L);
+                }
+            }
         }
     }
 }

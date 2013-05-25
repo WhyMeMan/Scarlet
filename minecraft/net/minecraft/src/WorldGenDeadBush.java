@@ -29,7 +29,7 @@ public class WorldGenDeadBush extends WorldGenerator
 
             if (par1World.isAirBlock(var8, var9, var10) && Block.blocksList[this.deadBushID].canBlockStay(par1World, var8, var9, var10))
             {
-                par1World.setBlock(var8, var9, var10, this.deadBushID);
+                par1World.setBlock(var8, var9, var10, this.deadBushID, 0, 2);
             }
         }
 

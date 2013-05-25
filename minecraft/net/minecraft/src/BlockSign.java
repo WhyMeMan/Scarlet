@@ -13,11 +13,18 @@ public class BlockSign extends BlockContainer
     {
         super(par1, Material.wood);
         this.isFreestanding = par3;
-        this.blockIndexInTexture = 4;
         this.signEntityClass = par2Class;
         float var4 = 0.25F;
         float var5 = 1.0F;
         this.setBlockBounds(0.5F - var4, 0.0F, 0.5F - var4, 0.5F + var4, var5, 0.5F + var4);
+    }
+
+    /**
+     * From the specified side and block metadata retrieves the blocks texture. Args: side, metadata
+     */
+    public Icon getIcon(int par1, int par2)
+    {
+        return Block.planks.getBlockTextureFromSide(par1);
     }
 
     /**
@@ -172,7 +179,7 @@ public class BlockSign extends BlockContainer
         if (var6)
         {
             this.dropBlockAsItem(par1World, par2, par3, par4, par1World.getBlockMetadata(par2, par3, par4), 0);
-            par1World.setBlockWithNotify(par2, par3, par4, 0);
+            par1World.setBlockToAir(par2, par3, par4);
         }
 
         super.onNeighborBlockChange(par1World, par2, par3, par4, par5);
@@ -185,4 +192,10 @@ public class BlockSign extends BlockContainer
     {
         return Item.sign.itemID;
     }
+
+    /**
+     * When this method is called, your block should register all the icons it needs with the given IconRegister. This
+     * is the only chance you get to register icons.
+     */
+    public void registerIcons(IconRegister par1IconRegister) {}
 }

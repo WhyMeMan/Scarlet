@@ -20,9 +20,9 @@ public class ItemLeaves extends ItemBlock
     /**
      * Gets an icon index based on an item's damage value
      */
-    public int getIconFromDamage(int par1)
+    public Icon getIconFromDamage(int par1)
     {
-        return Block.leaves.getBlockTextureFromSideAndMetadata(0, par1);
+        return Block.leaves.getIcon(0, par1);
     }
 
     public int getColorFromItemStack(ItemStack par1ItemStack, int par2)
@@ -31,7 +31,11 @@ public class ItemLeaves extends ItemBlock
         return (var3 & 1) == 1 ? ColorizerFoliage.getFoliageColorPine() : ((var3 & 2) == 2 ? ColorizerFoliage.getFoliageColorBirch() : ColorizerFoliage.getFoliageColorBasic());
     }
 
-    public String getItemNameIS(ItemStack par1ItemStack)
+    /**
+     * Returns the unlocalized name of this item. This version accepts an ItemStack so different stacks can have
+     * different names based on their damage or NBT.
+     */
+    public String getUnlocalizedName(ItemStack par1ItemStack)
     {
         int var2 = par1ItemStack.getItemDamage();
 
@@ -40,6 +44,6 @@ public class ItemLeaves extends ItemBlock
             var2 = 0;
         }
 
-        return super.getItemName() + "." + BlockLeaves.LEAF_TYPES[var2];
+        return super.getUnlocalizedName() + "." + BlockLeaves.LEAF_TYPES[var2];
     }
 }

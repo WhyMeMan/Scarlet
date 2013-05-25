@@ -13,9 +13,9 @@ public class GuiCreateFlatWorld extends GuiScreen
     private GuiButton buttonEditLayer;
     private GuiButton buttonRemoveLayer;
 
-    public GuiCreateFlatWorld(GuiCreateWorld par1, String par2Str)
+    public GuiCreateFlatWorld(GuiCreateWorld par1GuiCreateWorld, String par2Str)
     {
-        this.createWorldGui = par1;
+        this.createWorldGui = par1GuiCreateWorld;
         this.setFlatGeneratorInfo(par2Str);
     }
 
@@ -34,17 +34,17 @@ public class GuiCreateFlatWorld extends GuiScreen
      */
     public void initGui()
     {
-        this.controlList.clear();
+        this.buttonList.clear();
         this.customizationTitle = StatCollector.translateToLocal("createWorld.customize.flat.title");
         this.layerMaterialLabel = StatCollector.translateToLocal("createWorld.customize.flat.tile");
         this.heightLabel = StatCollector.translateToLocal("createWorld.customize.flat.height");
         this.createFlatWorldListSlotGui = new GuiCreateFlatWorldListSlot(this);
-        this.controlList.add(this.buttonAddLayer = new GuiButton(2, this.width / 2 - 154, this.height - 52, 100, 20, StatCollector.translateToLocal("createWorld.customize.flat.addLayer") + " (NYI)"));
-        this.controlList.add(this.buttonEditLayer = new GuiButton(3, this.width / 2 - 50, this.height - 52, 100, 20, StatCollector.translateToLocal("createWorld.customize.flat.editLayer") + " (NYI)"));
-        this.controlList.add(this.buttonRemoveLayer = new GuiButton(4, this.width / 2 - 155, this.height - 52, 150, 20, StatCollector.translateToLocal("createWorld.customize.flat.removeLayer")));
-        this.controlList.add(new GuiButton(0, this.width / 2 - 155, this.height - 28, 150, 20, StatCollector.translateToLocal("gui.done")));
-        this.controlList.add(new GuiButton(5, this.width / 2 + 5, this.height - 52, 150, 20, StatCollector.translateToLocal("createWorld.customize.presets")));
-        this.controlList.add(new GuiButton(1, this.width / 2 + 5, this.height - 28, 150, 20, StatCollector.translateToLocal("gui.cancel")));
+        this.buttonList.add(this.buttonAddLayer = new GuiButton(2, this.width / 2 - 154, this.height - 52, 100, 20, StatCollector.translateToLocal("createWorld.customize.flat.addLayer") + " (NYI)"));
+        this.buttonList.add(this.buttonEditLayer = new GuiButton(3, this.width / 2 - 50, this.height - 52, 100, 20, StatCollector.translateToLocal("createWorld.customize.flat.editLayer") + " (NYI)"));
+        this.buttonList.add(this.buttonRemoveLayer = new GuiButton(4, this.width / 2 - 155, this.height - 52, 150, 20, StatCollector.translateToLocal("createWorld.customize.flat.removeLayer")));
+        this.buttonList.add(new GuiButton(0, this.width / 2 - 155, this.height - 28, 150, 20, StatCollector.translateToLocal("gui.done")));
+        this.buttonList.add(new GuiButton(5, this.width / 2 + 5, this.height - 52, 150, 20, StatCollector.translateToLocal("createWorld.customize.presets")));
+        this.buttonList.add(new GuiButton(1, this.width / 2 + 5, this.height - 28, 150, 20, StatCollector.translateToLocal("gui.cancel")));
         this.buttonAddLayer.drawButton = this.buttonEditLayer.drawButton = false;
         this.theFlatGeneratorInfo.func_82645_d();
         this.func_82270_g();
@@ -63,7 +63,7 @@ public class GuiCreateFlatWorld extends GuiScreen
         }
         else if (par1GuiButton.id == 0)
         {
-            this.createWorldGui.field_82290_a = this.getFlatGeneratorInfo();
+            this.createWorldGui.generatorOptionsToUse = this.getFlatGeneratorInfo();
             this.mc.displayGuiScreen(this.createWorldGui);
         }
         else if (par1GuiButton.id == 5)

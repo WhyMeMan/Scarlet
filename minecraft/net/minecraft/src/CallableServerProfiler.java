@@ -5,14 +5,15 @@ import net.minecraft.server.MinecraftServer;
 
 public class CallableServerProfiler implements Callable
 {
+    /** Reference to the MinecraftServer object. */
     final MinecraftServer mcServer;
 
-    public CallableServerProfiler(MinecraftServer par1MinecraftServer)
+    public CallableServerProfiler(MinecraftServer par1)
     {
-        this.mcServer = par1MinecraftServer;
+        this.mcServer = par1;
     }
 
-    public String func_82551_a()
+    public String callServerProfiler()
     {
         int var1 = this.mcServer.worldServers[0].getWorldVec3Pool().getPoolSize();
         int var2 = 56 * var1;
@@ -25,6 +26,6 @@ public class CallableServerProfiler implements Callable
 
     public Object call()
     {
-        return this.func_82551_a();
+        return this.callServerProfiler();
     }
 }

@@ -5,7 +5,7 @@ public class GuiOtherSettingsOF extends GuiScreen
     private GuiScreen prevScreen;
     protected String title = "Other Settings";
     private GameSettings settings;
-    private static EnumOptions[] enumOptions = new EnumOptions[] {EnumOptions.LAGOMETER, EnumOptions.PROFILER, EnumOptions.WEATHER, EnumOptions.TIME, EnumOptions.USE_FULLSCREEN, EnumOptions.FULLSCREEN_MODE, EnumOptions.USE_SERVER_TEXTURES, EnumOptions.AUTOSAVE_TICKS};
+    private static EnumOptions[] enumOptions = new EnumOptions[] {EnumOptions.LAGOMETER, EnumOptions.PROFILER, EnumOptions.WEATHER, EnumOptions.TIME, EnumOptions.USE_FULLSCREEN, EnumOptions.FULLSCREEN_MODE, EnumOptions.ANAGLYPH, EnumOptions.AUTOSAVE_TICKS};
     private int lastMouseX = 0;
     private int lastMouseY = 0;
     private long mouseStillTime = 0L;
@@ -34,18 +34,18 @@ public class GuiOtherSettingsOF extends GuiScreen
 
             if (!var6.getEnumFloat())
             {
-                this.controlList.add(new GuiSmallButton(var6.returnEnumOrdinal(), var7, var8, var6, this.settings.getKeyBinding(var6)));
+                this.buttonList.add(new GuiSmallButton(var6.returnEnumOrdinal(), var7, var8, var6, this.settings.getKeyBinding(var6)));
             }
             else
             {
-                this.controlList.add(new GuiSlider(var6.returnEnumOrdinal(), var7, var8, var6, this.settings.getKeyBinding(var6), this.settings.getOptionFloatValue(var6)));
+                this.buttonList.add(new GuiSlider(var6.returnEnumOrdinal(), var7, var8, var6, this.settings.getKeyBinding(var6), this.settings.getOptionFloatValue(var6)));
             }
 
             ++var2;
         }
 
-        this.controlList.add(new GuiButton(210, this.width / 2 - 100, this.height / 6 + 168 + 11 - 22, "Reset Video Settings..."));
-        this.controlList.add(new GuiButton(200, this.width / 2 - 100, this.height / 6 + 168 + 11, var1.translateKey("gui.done")));
+        this.buttonList.add(new GuiButton(210, this.width / 2 - 100, this.height / 6 + 168 + 11 - 22, "Reset Video Settings..."));
+        this.buttonList.add(new GuiButton(200, this.width / 2 - 100, this.height / 6 + 168 + 11, var1.translateKey("gui.done")));
     }
 
     /**
@@ -162,9 +162,9 @@ public class GuiOtherSettingsOF extends GuiScreen
 
     private GuiButton getSelectedButton(int var1, int var2)
     {
-        for (int var3 = 0; var3 < this.controlList.size(); ++var3)
+        for (int var3 = 0; var3 < this.buttonList.size(); ++var3)
         {
-            GuiButton var4 = (GuiButton)this.controlList.get(var3);
+            GuiButton var4 = (GuiButton)this.buttonList.get(var3);
             boolean var5 = var1 >= var4.xPosition && var2 >= var4.yPosition && var1 < var4.xPosition + var4.width && var2 < var4.yPosition + var4.height;
 
             if (var5)

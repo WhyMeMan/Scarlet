@@ -77,40 +77,39 @@ public class EffectRenderer
         {
             if (!this.fxLayers[var8].isEmpty())
             {
-                int var9 = 0;
-
-                if (var8 == 0)
+                switch (var8)
                 {
-                    var9 = this.renderer.getTexture("/particles.png");
+                    case 0:
+                    default:
+                        this.renderer.bindTexture("/particles.png");
+                        break;
+
+                    case 1:
+                        this.renderer.bindTexture("/terrain.png");
+                        break;
+
+                    case 2:
+                        this.renderer.bindTexture("/gui/items.png");
                 }
 
-                if (var8 == 1)
-                {
-                    var9 = this.renderer.getTexture("/terrain.png");
-                }
-
-                if (var8 == 2)
-                {
-                    var9 = this.renderer.getTexture("/gui/items.png");
-                }
-
-                GL11.glBindTexture(GL11.GL_TEXTURE_2D, var9);
-                Tessellator var10 = Tessellator.instance;
+                Tessellator var9 = Tessellator.instance;
                 GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+                GL11.glDepthMask(false);
                 GL11.glEnable(GL11.GL_BLEND);
                 GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
                 GL11.glAlphaFunc(GL11.GL_GREATER, 0.003921569F);
-                var10.startDrawingQuads();
+                var9.startDrawingQuads();
 
-                for (int var11 = 0; var11 < this.fxLayers[var8].size(); ++var11)
+                for (int var10 = 0; var10 < this.fxLayers[var8].size(); ++var10)
                 {
-                    EntityFX var12 = (EntityFX)this.fxLayers[var8].get(var11);
-                    var10.setBrightness(var12.getBrightnessForRender(par2));
-                    var12.renderParticle(var10, par2, var3, var7, var4, var5, var6);
+                    EntityFX var11 = (EntityFX)this.fxLayers[var8].get(var10);
+                    var9.setBrightness(var11.getBrightnessForRender(par2));
+                    var11.renderParticle(var9, par2, var3, var7, var4, var5, var6);
                 }
 
-                var10.draw();
+                var9.draw();
                 GL11.glDisable(GL11.GL_BLEND);
+                GL11.glDepthMask(true);
                 GL11.glAlphaFunc(GL11.GL_GREATER, 0.1F);
             }
         }
@@ -165,7 +164,7 @@ public class EffectRenderer
                         double var13 = (double)par2 + ((double)var9 + 0.5D) / (double)var7;
                         double var15 = (double)par3 + ((double)var10 + 0.5D) / (double)var7;
                         int var17 = this.rand.nextInt(6);
-                        this.addEffect((new EntityDiggingFX(this.worldObj, var11, var13, var15, var11 - (double)par1 - 0.5D, var13 - (double)par2 - 0.5D, var15 - (double)par3 - 0.5D, var6, var17, par5)).func_70596_a(par1, par2, par3));
+                        this.addEffect((new EntityDiggingFX(this.worldObj, var11, var13, var15, var11 - (double)par1 - 0.5D, var13 - (double)par2 - 0.5D, var15 - (double)par3 - 0.5D, var6, var17, par5, this.renderer)).func_70596_a(par1, par2, par3));
                     }
                 }
             }
@@ -217,7 +216,7 @@ public class EffectRenderer
                 var8 = (double)par1 + var6.getBlockBoundsMaxX() + (double)var7;
             }
 
-            this.addEffect((new EntityDiggingFX(this.worldObj, var8, var10, var12, 0.0D, 0.0D, 0.0D, var6, par4, this.worldObj.getBlockMetadata(par1, par2, par3))).func_70596_a(par1, par2, par3).multiplyVelocity(0.2F).multipleParticleScaleBy(0.6F));
+            this.addEffect((new EntityDiggingFX(this.worldObj, var8, var10, var12, 0.0D, 0.0D, 0.0D, var6, par4, this.worldObj.getBlockMetadata(par1, par2, par3), this.renderer)).func_70596_a(par1, par2, par3).multiplyVelocity(0.2F).multipleParticleScaleBy(0.6F));
         }
     }
 

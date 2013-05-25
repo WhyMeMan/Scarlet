@@ -1,5 +1,6 @@
 package net.minecraft.src;
 
+import net.minecraft.client.Minecraft;
 import org.lwjgl.opengl.GL11;
 
 public class RenderMagmaCube extends RenderLiving
@@ -20,7 +21,7 @@ public class RenderMagmaCube extends RenderLiving
         {
             this.field_77120_a = var10;
             this.mainModel = new ModelMagmaCube();
-            System.out.println("new lava slime model");
+            Minecraft.getMinecraft().getLogAgent().logInfo("Loaded new lava slime model");
         }
 
         super.doRenderLiving(par1EntityMagmaCube, par2, par4, par6, par8, par9);

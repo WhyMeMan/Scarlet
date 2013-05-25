@@ -26,7 +26,7 @@ class GuiBeaconButton extends GuiButton
     {
         if (this.drawButton)
         {
-            GL11.glBindTexture(GL11.GL_TEXTURE_2D, par1Minecraft.renderEngine.getTexture("/gui/beacon.png"));
+            par1Minecraft.renderEngine.bindTexture("/gui/beacon.png");
             GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
             this.field_82253_i = par2 >= this.xPosition && par3 >= this.yPosition && par2 < this.xPosition + this.width && par3 < this.yPosition + this.height;
             short var4 = 219;
@@ -49,7 +49,7 @@ class GuiBeaconButton extends GuiButton
 
             if (!"/gui/beacon.png".equals(this.buttonTexture))
             {
-                GL11.glBindTexture(GL11.GL_TEXTURE_2D, par1Minecraft.renderEngine.getTexture(this.buttonTexture));
+                par1Minecraft.renderEngine.bindTexture(this.buttonTexture);
             }
 
             this.drawTexturedModalRect(this.xPosition + 2, this.yPosition + 2, this.field_82257_l, this.field_82258_m, 18, 18);

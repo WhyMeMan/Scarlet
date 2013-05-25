@@ -5,36 +5,57 @@ import java.util.Random;
 
 public class BlockCauldron extends Block
 {
+    private Icon field_94378_a;
+    private Icon cauldronTopIcon;
+    private Icon cauldronBottomIcon;
+
     public BlockCauldron(int par1)
     {
         super(par1, Material.iron);
-        this.blockIndexInTexture = 154;
     }
 
     /**
      * From the specified side and block metadata retrieves the blocks texture. Args: side, metadata
      */
-    public int getBlockTextureFromSideAndMetadata(int par1, int par2)
+    public Icon getIcon(int par1, int par2)
     {
-        return par1 == 1 ? 138 : (par1 == 0 ? 155 : 154);
+        return par1 == 1 ? this.cauldronTopIcon : (par1 == 0 ? this.cauldronBottomIcon : this.blockIcon);
     }
 
     /**
-     * if the specified block is in the given AABB, add its collision bounding box to the given list
+     * When this method is called, your block should register all the icons it needs with the given IconRegister. This
+     * is the only chance you get to register icons.
      */
-    public void addCollidingBlockToList(World par1World, int par2, int par3, int par4, AxisAlignedBB par5AxisAlignedBB, List par6List, Entity par7Entity)
+    public void registerIcons(IconRegister par1IconRegister)
+    {
+        this.field_94378_a = par1IconRegister.registerIcon("cauldron_inner");
+        this.cauldronTopIcon = par1IconRegister.registerIcon("cauldron_top");
+        this.cauldronBottomIcon = par1IconRegister.registerIcon("cauldron_bottom");
+        this.blockIcon = par1IconRegister.registerIcon("cauldron_side");
+    }
+
+    public static Icon func_94375_b(String par0Str)
+    {
+        return par0Str == "cauldron_inner" ? Block.cauldron.field_94378_a : (par0Str == "cauldron_bottom" ? Block.cauldron.cauldronBottomIcon : null);
+    }
+
+    /**
+     * Adds all intersecting collision boxes to a list. (Be sure to only add boxes to the list if they intersect the
+     * mask.) Parameters: World, X, Y, Z, mask, list, colliding entity
+     */
+    public void addCollisionBoxesToList(World par1World, int par2, int par3, int par4, AxisAlignedBB par5AxisAlignedBB, List par6List, Entity par7Entity)
     {
         this.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 0.3125F, 1.0F);
-        super.addCollidingBlockToList(par1World, par2, par3, par4, par5AxisAlignedBB, par6List, par7Entity);
+        super.addCollisionBoxesToList(par1World, par2, par3, par4, par5AxisAlignedBB, par6List, par7Entity);
         float var8 = 0.125F;
         this.setBlockBounds(0.0F, 0.0F, 0.0F, var8, 1.0F, 1.0F);
-        super.addCollidingBlockToList(par1World, par2, par3, par4, par5AxisAlignedBB, par6List, par7Entity);
+        super.addCollisionBoxesToList(par1World, par2, par3, par4, par5AxisAlignedBB, par6List, par7Entity);
         this.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, var8);
-        super.addCollidingBlockToList(par1World, par2, par3, par4, par5AxisAlignedBB, par6List, par7Entity);
+        super.addCollisionBoxesToList(par1World, par2, par3, par4, par5AxisAlignedBB, par6List, par7Entity);
         this.setBlockBounds(1.0F - var8, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
-        super.addCollidingBlockToList(par1World, par2, par3, par4, par5AxisAlignedBB, par6List, par7Entity);
+        super.addCollisionBoxesToList(par1World, par2, par3, par4, par5AxisAlignedBB, par6List, par7Entity);
         this.setBlockBounds(0.0F, 0.0F, 1.0F - var8, 1.0F, 1.0F, 1.0F);
-        super.addCollidingBlockToList(par1World, par2, par3, par4, par5AxisAlignedBB, par6List, par7Entity);
+        super.addCollisionBoxesToList(par1World, par2, par3, par4, par5AxisAlignedBB, par6List, par7Entity);
         this.setBlockBoundsForItemRender();
     }
 
@@ -101,7 +122,7 @@ public class BlockCauldron extends Block
                             par5EntityPlayer.inventory.setInventorySlotContents(par5EntityPlayer.inventory.currentItem, new ItemStack(Item.bucketEmpty));
                         }
 
-                        par1World.setBlockMetadataWithNotify(par2, par3, par4, 3);
+                        par1World.setBlockMetadataWithNotify(par2, par3, par4, 3, 2);
                     }
 
                     return true;
@@ -130,14 +151,14 @@ public class BlockCauldron extends Block
                                 par5EntityPlayer.inventory.setInventorySlotContents(par5EntityPlayer.inventory.currentItem, (ItemStack)null);
                             }
 
-                            par1World.setBlockMetadataWithNotify(par2, par3, par4, var11 - 1);
+                            par1World.setBlockMetadataWithNotify(par2, par3, par4, var11 - 1, 2);
                         }
                     }
                     else if (var11 > 0 && var10.getItem() instanceof ItemArmor && ((ItemArmor)var10.getItem()).getArmorMaterial() == EnumArmorMaterial.CLOTH)
                     {
                         ItemArmor var13 = (ItemArmor)var10.getItem();
                         var13.removeColor(var10);
-                        par1World.setBlockMetadataWithNotify(par2, par3, par4, var11 - 1);
+                        par1World.setBlockMetadataWithNotify(par2, par3, par4, var11 - 1, 2);
                         return true;
                     }
 
@@ -158,7 +179,7 @@ public class BlockCauldron extends Block
 
             if (var5 < 3)
             {
-                par1World.setBlockMetadataWithNotify(par2, par3, par4, var5 + 1);
+                par1World.setBlockMetadataWithNotify(par2, par3, par4, var5 + 1, 2);
             }
         }
     }

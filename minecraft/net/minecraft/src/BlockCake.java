@@ -4,9 +4,13 @@ import java.util.Random;
 
 public class BlockCake extends Block
 {
-    protected BlockCake(int par1, int par2)
+    private Icon cakeTopIcon;
+    private Icon cakeBottomIcon;
+    private Icon field_94382_c;
+
+    protected BlockCake(int par1)
     {
-        super(par1, par2, Material.cake);
+        super(par1, Material.cake);
         this.setTickRandomly(true);
     }
 
@@ -42,7 +46,7 @@ public class BlockCake extends Block
         float var6 = 0.0625F;
         float var7 = (float)(1 + var5 * 2) / 16.0F;
         float var8 = 0.5F;
-        return AxisAlignedBB.getAABBPool().addOrModifyAABBInPool((double)((float)par2 + var7), (double)par3, (double)((float)par4 + var6), (double)((float)(par2 + 1) - var6), (double)((float)par3 + var8 - var6), (double)((float)(par4 + 1) - var6));
+        return AxisAlignedBB.getAABBPool().getAABB((double)((float)par2 + var7), (double)par3, (double)((float)par4 + var6), (double)((float)(par2 + 1) - var6), (double)((float)par3 + var8 - var6), (double)((float)(par4 + 1) - var6));
     }
 
     /**
@@ -54,23 +58,27 @@ public class BlockCake extends Block
         float var6 = 0.0625F;
         float var7 = (float)(1 + var5 * 2) / 16.0F;
         float var8 = 0.5F;
-        return AxisAlignedBB.getAABBPool().addOrModifyAABBInPool((double)((float)par2 + var7), (double)par3, (double)((float)par4 + var6), (double)((float)(par2 + 1) - var6), (double)((float)par3 + var8), (double)((float)(par4 + 1) - var6));
+        return AxisAlignedBB.getAABBPool().getAABB((double)((float)par2 + var7), (double)par3, (double)((float)par4 + var6), (double)((float)(par2 + 1) - var6), (double)((float)par3 + var8), (double)((float)(par4 + 1) - var6));
     }
 
     /**
      * From the specified side and block metadata retrieves the blocks texture. Args: side, metadata
      */
-    public int getBlockTextureFromSideAndMetadata(int par1, int par2)
+    public Icon getIcon(int par1, int par2)
     {
-        return par1 == 1 ? this.blockIndexInTexture : (par1 == 0 ? this.blockIndexInTexture + 3 : (par2 > 0 && par1 == 4 ? this.blockIndexInTexture + 2 : this.blockIndexInTexture + 1));
+        return par1 == 1 ? this.cakeTopIcon : (par1 == 0 ? this.cakeBottomIcon : (par2 > 0 && par1 == 4 ? this.field_94382_c : this.blockIcon));
     }
 
     /**
-     * Returns the block texture based on the side being looked at.  Args: side
+     * When this method is called, your block should register all the icons it needs with the given IconRegister. This
+     * is the only chance you get to register icons.
      */
-    public int getBlockTextureFromSide(int par1)
+    public void registerIcons(IconRegister par1IconRegister)
     {
-        return par1 == 1 ? this.blockIndexInTexture : (par1 == 0 ? this.blockIndexInTexture + 3 : this.blockIndexInTexture + 1);
+        this.blockIcon = par1IconRegister.registerIcon("cake_side");
+        this.field_94382_c = par1IconRegister.registerIcon("cake_inner");
+        this.cakeTopIcon = par1IconRegister.registerIcon("cake_top");
+        this.cakeBottomIcon = par1IconRegister.registerIcon("cake_bottom");
     }
 
     /**
@@ -119,12 +127,11 @@ public class BlockCake extends Block
 
             if (var6 >= 6)
             {
-                par1World.setBlockWithNotify(par2, par3, par4, 0);
+                par1World.setBlockToAir(par2, par3, par4);
             }
             else
             {
-                par1World.setBlockMetadataWithNotify(par2, par3, par4, var6);
-                par1World.markBlockForRenderUpdate2(par2, par3, par4);
+                par1World.setBlockMetadataWithNotify(par2, par3, par4, var6, 2);
             }
         }
     }
@@ -145,8 +152,7 @@ public class BlockCake extends Block
     {
         if (!this.canBlockStay(par1World, par2, par3, par4))
         {
-            this.dropBlockAsItem(par1World, par2, par3, par4, par1World.getBlockMetadata(par2, par3, par4), 0);
-            par1World.setBlockWithNotify(par2, par3, par4, 0);
+            par1World.setBlockToAir(par2, par3, par4);
         }
     }
 

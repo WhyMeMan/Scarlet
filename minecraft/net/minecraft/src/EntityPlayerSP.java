@@ -93,7 +93,7 @@ public class EntityPlayerSP extends EntityPlayer
             --this.sprintToggleTimer;
         }
 
-        if (this.mc.playerController.func_78747_a())
+        if (this.mc.playerController.enableEverythingIsScrewedUpMode())
         {
             this.posX = this.posZ = 0.5D;
             this.posX = 0.0D;
@@ -278,8 +278,7 @@ public class EntityPlayerSP extends EntityPlayer
 
     public void updateCloak()
     {
-        this.playerCloakUrl = "http://skins.minecraft.net/MinecraftCloaks/" + StringUtils.stripControlCodes(this.username) + ".png";
-        this.cloakUrl = this.playerCloakUrl;
+        this.cloakUrl = "http://skins.minecraft.net/MinecraftCloaks/" + StringUtils.stripControlCodes(this.username) + ".png";
     }
 
     /**
@@ -331,6 +330,16 @@ public class EntityPlayerSP extends EntityPlayer
         this.mc.displayGuiScreen(new GuiChest(this.inventory, par1IInventory));
     }
 
+    public void displayGUIHopper(TileEntityHopper par1TileEntityHopper)
+    {
+        this.mc.displayGuiScreen(new GuiHopper(this.inventory, par1TileEntityHopper));
+    }
+
+    public void displayGUIHopperMinecart(EntityMinecartHopper par1EntityMinecartHopper)
+    {
+        this.mc.displayGuiScreen(new GuiHopper(this.inventory, par1EntityMinecartHopper));
+    }
+
     /**
      * Displays the crafting GUI for a workbench.
      */
@@ -339,9 +348,9 @@ public class EntityPlayerSP extends EntityPlayer
         this.mc.displayGuiScreen(new GuiCrafting(this.inventory, this.worldObj, par1, par2, par3));
     }
 
-    public void displayGUIEnchantment(int par1, int par2, int par3)
+    public void displayGUIEnchantment(int par1, int par2, int par3, String par4Str)
     {
-        this.mc.displayGuiScreen(new GuiEnchantment(this.inventory, this.worldObj, par1, par2, par3));
+        this.mc.displayGuiScreen(new GuiEnchantment(this.inventory, this.worldObj, par1, par2, par3, par4Str));
     }
 
     /**
@@ -384,9 +393,9 @@ public class EntityPlayerSP extends EntityPlayer
         this.mc.displayGuiScreen(new GuiDispenser(this.inventory, par1TileEntityDispenser));
     }
 
-    public void displayGUIMerchant(IMerchant par1IMerchant)
+    public void displayGUIMerchant(IMerchant par1IMerchant, String par2Str)
     {
-        this.mc.displayGuiScreen(new GuiMerchant(this.inventory, par1IMerchant, this.worldObj));
+        this.mc.displayGuiScreen(new GuiMerchant(this.inventory, par1IMerchant, this.worldObj, par2Str));
     }
 
     /**

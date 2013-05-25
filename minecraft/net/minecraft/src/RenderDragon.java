@@ -56,13 +56,13 @@ public class RenderDragon extends RenderLiving
             GL11.glDepthFunc(GL11.GL_LEQUAL);
             GL11.glEnable(GL11.GL_ALPHA_TEST);
             GL11.glAlphaFunc(GL11.GL_GREATER, var8);
-            this.loadDownloadableImageTexture(par1EntityDragon.skinUrl, "/mob/enderdragon/shuffle.png");
+            this.loadTexture("/mob/enderdragon/shuffle.png");
             this.mainModel.render(par1EntityDragon, par2, par3, par4, par5, par6, par7);
             GL11.glAlphaFunc(GL11.GL_GREATER, 0.1F);
             GL11.glDepthFunc(GL11.GL_EQUAL);
         }
 
-        this.loadDownloadableImageTexture(par1EntityDragon.skinUrl, par1EntityDragon.getTexture());
+        this.loadTexture(par1EntityDragon.getTexture());
         this.mainModel.render(par1EntityDragon, par2, par3, par4, par5, par6, par7);
 
         if (par1EntityDragon.hurtTime > 0)

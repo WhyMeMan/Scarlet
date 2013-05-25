@@ -25,5 +25,5 @@ public interface ICommand extends Comparable
     /**
      * Return whether the specified command parameter index is a username parameter.
      */
-    boolean isUsernameIndex(int var1);
+    boolean isUsernameIndex(String[] var1, int var2);
 }

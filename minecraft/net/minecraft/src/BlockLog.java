@@ -7,11 +7,13 @@ public class BlockLog extends Block
 {
     /** The type of tree this log came from. */
     public static final String[] woodType = new String[] {"oak", "spruce", "birch", "jungle"};
+    public static final String[] treeTextureTypes = new String[] {"tree_side", "tree_spruce", "tree_birch", "tree_jungle"};
+    private Icon[] iconArray;
+    private Icon tree_top;
 
     protected BlockLog(int par1)
     {
         super(par1, Material.wood);
-        this.blockIndexInTexture = 20;
         this.setCreativeTab(CreativeTabs.tabBlock);
     }
 
@@ -63,7 +65,7 @@ public class BlockLog extends Block
 
                             if ((var13 & 8) == 0)
                             {
-                                par1World.setBlockMetadata(par2 + var9, par3 + var10, par4 + var11, var13 | 8);
+                                par1World.setBlockMetadataWithNotify(par2 + var9, par3 + var10, par4 + var11, var13 | 8, 4);
                             }
                         }
                     }
@@ -103,11 +105,11 @@ public class BlockLog extends Block
     /**
      * From the specified side and block metadata retrieves the blocks texture. Args: side, metadata
      */
-    public int getBlockTextureFromSideAndMetadata(int par1, int par2)
+    public Icon getIcon(int par1, int par2)
     {
         int var3 = par2 & 12;
         int var4 = par2 & 3;
-        return var3 == 0 && (par1 == 1 || par1 == 0) ? 21 : (var3 == 4 && (par1 == 5 || par1 == 4) ? 21 : (var3 == 8 && (par1 == 2 || par1 == 3) ? 21 : (var4 == 1 ? 116 : (var4 == 2 ? 117 : (var4 == 3 ? 153 : 20)))));
+        return var3 == 0 && (par1 == 1 || par1 == 0) ? this.tree_top : (var3 == 4 && (par1 == 5 || par1 == 4) ? this.tree_top : (var3 == 8 && (par1 == 2 || par1 == 3) ? this.tree_top : this.iconArray[var4]));
     }
 
     /**
@@ -144,5 +146,20 @@ public class BlockLog extends Block
     protected ItemStack createStackedBlock(int par1)
     {
         return new ItemStack(this.blockID, 1, limitToValidMetadata(par1));
+    }
+
+    /**
+     * When this method is called, your block should register all the icons it needs with the given IconRegister. This
+     * is the only chance you get to register icons.
+     */
+    public void registerIcons(IconRegister par1IconRegister)
+    {
+        this.tree_top = par1IconRegister.registerIcon("tree_top");
+        this.iconArray = new Icon[treeTextureTypes.length];
+
+        for (int var2 = 0; var2 < this.iconArray.length; ++var2)
+        {
+            this.iconArray[var2] = par1IconRegister.registerIcon(treeTextureTypes[var2]);
+        }
     }
 }

@@ -11,7 +11,9 @@ public class TileEntityChestRenderer extends TileEntitySpecialRenderer
 
     /** The large double chest model. */
     private ModelChest largeChestModel = new ModelLargeChest();
-    private boolean field_92061_d;
+
+    /** If true, chests will be rendered with the Christmas present textures. */
+    private boolean isChristmas;
 
     public TileEntityChestRenderer()
     {
@@ -19,7 +21,7 @@ public class TileEntityChestRenderer extends TileEntitySpecialRenderer
 
         if (var1.get(2) + 1 == 12 && var1.get(5) >= 24 && var1.get(5) <= 26)
         {
-            this.field_92061_d = true;
+            this.isChristmas = true;
         }
     }
 
@@ -39,7 +41,7 @@ public class TileEntityChestRenderer extends TileEntitySpecialRenderer
             Block var10 = par1TileEntityChest.getBlockType();
             var9 = par1TileEntityChest.getBlockMetadata();
 
-            if (var10 != null && var9 == 0)
+            if (var10 instanceof BlockChest && var9 == 0)
             {
                 ((BlockChest)var10).unifyAdjacentChests(par1TileEntityChest.getWorldObj(), par1TileEntityChest.xCoord, par1TileEntityChest.yCoord, par1TileEntityChest.zCoord);
                 var9 = par1TileEntityChest.getBlockMetadata();
@@ -56,7 +58,11 @@ public class TileEntityChestRenderer extends TileEntitySpecialRenderer
             {
                 var14 = this.chestModel;
 
-                if (this.field_92061_d)
+                if (par1TileEntityChest.func_98041_l() == 1)
+                {
+                    this.bindTextureByName("/item/chests/trap_small.png");
+                }
+                else if (this.isChristmas)
                 {
                     this.bindTextureByName("/item/xmaschest.png");
                 }
@@ -69,7 +75,11 @@ public class TileEntityChestRenderer extends TileEntitySpecialRenderer
             {
                 var14 = this.largeChestModel;
 
-                if (this.field_92061_d)
+                if (par1TileEntityChest.func_98041_l() == 1)
+                {
+                    this.bindTextureByName("/item/chests/trap_large.png");
+                }
+                else if (this.isChristmas)
                 {
                     this.bindTextureByName("/item/largexmaschest.png");
                 }

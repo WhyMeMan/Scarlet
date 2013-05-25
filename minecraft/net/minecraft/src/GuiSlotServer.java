@@ -32,7 +32,7 @@ class GuiSlotServer extends GuiSlot
             int var3 = GuiMultiplayer.getSelectedServer(this.parentGui);
             GuiMultiplayer.getAndSetSelectedServer(this.parentGui, par1);
             ServerData var4 = GuiMultiplayer.getInternetServerList(this.parentGui).countServers() > par1 ? GuiMultiplayer.getInternetServerList(this.parentGui).getServerData(par1) : null;
-            boolean var5 = GuiMultiplayer.getSelectedServer(this.parentGui) >= 0 && GuiMultiplayer.getSelectedServer(this.parentGui) < this.getSize() && (var4 == null || var4.field_82821_f == 51);
+            boolean var5 = GuiMultiplayer.getSelectedServer(this.parentGui) >= 0 && GuiMultiplayer.getSelectedServer(this.parentGui) < this.getSize() && (var4 == null || var4.field_82821_f == 61);
             boolean var6 = GuiMultiplayer.getSelectedServer(this.parentGui) < GuiMultiplayer.getInternetServerList(this.parentGui).countServers();
             GuiMultiplayer.getButtonSelect(this.parentGui).enabled = var5;
             GuiMultiplayer.getButtonEdit(this.parentGui).enabled = var6;
@@ -107,7 +107,7 @@ class GuiSlotServer extends GuiSlot
         this.parentGui.drawCenteredString(this.parentGui.fontRenderer, StatCollector.translateToLocal("lanServer.scanning"), this.parentGui.width / 2, par3 + 1, 16777215);
         String var6;
 
-        switch (GuiMultiplayer.func_74010_g(this.parentGui) / 3 % 4)
+        switch (GuiMultiplayer.getTicksOpened(this.parentGui) / 3 % 4)
         {
             case 0:
             default:
@@ -130,21 +130,21 @@ class GuiSlotServer extends GuiSlot
     {
         ServerData var6 = GuiMultiplayer.getInternetServerList(this.parentGui).getServerData(par1);
 
-        synchronized (GuiMultiplayer.func_74011_h())
+        synchronized (GuiMultiplayer.getLock())
         {
-            if (GuiMultiplayer.func_74012_i() < 5 && !var6.field_78841_f)
+            if (GuiMultiplayer.getThreadsPending() < 5 && !var6.field_78841_f)
             {
                 var6.field_78841_f = true;
                 var6.pingToServer = -2L;
                 var6.serverMOTD = "";
                 var6.populationInfo = "";
-                GuiMultiplayer.func_74021_j();
+                GuiMultiplayer.increaseThreadsPending();
                 (new ThreadPollServers(this, var6)).start();
             }
         }
 
-        boolean var7 = var6.field_82821_f > 51;
-        boolean var8 = var6.field_82821_f < 51;
+        boolean var7 = var6.field_82821_f > 61;
+        boolean var8 = var6.field_82821_f < 61;
         boolean var9 = var7 || var8;
         this.parentGui.drawString(this.parentGui.fontRenderer, var6.serverName, par2 + 2, par3 + 1, 16777215);
         this.parentGui.drawString(this.parentGui.fontRenderer, var6.serverMOTD, par2 + 2, par3 + 12, 8421504);
@@ -152,7 +152,7 @@ class GuiSlotServer extends GuiSlot
 
         if (var9)
         {
-            String var10 = "\u00a74" + var6.gameVersion;
+            String var10 = EnumChatFormatting.DARK_RED + var6.gameVersion;
             this.parentGui.drawString(this.parentGui.fontRenderer, var10, par2 + 200 - this.parentGui.fontRenderer.getStringWidth(var10), par3 + 1, 8421504);
         }
 
@@ -166,7 +166,7 @@ class GuiSlotServer extends GuiSlot
         }
 
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        this.parentGui.mc.renderEngine.bindTexture(this.parentGui.mc.renderEngine.getTexture("/gui/icons.png"));
+        this.parentGui.mc.renderEngine.bindTexture("/gui/icons.png");
         byte var16 = 0;
         boolean var11 = false;
         String var12 = "";
@@ -231,7 +231,7 @@ class GuiSlotServer extends GuiSlot
 
         if (this.mouseX >= par2 + 205 - var13 && this.mouseY >= par3 - var13 && this.mouseX <= par2 + 205 + 10 + var13 && this.mouseY <= par3 + 8 + var13)
         {
-            GuiMultiplayer.func_74009_a(this.parentGui, var12);
+            GuiMultiplayer.getAndSetLagTooltip(this.parentGui, var12);
         }
     }
 }

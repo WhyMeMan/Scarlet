@@ -36,10 +36,10 @@ public class AABBPool
     }
 
     /**
-     * Adds a AABB to the pool, or if there is an available AABB, updates an existing AABB entry to specified
-     * coordinates
+     * Creates a new AABB, or reuses one that's no longer in use. Parameters: minX, minY, minZ, maxX, maxY, maxZ. AABBs
+     * returned from this function should only be used for one frame or tick, as after that they will be reused.
      */
-    public AxisAlignedBB addOrModifyAABBInPool(double par1, double par3, double par5, double par7, double par9, double par11)
+    public AxisAlignedBB getAABB(double par1, double par3, double par5, double par7, double par9, double par11)
     {
         AxisAlignedBB var13;
 

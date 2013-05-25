@@ -3,7 +3,7 @@ package net.minecraft.src;
 public class ScaledResolution
 {
     private static int scaledWidth;
-    private int scaledHeight;
+    private static int scaledHeight;
     private double scaledWidthD;
     private double scaledHeightD;
     private int scaleFactor;
@@ -36,9 +36,9 @@ public class ScaledResolution
         return scaledWidth;
     }
 
-    public int getScaledHeight()
+    public static int getScaledHeight()
     {
-        return this.scaledHeight;
+        return scaledHeight;
     }
 
     public double getScaledWidth_double()

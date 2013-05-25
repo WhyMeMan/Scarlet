@@ -32,7 +32,7 @@ public class CommandDifficulty extends CommandBase
             int var3 = this.getDifficultyForName(par1ICommandSender, par2ArrayOfStr[0]);
             MinecraftServer.getServer().setDifficultyForAllWorlds(var3);
             String var4 = StatCollector.translateToLocal(difficulties[var3]);
-            notifyAdmins(par1ICommandSender, 1, "commands.difficulty.success", new Object[] {var4});
+            notifyAdmins(par1ICommandSender, "commands.difficulty.success", new Object[] {var4});
         }
         else
         {

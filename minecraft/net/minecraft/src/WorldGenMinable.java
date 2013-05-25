@@ -9,11 +9,18 @@ public class WorldGenMinable extends WorldGenerator
 
     /** The number of blocks to generate. */
     private int numberOfBlocks;
+    private int field_94523_c;
 
     public WorldGenMinable(int par1, int par2)
     {
+        this(par1, par2, Block.stone.blockID);
+    }
+
+    public WorldGenMinable(int par1, int par2, int par3)
+    {
         this.minableBlockId = par1;
         this.numberOfBlocks = par2;
+        this.field_94523_c = par3;
     }
 
     public boolean generate(World par1World, Random par2Random, int par3, int par4, int par5)
@@ -57,9 +64,9 @@ public class WorldGenMinable extends WorldGenerator
                             {
                                 double var45 = ((double)var44 + 0.5D - var24) / (var28 / 2.0D);
 
-                                if (var39 * var39 + var42 * var42 + var45 * var45 < 1.0D && par1World.getBlockId(var38, var41, var44) == Block.stone.blockID)
+                                if (var39 * var39 + var42 * var42 + var45 * var45 < 1.0D && par1World.getBlockId(var38, var41, var44) == this.field_94523_c)
                                 {
-                                    par1World.setBlock(var38, var41, var44, this.minableBlockId);
+                                    par1World.setBlock(var38, var41, var44, this.minableBlockId, 0, 2);
                                 }
                             }
                         }

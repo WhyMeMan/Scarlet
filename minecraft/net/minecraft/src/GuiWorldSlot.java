@@ -84,7 +84,7 @@ class GuiWorldSlot extends GuiSlot
 
             if (var6.isHardcoreModeEnabled())
             {
-                var9 = "\u00a74" + StatCollector.translateToLocal("gameMode.hardcore") + "\u00a7r";
+                var9 = EnumChatFormatting.DARK_RED + StatCollector.translateToLocal("gameMode.hardcore") + EnumChatFormatting.RESET;
             }
 
             if (var6.getCheatsEnabled())

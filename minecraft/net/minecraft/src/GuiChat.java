@@ -117,11 +117,11 @@ public class GuiChat extends GuiScreen
         }
         else if (par2 == 201)
         {
-            this.mc.ingameGUI.getChatGUI().scroll(19);
+            this.mc.ingameGUI.getChatGUI().scroll(this.mc.ingameGUI.getChatGUI().func_96127_i() - 1);
         }
         else if (par2 == 209)
         {
-            this.mc.ingameGUI.getChatGUI().scroll(-19);
+            this.mc.ingameGUI.getChatGUI().scroll(-this.mc.ingameGUI.getChatGUI().func_96127_i() + 1);
         }
         else
         {
@@ -176,7 +176,7 @@ public class GuiChat extends GuiScreen
                     if (this.mc.gameSettings.chatLinksPrompt)
                     {
                         this.clickedURI = var5;
-                        this.mc.displayGuiScreen(new GuiConfirmOpenLink(this, var4.getClickedUrl(), 0));
+                        this.mc.displayGuiScreen(new GuiConfirmOpenLink(this, var4.getClickedUrl(), 0, false));
                     }
                     else
                     {

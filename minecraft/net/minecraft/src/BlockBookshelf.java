@@ -4,18 +4,18 @@ import java.util.Random;
 
 public class BlockBookshelf extends Block
 {
-    public BlockBookshelf(int par1, int par2)
+    public BlockBookshelf(int par1)
     {
-        super(par1, par2, Material.wood);
+        super(par1, Material.wood);
         this.setCreativeTab(CreativeTabs.tabBlock);
     }
 
     /**
-     * Returns the block texture based on the side being looked at.  Args: side
+     * From the specified side and block metadata retrieves the blocks texture. Args: side, metadata
      */
-    public int getBlockTextureFromSide(int par1)
+    public Icon getIcon(int par1, int par2)
     {
-        return par1 <= 1 ? 4 : this.blockIndexInTexture;
+        return par1 != 1 && par1 != 0 ? super.getIcon(par1, par2) : Block.planks.getBlockTextureFromSide(par1);
     }
 
     /**

@@ -23,7 +23,7 @@ public class ItemAppleGold extends ItemFood
         return par1ItemStack.getItemDamage() == 0 ? EnumRarity.rare : EnumRarity.epic;
     }
 
-    protected void func_77849_c(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer)
+    protected void onFoodEaten(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer)
     {
         if (par1ItemStack.getItemDamage() > 0)
         {
@@ -36,7 +36,7 @@ public class ItemAppleGold extends ItemFood
         }
         else
         {
-            super.func_77849_c(par1ItemStack, par2World, par3EntityPlayer);
+            super.onFoodEaten(par1ItemStack, par2World, par3EntityPlayer);
         }
     }
 

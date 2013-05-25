@@ -48,7 +48,7 @@ public class CommandEnchant extends CommandBase
                 {
                     throw new NumberInvalidException("commands.enchant.notFound", new Object[] {Integer.valueOf(var4)});
                 }
-                else if (!var7.func_92089_a(var6))
+                else if (!var7.canApply(var6))
                 {
                     notifyAdmins(par1ICommandSender, "commands.enchant.cantEnchant", new Object[0]);
                 }
@@ -106,8 +106,8 @@ public class CommandEnchant extends CommandBase
     /**
      * Return whether the specified command parameter index is a username parameter.
      */
-    public boolean isUsernameIndex(int par1)
+    public boolean isUsernameIndex(String[] par1ArrayOfStr, int par2)
     {
-        return par1 == 0;
+        return par2 == 0;
     }
 }

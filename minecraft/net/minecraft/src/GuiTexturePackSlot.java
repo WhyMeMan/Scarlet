@@ -32,11 +32,13 @@ class GuiTexturePackSlot extends GuiSlot
         {
             GuiTexturePacks.func_73951_d(this.parentTexturePackGui).texturePackList.setTexturePack((ITexturePack)var3.get(par1));
             GuiTexturePacks.func_73952_e(this.parentTexturePackGui).renderEngine.refreshTextures();
+            GuiTexturePacks.func_73962_f(this.parentTexturePackGui).renderGlobal.loadRenderers();
         }
         catch (Exception var5)
         {
-            GuiTexturePacks.func_73962_f(this.parentTexturePackGui).texturePackList.setTexturePack((ITexturePack)var3.get(0));
-            GuiTexturePacks.func_73959_g(this.parentTexturePackGui).renderEngine.refreshTextures();
+            GuiTexturePacks.func_73959_g(this.parentTexturePackGui).texturePackList.setTexturePack((ITexturePack)var3.get(0));
+            GuiTexturePacks.func_73957_h(this.parentTexturePackGui).renderEngine.refreshTextures();
+            GuiTexturePacks.func_73956_i(this.parentTexturePackGui).renderGlobal.loadRenderers();
         }
     }
 
@@ -45,8 +47,8 @@ class GuiTexturePackSlot extends GuiSlot
      */
     protected boolean isSelected(int par1)
     {
-        List var2 = GuiTexturePacks.func_73957_h(this.parentTexturePackGui).texturePackList.availableTexturePacks();
-        return GuiTexturePacks.func_73956_i(this.parentTexturePackGui).texturePackList.getSelectedTexturePack() == var2.get(par1);
+        List var2 = GuiTexturePacks.func_73953_j(this.parentTexturePackGui).texturePackList.availableTexturePacks();
+        return GuiTexturePacks.func_73961_k(this.parentTexturePackGui).texturePackList.getSelectedTexturePack() == var2.get(par1);
     }
 
     /**
@@ -64,8 +66,8 @@ class GuiTexturePackSlot extends GuiSlot
 
     protected void drawSlot(int par1, int par2, int par3, int par4, Tessellator par5Tessellator)
     {
-        ITexturePack var6 = (ITexturePack)GuiTexturePacks.func_73953_j(this.parentTexturePackGui).texturePackList.availableTexturePacks().get(par1);
-        var6.bindThumbnailTexture(GuiTexturePacks.func_73961_k(this.parentTexturePackGui).renderEngine);
+        ITexturePack var6 = (ITexturePack)GuiTexturePacks.func_96143_l(this.parentTexturePackGui).texturePackList.availableTexturePacks().get(par1);
+        var6.bindThumbnailTexture(GuiTexturePacks.func_96142_m(this.parentTexturePackGui).renderEngine);
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         par5Tessellator.startDrawingQuads();
         par5Tessellator.setColorOpaque_I(16777215);
@@ -74,8 +76,20 @@ class GuiTexturePackSlot extends GuiSlot
         par5Tessellator.addVertexWithUV((double)(par2 + 32), (double)par3, 0.0D, 1.0D, 0.0D);
         par5Tessellator.addVertexWithUV((double)par2, (double)par3, 0.0D, 0.0D, 0.0D);
         par5Tessellator.draw();
-        this.parentTexturePackGui.drawString(GuiTexturePacks.func_73960_l(this.parentTexturePackGui), var6.getTexturePackFileName(), par2 + 32 + 2, par3 + 1, 16777215);
-        this.parentTexturePackGui.drawString(GuiTexturePacks.func_73963_m(this.parentTexturePackGui), var6.getFirstDescriptionLine(), par2 + 32 + 2, par3 + 12, 8421504);
-        this.parentTexturePackGui.drawString(GuiTexturePacks.func_73954_n(this.parentTexturePackGui), var6.getSecondDescriptionLine(), par2 + 32 + 2, par3 + 12 + 10, 8421504);
+        String var7 = var6.getTexturePackFileName();
+
+        if (!var6.isCompatible())
+        {
+            var7 = EnumChatFormatting.DARK_RED + StatCollector.translateToLocal("texturePack.incompatible") + " - " + var7;
+        }
+
+        if (var7.length() > 32)
+        {
+            var7 = var7.substring(0, 32).trim() + "...";
+        }
+
+        this.parentTexturePackGui.drawString(GuiTexturePacks.func_73954_n(this.parentTexturePackGui), var7, par2 + 32 + 2, par3 + 1, 16777215);
+        this.parentTexturePackGui.drawString(GuiTexturePacks.func_96145_o(this.parentTexturePackGui), var6.getFirstDescriptionLine(), par2 + 32 + 2, par3 + 12, 8421504);
+        this.parentTexturePackGui.drawString(GuiTexturePacks.func_96144_p(this.parentTexturePackGui), var6.getSecondDescriptionLine(), par2 + 32 + 2, par3 + 12 + 10, 8421504);
     }
 }

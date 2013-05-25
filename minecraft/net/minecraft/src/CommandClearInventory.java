@@ -30,7 +30,15 @@ public class CommandClearInventory extends CommandBase
         int var5 = par2ArrayOfStr.length >= 3 ? parseIntWithMin(par1ICommandSender, par2ArrayOfStr[2], 0) : -1;
         int var6 = var3.inventory.clearInventory(var4, var5);
         var3.inventoryContainer.detectAndSendChanges();
-        notifyAdmins(par1ICommandSender, "commands.clear.success", new Object[] {var3.getEntityName(), Integer.valueOf(var6)});
+
+        if (var6 == 0)
+        {
+            throw new CommandException("commands.clear.failure", new Object[] {var3.getEntityName()});
+        }
+        else
+        {
+            notifyAdmins(par1ICommandSender, "commands.clear.success", new Object[] {var3.getEntityName(), Integer.valueOf(var6)});
+        }
     }
 
     /**
@@ -52,8 +60,8 @@ public class CommandClearInventory extends CommandBase
     /**
      * Return whether the specified command parameter index is a username parameter.
      */
-    public boolean isUsernameIndex(int par1)
+    public boolean isUsernameIndex(String[] par1ArrayOfStr, int par2)
     {
-        return par1 == 0;
+        return par2 == 0;
     }
 }

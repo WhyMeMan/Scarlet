@@ -13,7 +13,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class DataWatcher
 {
-    private boolean field_92086_a = true;
+    /** When isBlank is true the DataWatcher is not watching any objects */
+    private boolean isBlank = true;
     private static final HashMap dataTypes = new HashMap();
     private final Map watchedObjects = new HashMap();
 
@@ -47,7 +48,7 @@ public class DataWatcher
             this.lock.writeLock().lock();
             this.watchedObjects.put(Integer.valueOf(par1), var4);
             this.lock.writeLock().unlock();
-            this.field_92086_a = false;
+            this.isBlank = false;
         }
     }
 
@@ -60,7 +61,7 @@ public class DataWatcher
         this.lock.writeLock().lock();
         this.watchedObjects.put(Integer.valueOf(par1), var3);
         this.lock.writeLock().unlock();
-        this.field_92086_a = false;
+        this.isBlank = false;
     }
 
     /**
@@ -139,7 +140,7 @@ public class DataWatcher
         }
     }
 
-    public void func_82708_h(int par1)
+    public void setObjectWatched(int par1)
     {
         WatchableObject.setWatchableObjectWatched(this.getWatchedObject(par1), true);
         this.objectChanged = true;
@@ -217,7 +218,7 @@ public class DataWatcher
         par1DataOutputStream.writeByte(127);
     }
 
-    public List func_75685_c()
+    public List getAllWatched()
     {
         ArrayList var1 = null;
         this.lock.readLock().lock();
@@ -350,9 +351,9 @@ public class DataWatcher
         this.lock.writeLock().unlock();
     }
 
-    public boolean func_92085_d()
+    public boolean getIsBlank()
     {
-        return this.field_92086_a;
+        return this.isBlank;
     }
 
     static

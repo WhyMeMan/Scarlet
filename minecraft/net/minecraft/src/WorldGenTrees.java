@@ -89,7 +89,7 @@ public class WorldGenTrees extends WorldGenerator
                 {
                     this.setBlock(par1World, par3, par4 - 1, par5, Block.dirt.blockID);
                     var9 = 3;
-                    byte var18 = 0;
+                    byte var19 = 0;
                     int var13;
                     int var14;
                     int var15;
@@ -97,7 +97,7 @@ public class WorldGenTrees extends WorldGenerator
                     for (var11 = par4 - var9 + var6; var11 <= par4 + var6; ++var11)
                     {
                         var12 = var11 - (par4 + var6);
-                        var13 = var18 + 1 - var12 / 2;
+                        var13 = var19 + 1 - var12 / 2;
 
                         for (var14 = par3 - var13; var14 <= par3 + var13; ++var14)
                         {
@@ -107,9 +107,14 @@ public class WorldGenTrees extends WorldGenerator
                             {
                                 int var17 = var16 - par5;
 
-                                if ((Math.abs(var15) != var13 || Math.abs(var17) != var13 || par2Random.nextInt(2) != 0 && var12 != 0) && par1World.isAirBlock(var14, var11, var16))
+                                if (Math.abs(var15) != var13 || Math.abs(var17) != var13 || par2Random.nextInt(2) != 0 && var12 != 0)
                                 {
-                                    this.setBlockAndMetadata(par1World, var14, var11, var16, Block.leaves.blockID, this.metaLeaves);
+                                    int var18 = par1World.getBlockId(var14, var11, var16);
+
+                                    if (var18 == 0 || var18 == Block.leaves.blockID)
+                                    {
+                                        this.setBlockAndMetadata(par1World, var14, var11, var16, Block.leaves.blockID, this.metaLeaves);
+                                    }
                                 }
                             }
                         }
@@ -194,7 +199,7 @@ public class WorldGenTrees extends WorldGenerator
                                     if (par2Random.nextInt(4 - var11) == 0)
                                     {
                                         var13 = par2Random.nextInt(3);
-                                        this.setBlockAndMetadata(par1World, par3 + Direction.offsetX[Direction.footInvisibleFaceRemap[var12]], par4 + var6 - 5 + var11, par5 + Direction.offsetZ[Direction.footInvisibleFaceRemap[var12]], Block.cocoaPlant.blockID, var13 << 2 | var12);
+                                        this.setBlockAndMetadata(par1World, par3 + Direction.offsetX[Direction.rotateOpposite[var12]], par4 + var6 - 5 + var11, par5 + Direction.offsetZ[Direction.rotateOpposite[var12]], Block.cocoaPlant.blockID, var13 << 2 | var12);
                                     }
                                 }
                             }

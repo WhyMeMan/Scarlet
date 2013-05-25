@@ -439,7 +439,7 @@ public class ChunkProviderHell implements IChunkProvider
             var7 = var4 + this.hellRNG.nextInt(16) + 8;
             var8 = this.hellRNG.nextInt(120) + 4;
             var9 = var5 + this.hellRNG.nextInt(16) + 8;
-            (new WorldGenHellLava(Block.lavaMoving.blockID)).generate(this.worldObj, this.hellRNG, var7, var8, var9);
+            (new WorldGenHellLava(Block.lavaMoving.blockID, false)).generate(this.worldObj, this.hellRNG, var7, var8, var9);
         }
 
         var6 = this.hellRNG.nextInt(this.hellRNG.nextInt(10) + 1) + 1;
@@ -487,6 +487,25 @@ public class ChunkProviderHell implements IChunkProvider
             (new WorldGenFlowers(Block.mushroomRed.blockID)).generate(this.worldObj, this.hellRNG, var7, var8, var9);
         }
 
+        WorldGenMinable var12 = new WorldGenMinable(Block.oreNetherQuartz.blockID, 13, Block.netherrack.blockID);
+        int var11;
+
+        for (var8 = 0; var8 < 16; ++var8)
+        {
+            var9 = var4 + this.hellRNG.nextInt(16);
+            var10 = this.hellRNG.nextInt(108) + 10;
+            var11 = var5 + this.hellRNG.nextInt(16);
+            var12.generate(this.worldObj, this.hellRNG, var9, var10, var11);
+        }
+
+        for (var8 = 0; var8 < 16; ++var8)
+        {
+            var9 = var4 + this.hellRNG.nextInt(16);
+            var10 = this.hellRNG.nextInt(108) + 10;
+            var11 = var5 + this.hellRNG.nextInt(16);
+            (new WorldGenHellLava(Block.lavaMoving.blockID, true)).generate(this.worldObj, this.hellRNG, var9, var10, var11);
+        }
+
         BlockSand.fallInstantly = false;
     }
 
@@ -499,11 +518,12 @@ public class ChunkProviderHell implements IChunkProvider
         return true;
     }
 
+    public void func_104112_b() {}
+
     /**
-     * Unloads the 100 oldest chunks from memory, due to a bug with chunkSet.add() never being called it thinks the list
-     * is always empty and will not remove any chunks.
+     * Unloads chunks that are marked to be unloaded. This is not guaranteed to unload every such chunk.
      */
-    public boolean unload100OldestChunks()
+    public boolean unloadQueuedChunks()
     {
         return false;
     }

@@ -5,15 +5,18 @@ import org.lwjgl.opengl.GL12;
 
 public class RenderSnowball extends Render
 {
-    /**
-     * Have the icon index (in items.png) that will be used to render the image. Currently, eggs and snowballs uses this
-     * classes.
-     */
-    private int itemIconIndex;
+    private Item field_94151_a;
+    private int field_94150_f;
 
-    public RenderSnowball(int par1)
+    public RenderSnowball(Item par1, int par2)
     {
-        this.itemIconIndex = par1;
+        this.field_94151_a = par1;
+        this.field_94150_f = par2;
+    }
+
+    public RenderSnowball(Item par1)
+    {
+        this(par1, 0);
     }
 
     /**
@@ -24,37 +27,42 @@ public class RenderSnowball extends Render
      */
     public void doRender(Entity par1Entity, double par2, double par4, double par6, float par8, float par9)
     {
-        GL11.glPushMatrix();
-        GL11.glTranslatef((float)par2, (float)par4, (float)par6);
-        GL11.glEnable(GL12.GL_RESCALE_NORMAL);
-        GL11.glScalef(0.5F, 0.5F, 0.5F);
-        this.loadTexture("/gui/items.png");
-        Tessellator var10 = Tessellator.instance;
+        Icon var10 = this.field_94151_a.getIconFromDamage(this.field_94150_f);
 
-        if (this.itemIconIndex == 154)
+        if (var10 != null)
         {
-            int var11 = PotionHelper.func_77915_a(((EntityPotion)par1Entity).getPotionDamage(), false);
-            float var12 = (float)(var11 >> 16 & 255) / 255.0F;
-            float var13 = (float)(var11 >> 8 & 255) / 255.0F;
-            float var14 = (float)(var11 & 255) / 255.0F;
-            GL11.glColor3f(var12, var13, var14);
             GL11.glPushMatrix();
-            this.func_77026_a(var10, 141);
-            GL11.glPopMatrix();
-            GL11.glColor3f(1.0F, 1.0F, 1.0F);
-        }
+            GL11.glTranslatef((float)par2, (float)par4, (float)par6);
+            GL11.glEnable(GL12.GL_RESCALE_NORMAL);
+            GL11.glScalef(0.5F, 0.5F, 0.5F);
+            this.loadTexture("/gui/items.png");
+            Tessellator var11 = Tessellator.instance;
 
-        this.func_77026_a(var10, this.itemIconIndex);
-        GL11.glDisable(GL12.GL_RESCALE_NORMAL);
-        GL11.glPopMatrix();
+            if (var10 == ItemPotion.func_94589_d("potion_splash"))
+            {
+                int var12 = PotionHelper.func_77915_a(((EntityPotion)par1Entity).getPotionDamage(), false);
+                float var13 = (float)(var12 >> 16 & 255) / 255.0F;
+                float var14 = (float)(var12 >> 8 & 255) / 255.0F;
+                float var15 = (float)(var12 & 255) / 255.0F;
+                GL11.glColor3f(var13, var14, var15);
+                GL11.glPushMatrix();
+                this.func_77026_a(var11, ItemPotion.func_94589_d("potion_contents"));
+                GL11.glPopMatrix();
+                GL11.glColor3f(1.0F, 1.0F, 1.0F);
+            }
+
+            this.func_77026_a(var11, var10);
+            GL11.glDisable(GL12.GL_RESCALE_NORMAL);
+            GL11.glPopMatrix();
+        }
     }
 
-    private void func_77026_a(Tessellator par1Tessellator, int par2)
+    private void func_77026_a(Tessellator par1Tessellator, Icon par2Icon)
     {
-        float var3 = (float)(par2 % 16 * 16 + 0) / 256.0F;
-        float var4 = (float)(par2 % 16 * 16 + 16) / 256.0F;
-        float var5 = (float)(par2 / 16 * 16 + 0) / 256.0F;
-        float var6 = (float)(par2 / 16 * 16 + 16) / 256.0F;
+        float var3 = par2Icon.getMinU();
+        float var4 = par2Icon.getMaxU();
+        float var5 = par2Icon.getMinV();
+        float var6 = par2Icon.getMaxV();
         float var7 = 1.0F;
         float var8 = 0.5F;
         float var9 = 0.25F;

@@ -18,7 +18,7 @@ public class Packet40EntityMetadata extends Packet
 
         if (par3)
         {
-            this.metadata = par2DataWatcher.func_75685_c();
+            this.metadata = par2DataWatcher.getAllWatched();
         }
         else
         {

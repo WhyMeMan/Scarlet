@@ -142,14 +142,13 @@ public class StatFileWriter
 
                 if (var12 == null)
                 {
-                    System.out.println(var10 + " is not a valid stat");
+                    System.out.println(var10 + " is not a valid stat, creating place-holder");
+                    var12 = (new StatPlaceholder(var10)).registerStat();
                 }
-                else
-                {
-                    var3.append(StatList.getOneShotStat(var10).statGuid).append(",");
-                    var3.append(var11).append(",");
-                    var1.put(var12, Integer.valueOf(var11));
-                }
+
+                var3.append(StatList.getOneShotStat(var10).statGuid).append(",");
+                var3.append(var11).append(",");
+                var1.put(var12, Integer.valueOf(var11));
             }
 
             MD5String var14 = new MD5String(var2);

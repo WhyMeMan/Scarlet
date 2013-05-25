@@ -6,7 +6,7 @@ import net.minecraft.server.MinecraftServer;
 
 public class IntegratedServerListenThread extends NetworkListenThread
 {
-    private final MemoryConnection netMemoryConnection = new MemoryConnection((NetHandler)null);
+    private final MemoryConnection netMemoryConnection;
     private MemoryConnection theMemoryConnection;
     private String field_71759_e;
     private boolean field_71756_f = false;
@@ -15,6 +15,7 @@ public class IntegratedServerListenThread extends NetworkListenThread
     public IntegratedServerListenThread(IntegratedServer par1IntegratedServer) throws IOException
     {
         super(par1IntegratedServer);
+        this.netMemoryConnection = new MemoryConnection(par1IntegratedServer.getLogAgent(), (NetHandler)null);
     }
 
     public void func_71754_a(MemoryConnection par1MemoryConnection, String par2Str)
@@ -63,7 +64,7 @@ public class IntegratedServerListenThread extends NetworkListenThread
 
         if (this.myServerListenThread != null)
         {
-            System.out.println("Stopping server connection");
+            this.getIntegratedServer().getLogAgent().logInfo("Stopping server connection");
             this.myServerListenThread.func_71768_b();
             this.myServerListenThread.interrupt();
             this.myServerListenThread = null;
@@ -77,13 +78,13 @@ public class IntegratedServerListenThread extends NetworkListenThread
     {
         if (this.theMemoryConnection != null)
         {
-            EntityPlayerMP var1 = this.getIntergatedServerMinecraftServerInstance().getConfigurationManager().createPlayerForUser(this.field_71759_e);
+            EntityPlayerMP var1 = this.getIntegratedServer().getConfigurationManager().createPlayerForUser(this.field_71759_e);
 
             if (var1 != null)
             {
                 this.netMemoryConnection.pairWith(this.theMemoryConnection);
                 this.field_71756_f = true;
-                this.getIntergatedServerMinecraftServerInstance().getConfigurationManager().initializeConnectionToPlayer(this.netMemoryConnection, var1);
+                this.getIntegratedServer().getConfigurationManager().initializeConnectionToPlayer(this.netMemoryConnection, var1);
             }
 
             this.theMemoryConnection = null;
@@ -101,7 +102,7 @@ public class IntegratedServerListenThread extends NetworkListenThread
     /**
      * Gets MinecraftServer instance.
      */
-    public IntegratedServer getIntergatedServerMinecraftServerInstance()
+    public IntegratedServer getIntegratedServer()
     {
         return (IntegratedServer)super.getServer();
     }
@@ -113,6 +114,6 @@ public class IntegratedServerListenThread extends NetworkListenThread
 
     public MinecraftServer getServer()
     {
-        return this.getIntergatedServerMinecraftServerInstance();
+        return this.getIntegratedServer();
     }
 }

@@ -76,6 +76,25 @@ public class EntityList
     {
         Entity var2 = null;
 
+        if ("Minecart".equals(par0NBTTagCompound.getString("id")))
+        {
+            switch (par0NBTTagCompound.getInteger("Type"))
+            {
+                case 0:
+                    par0NBTTagCompound.setString("id", "MinecartRideable");
+                    break;
+
+                case 1:
+                    par0NBTTagCompound.setString("id", "MinecartChest");
+                    break;
+
+                case 2:
+                    par0NBTTagCompound.setString("id", "MinecartFurnace");
+            }
+
+            par0NBTTagCompound.removeTag("Type");
+        }
+
         try
         {
             Class var3 = (Class)stringToClassMapping.get(par0NBTTagCompound.getString("id"));
@@ -96,7 +115,7 @@ public class EntityList
         }
         else
         {
-            System.out.println("Skipping Entity with id " + par0NBTTagCompound.getString("id"));
+            par1World.getWorldLogAgent().logWarning("Skipping Entity with id " + par0NBTTagCompound.getString("id"));
         }
 
         return var2;
@@ -111,7 +130,7 @@ public class EntityList
 
         try
         {
-            Class var3 = (Class)IDtoClassMapping.get(Integer.valueOf(par0));
+            Class var3 = getClassFromID(par0);
 
             if (var3 != null)
             {
@@ -125,7 +144,7 @@ public class EntityList
 
         if (var2 == null)
         {
-            System.out.println("Skipping Entity with id " + par0);
+            par1World.getWorldLogAgent().logWarning("Skipping Entity with id " + par0);
         }
 
         return var2;
@@ -161,7 +180,7 @@ public class EntityList
      */
     public static String getStringFromID(int par0)
     {
-        Class var1 = (Class)IDtoClassMapping.get(Integer.valueOf(par0));
+        Class var1 = getClassFromID(par0);
         return var1 != null ? (String)classToStringMapping.get(var1) : null;
     }
 
@@ -183,8 +202,13 @@ public class EntityList
         addMapping(EntityTNTPrimed.class, "PrimedTnt", 20);
         addMapping(EntityFallingSand.class, "FallingSand", 21);
         addMapping(EntityFireworkRocket.class, "FireworksRocketEntity", 22);
-        addMapping(EntityMinecart.class, "Minecart", 40);
         addMapping(EntityBoat.class, "Boat", 41);
+        addMapping(EntityMinecartEmpty.class, "MinecartRideable", 42);
+        addMapping(EntityMinecartChest.class, "MinecartChest", 43);
+        addMapping(EntityMinecartFurnace.class, "MinecartFurnace", 44);
+        addMapping(EntityMinecartTNT.class, "MinecartTNT", 45);
+        addMapping(EntityMinecartHopper.class, "MinecartHopper", 46);
+        addMapping(EntityMinecartMobSpawner.class, "MinecartSpawner", 47);
         addMapping(EntityLiving.class, "Mob", 48);
         addMapping(EntityMob.class, "Monster", 49);
         addMapping(EntityCreeper.class, "Creeper", 50, 894731, 0);

@@ -27,7 +27,7 @@ public class AxisAlignedBB
         return (AABBPool)theAABBLocalPool.get();
     }
 
-    public AxisAlignedBB(double par1, double par3, double par5, double par7, double par9, double par11)
+    protected AxisAlignedBB(double par1, double par3, double par5, double par7, double par9, double par11)
     {
         this.minX = par1;
         this.minY = par3;
@@ -93,7 +93,7 @@ public class AxisAlignedBB
             var17 += par5;
         }
 
-        return getAABBPool().addOrModifyAABBInPool(var7, var9, var11, var13, var15, var17);
+        return getAABBPool().getAABB(var7, var9, var11, var13, var15, var17);
     }
 
     /**
@@ -108,7 +108,7 @@ public class AxisAlignedBB
         double var13 = this.maxX + par1;
         double var15 = this.maxY + par3;
         double var17 = this.maxZ + par5;
-        return getAABBPool().addOrModifyAABBInPool(var7, var9, var11, var13, var15, var17);
+        return getAABBPool().getAABB(var7, var9, var11, var13, var15, var17);
     }
 
     /**
@@ -117,7 +117,7 @@ public class AxisAlignedBB
      */
     public AxisAlignedBB getOffsetBoundingBox(double par1, double par3, double par5)
     {
-        return getAABBPool().addOrModifyAABBInPool(this.minX + par1, this.minY + par3, this.minZ + par5, this.maxX + par1, this.maxY + par3, this.maxZ + par5);
+        return getAABBPool().getAABB(this.minX + par1, this.minY + par3, this.minZ + par5, this.maxX + par1, this.maxY + par3, this.maxZ + par5);
     }
 
     /**
@@ -310,7 +310,7 @@ public class AxisAlignedBB
         double var13 = this.maxX - par1;
         double var15 = this.maxY - par3;
         double var17 = this.maxZ - par5;
-        return getAABBPool().addOrModifyAABBInPool(var7, var9, var11, var13, var15, var17);
+        return getAABBPool().getAABB(var7, var9, var11, var13, var15, var17);
     }
 
     /**
@@ -318,7 +318,7 @@ public class AxisAlignedBB
      */
     public AxisAlignedBB copy()
     {
-        return getAABBPool().addOrModifyAABBInPool(this.minX, this.minY, this.minZ, this.maxX, this.maxY, this.maxZ);
+        return getAABBPool().getAABB(this.minX, this.minY, this.minZ, this.maxX, this.maxY, this.maxZ);
     }
 
     public MovingObjectPosition calculateIntercept(Vec3 par1Vec3, Vec3 par2Vec3)

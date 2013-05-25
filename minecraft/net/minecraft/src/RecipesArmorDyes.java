@@ -76,6 +76,7 @@ public class RecipesArmorDyes implements IRecipe
                     }
 
                     var2 = var8.copy();
+                    var2.stackSize = 1;
 
                     if (var6.hasColor(var8))
                     {

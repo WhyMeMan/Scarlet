@@ -37,9 +37,9 @@ public class AltManager extends GuiScreen
     {
         StringTranslate stringtranslate = StringTranslate.getInstance();
         Keyboard.enableRepeatEvents(true);
-        controlList.clear();
-        controlList.add(new GuiButton(0, width / 2 - 100, height / 4 + 92 + 12, "Login"));
-        controlList.add(new GuiButton(1, width / 2 - 100, height / 4 + 116 + 12, "Back"));
+        buttonList.clear();
+        buttonList.add(new GuiButton(0, width / 2 - 100, height / 4 + 92 + 12, "Login"));
+        buttonList.add(new GuiButton(1, width / 2 - 100, height / 4 + 116 + 12, "Back"));
         serverTextField = new GuiTextField(fontRenderer, width / 2 - 100, 76, 200, 20);
         serverTextField.setText(mc.session.username);
         serverTextField.setMaxStringLength(50);
@@ -111,7 +111,7 @@ public class AltManager extends GuiScreen
         }
         if(c == '\r')
         {
-            actionPerformed((GuiButton)controlList.get(0));
+            actionPerformed((GuiButton)buttonList.get(0));
         }
     }
 

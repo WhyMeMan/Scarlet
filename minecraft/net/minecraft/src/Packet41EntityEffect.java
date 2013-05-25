@@ -20,7 +20,15 @@ public class Packet41EntityEffect extends Packet
         this.entityId = par1;
         this.effectId = (byte)(par2PotionEffect.getPotionID() & 255);
         this.effectAmplifier = (byte)(par2PotionEffect.getAmplifier() & 255);
-        this.duration = (short)par2PotionEffect.getDuration();
+
+        if (par2PotionEffect.getDuration() > 32767)
+        {
+            this.duration = 32767;
+        }
+        else
+        {
+            this.duration = (short)par2PotionEffect.getDuration();
+        }
     }
 
     /**
@@ -43,6 +51,14 @@ public class Packet41EntityEffect extends Packet
         par1DataOutputStream.writeByte(this.effectId);
         par1DataOutputStream.writeByte(this.effectAmplifier);
         par1DataOutputStream.writeShort(this.duration);
+    }
+
+    /**
+     * Returns true if duration is at maximum, false otherwise.
+     */
+    public boolean isDurationMax()
+    {
+        return this.duration == 32767;
     }
 
     /**

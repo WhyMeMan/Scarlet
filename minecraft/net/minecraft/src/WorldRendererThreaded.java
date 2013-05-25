@@ -58,7 +58,7 @@ public class WorldRendererThreaded extends WorldRenderer
             var27.addAll(this.tileEntityRenderers);
             this.tileEntityRenderers.clear();
             byte var10 = 1;
-            ChunkCache var11 = new ChunkCache(this.worldObj, var2 - var10, var3 - var10, var4 - var10, var5 + var10, var6 + var10, var7 + var10);
+            ChunkCache var11 = new ChunkCache(this.worldObj, var2 - var10, var3 - var10, var4 - var10, var5 + var10, var6 + var10, var7 + var10, var10);
 
             if (!var11.extendedLevelsInChunkCache())
             {
@@ -96,12 +96,6 @@ public class WorldRendererThreaded extends WorldRenderer
                                         var19 = true;
                                         GL11.glNewList(this.glRenderList + var16, GL11.GL_COMPILE);
                                         var13.setRenderingChunk(true);
-
-                                        if (var14)
-                                        {
-                                            Reflector.callVoid(Reflector.ForgeHooksClient_beforeRenderPass, new Object[] {Integer.valueOf(var16)});
-                                        }
-
                                         var13.startDrawingQuads();
                                         var13.setTranslation((double)(-globalChunkOffsetX), 0.0D, (double)(-globalChunkOffsetZ));
                                     }
@@ -134,17 +128,7 @@ public class WorldRendererThreaded extends WorldRenderer
 
                                     if (var26)
                                     {
-                                        if (var14)
-                                        {
-                                            Reflector.callVoid(Reflector.ForgeHooksClient_beforeBlockRender, new Object[] {var24, var12});
-                                        }
-
                                         var18 |= var12.renderBlockByRenderType(var24, var22, var20, var21);
-
-                                        if (var14)
-                                        {
-                                            Reflector.callVoid(Reflector.ForgeHooksClient_afterBlockRender, new Object[] {var24, var12});
-                                        }
                                     }
                                 }
                             }
@@ -156,11 +140,6 @@ public class WorldRendererThreaded extends WorldRenderer
                         if (var1 != null)
                         {
                             var1.updating(var15);
-                        }
-
-                        if (var14)
-                        {
-                            Reflector.callVoid(Reflector.ForgeHooksClient_afterRenderPass, new Object[] {Integer.valueOf(var16)});
                         }
 
                         this.bytesDrawn += var13.draw();
@@ -222,7 +201,7 @@ public class WorldRendererThreaded extends WorldRenderer
         {
             float var3 = 0.0F;
             GL11.glNewList(this.glRenderListBoundingBox, GL11.GL_COMPILE);
-            RenderItem.renderAABB(AxisAlignedBB.getAABBPool().addOrModifyAABBInPool((double)((float)this.posXClip - var3), (double)((float)this.posYClip - var3), (double)((float)this.posZClip - var3), (double)((float)(this.posXClip + 16) + var3), (double)((float)(this.posYClip + 16) + var3), (double)((float)(this.posZClip + 16) + var3)));
+            RenderItem.renderAABB(AxisAlignedBB.getAABBPool().getAABB((double)((float)this.posXClip - var3), (double)((float)this.posYClip - var3), (double)((float)this.posZClip - var3), (double)((float)(this.posXClip + 16) + var3), (double)((float)(this.posYClip + 16) + var3), (double)((float)(this.posZClip + 16) + var3)));
             GL11.glEndList();
             this.needsBoxUpdate = false;
         }

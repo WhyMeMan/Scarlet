@@ -4,9 +4,9 @@ import java.util.Random;
 
 public class BlockLadder extends Block
 {
-    protected BlockLadder(int par1, int par2)
+    protected BlockLadder(int par1)
     {
-        super(par1, par2, Material.circuits);
+        super(par1, Material.circuits);
         this.setCreativeTab(CreativeTabs.tabDecorations);
     }
 
@@ -160,7 +160,7 @@ public class BlockLadder extends Block
         if (!var7)
         {
             this.dropBlockAsItem(par1World, par2, par3, par4, var6, 0);
-            par1World.setBlockWithNotify(par2, par3, par4, 0);
+            par1World.setBlockToAir(par2, par3, par4);
         }
 
         super.onNeighborBlockChange(par1World, par2, par3, par4, par5);

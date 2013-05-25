@@ -19,13 +19,13 @@ public class RenderFireball extends Render
         GL11.glEnable(GL12.GL_RESCALE_NORMAL);
         float var10 = this.field_77002_a;
         GL11.glScalef(var10 / 1.0F, var10 / 1.0F, var10 / 1.0F);
-        byte var11 = 46;
+        Icon var11 = Item.fireballCharge.getIconFromDamage(0);
         this.loadTexture("/gui/items.png");
         Tessellator var12 = Tessellator.instance;
-        float var13 = (float)(var11 % 16 * 16 + 0) / 256.0F;
-        float var14 = (float)(var11 % 16 * 16 + 16) / 256.0F;
-        float var15 = (float)(var11 / 16 * 16 + 0) / 256.0F;
-        float var16 = (float)(var11 / 16 * 16 + 16) / 256.0F;
+        float var13 = var11.getMinU();
+        float var14 = var11.getMaxU();
+        float var15 = var11.getMinV();
+        float var16 = var11.getMaxV();
         float var17 = 1.0F;
         float var18 = 0.5F;
         float var19 = 0.25F;

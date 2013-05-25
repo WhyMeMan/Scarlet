@@ -1,5 +1,6 @@
 package net.minecraft.src;
 
+import net.minecraft.client.Minecraft;
 import org.lwjgl.opengl.GL11;
 
 public class RenderWitch extends RenderLiving
@@ -20,7 +21,7 @@ public class RenderWitch extends RenderLiving
 
         if (this.field_82414_a.func_82899_a() != this.field_82413_f)
         {
-            System.out.println("Updating witch model");
+            Minecraft.getMinecraft().getLogAgent().logInfo("Loaded new witch model");
             this.mainModel = this.field_82414_a = new ModelWitch(0.0F);
             this.field_82413_f = this.field_82414_a.func_82899_a();
         }

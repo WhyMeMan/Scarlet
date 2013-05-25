@@ -6,7 +6,7 @@ import java.util.Random;
 public class ContainerEnchantment extends Container
 {
     /** SlotEnchantmentTable object with ItemStack to be enchanted */
-    public IInventory tableInventory = new SlotEnchantmentTable(this, "Enchant", 1);
+    public IInventory tableInventory = new SlotEnchantmentTable(this, "Enchant", true, 1);
 
     /** current world (for bookshelf counting) */
     private World worldPointer;

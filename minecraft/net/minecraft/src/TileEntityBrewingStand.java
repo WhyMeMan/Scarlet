@@ -2,8 +2,11 @@ package net.minecraft.src;
 
 import java.util.List;
 
-public class TileEntityBrewingStand extends TileEntity implements IInventory
+public class TileEntityBrewingStand extends TileEntity implements ISidedInventory
 {
+    private static final int[] field_102017_a = new int[] {3};
+    private static final int[] field_102016_b = new int[] {0, 1, 2};
+
     /** The itemstacks currently placed in the slots of the brewing stand */
     private ItemStack[] brewingItemStacks = new ItemStack[4];
     private int brewTime;
@@ -13,13 +16,28 @@ public class TileEntityBrewingStand extends TileEntity implements IInventory
      */
     private int filledSlots;
     private int ingredientID;
+    private String field_94132_e;
 
     /**
      * Returns the name of the inventory.
      */
     public String getInvName()
     {
-        return "container.brewing";
+        return this.isInvNameLocalized() ? this.field_94132_e : "container.brewing";
+    }
+
+    /**
+     * If this returns false, the inventory name will be used as an unlocalized name, and translated into the player's
+     * language. Otherwise it will be used directly.
+     */
+    public boolean isInvNameLocalized()
+    {
+        return this.field_94132_e != null && this.field_94132_e.length() > 0;
+    }
+
+    public void func_94131_a(String par1Str)
+    {
+        this.field_94132_e = par1Str;
     }
 
     /**
@@ -67,7 +85,7 @@ public class TileEntityBrewingStand extends TileEntity implements IInventory
         if (var1 != this.filledSlots)
         {
             this.filledSlots = var1;
-            this.worldObj.setBlockMetadataWithNotify(this.xCoord, this.yCoord, this.zCoord, var1);
+            this.worldObj.setBlockMetadataWithNotify(this.xCoord, this.yCoord, this.zCoord, var1, 2);
         }
 
         super.updateEntity();
@@ -199,6 +217,11 @@ public class TileEntityBrewingStand extends TileEntity implements IInventory
         }
 
         this.brewTime = par1NBTTagCompound.getShort("BrewTime");
+
+        if (par1NBTTagCompound.hasKey("CustomName"))
+        {
+            this.field_94132_e = par1NBTTagCompound.getString("CustomName");
+        }
     }
 
     /**
@@ -222,6 +245,11 @@ public class TileEntityBrewingStand extends TileEntity implements IInventory
         }
 
         par1NBTTagCompound.setTag("Items", var2);
+
+        if (this.isInvNameLocalized())
+        {
+            par1NBTTagCompound.setString("CustomName", this.field_94132_e);
+        }
     }
 
     /**
@@ -285,7 +313,7 @@ public class TileEntityBrewingStand extends TileEntity implements IInventory
      */
     public int getInventoryStackLimit()
     {
-        return 1;
+        return 64;
     }
 
     /**
@@ -299,6 +327,14 @@ public class TileEntityBrewingStand extends TileEntity implements IInventory
     public void openChest() {}
 
     public void closeChest() {}
+
+    /**
+     * Returns true if automation is allowed to insert the given stack (ignoring stack size) into the given slot.
+     */
+    public boolean isStackValidForSlot(int par1, ItemStack par2ItemStack)
+    {
+        return par1 == 3 ? Item.itemsList[par2ItemStack.itemID].isPotionIngredient() : par2ItemStack.itemID == Item.potion.itemID || par2ItemStack.itemID == Item.glassBottle.itemID;
+    }
 
     public void setBrewTime(int par1)
     {
@@ -321,5 +357,32 @@ public class TileEntityBrewingStand extends TileEntity implements IInventory
         }
 
         return var1;
+    }
+
+    /**
+     * Returns an array containing the indices of the slots that can be accessed by automation on the given side of this
+     * block.
+     */
+    public int[] getAccessibleSlotsFromSide(int par1)
+    {
+        return par1 == 1 ? field_102017_a : field_102016_b;
+    }
+
+    /**
+     * Returns true if automation can insert the given item in the given slot from the given side. Args: Slot, item,
+     * side
+     */
+    public boolean canInsertItem(int par1, ItemStack par2ItemStack, int par3)
+    {
+        return this.isStackValidForSlot(par1, par2ItemStack);
+    }
+
+    /**
+     * Returns true if automation can extract the given item in the given slot from the given side. Args: Slot, item,
+     * side
+     */
+    public boolean canExtractItem(int par1, ItemStack par2ItemStack, int par3)
+    {
+        return true;
     }
 }

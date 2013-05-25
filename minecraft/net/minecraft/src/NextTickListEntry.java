@@ -44,13 +44,13 @@ public class NextTickListEntry implements Comparable
         else
         {
             NextTickListEntry var2 = (NextTickListEntry)par1Obj;
-            return this.xCoord == var2.xCoord && this.yCoord == var2.yCoord && this.zCoord == var2.zCoord && this.blockID == var2.blockID;
+            return this.xCoord == var2.xCoord && this.yCoord == var2.yCoord && this.zCoord == var2.zCoord && Block.isAssociatedBlockID(this.blockID, var2.blockID);
         }
     }
 
     public int hashCode()
     {
-        return (this.xCoord * 1024 * 1024 + this.zCoord * 1024 + this.yCoord) * 256 + this.blockID;
+        return (this.xCoord * 1024 * 1024 + this.zCoord * 1024 + this.yCoord) * 256;
     }
 
     /**
@@ -74,6 +74,11 @@ public class NextTickListEntry implements Comparable
     public int comparer(NextTickListEntry par1NextTickListEntry)
     {
         return this.scheduledTime < par1NextTickListEntry.scheduledTime ? -1 : (this.scheduledTime > par1NextTickListEntry.scheduledTime ? 1 : (this.field_82754_f != par1NextTickListEntry.field_82754_f ? this.field_82754_f - par1NextTickListEntry.field_82754_f : (this.tickEntryID < par1NextTickListEntry.tickEntryID ? -1 : (this.tickEntryID > par1NextTickListEntry.tickEntryID ? 1 : 0))));
+    }
+
+    public String toString()
+    {
+        return this.blockID + ": (" + this.xCoord + ", " + this.yCoord + ", " + this.zCoord + "), " + this.scheduledTime + ", " + this.field_82754_f + ", " + this.tickEntryID;
     }
 
     public int compareTo(Object par1Obj)

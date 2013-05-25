@@ -12,11 +12,13 @@ public class GuiMerchant extends GuiContainer
     private GuiButtonMerchant nextRecipeButtonIndex;
     private GuiButtonMerchant previousRecipeButtonIndex;
     private int currentRecipeIndex = 0;
+    private String field_94082_v;
 
-    public GuiMerchant(InventoryPlayer par1InventoryPlayer, IMerchant par2IMerchant, World par3World)
+    public GuiMerchant(InventoryPlayer par1, IMerchant par2, World par3World, String par4)
     {
-        super(new ContainerMerchant(par1InventoryPlayer, par2IMerchant, par3World));
-        this.theIMerchant = par2IMerchant;
+        super(new ContainerMerchant(par1, par2, par3World));
+        this.theIMerchant = par2;
+        this.field_94082_v = par4 != null && par4.length() >= 1 ? par4 : StatCollector.translateToLocal("entity.Villager.name");
     }
 
     /**
@@ -27,8 +29,8 @@ public class GuiMerchant extends GuiContainer
         super.initGui();
         int var1 = (this.width - this.xSize) / 2;
         int var2 = (this.height - this.ySize) / 2;
-        this.controlList.add(this.nextRecipeButtonIndex = new GuiButtonMerchant(1, var1 + 120 + 27, var2 + 24 - 1, true));
-        this.controlList.add(this.previousRecipeButtonIndex = new GuiButtonMerchant(2, var1 + 36 - 19, var2 + 24 - 1, false));
+        this.buttonList.add(this.nextRecipeButtonIndex = new GuiButtonMerchant(1, var1 + 120 + 27, var2 + 24 - 1, true));
+        this.buttonList.add(this.previousRecipeButtonIndex = new GuiButtonMerchant(2, var1 + 36 - 19, var2 + 24 - 1, false));
         this.nextRecipeButtonIndex.enabled = false;
         this.previousRecipeButtonIndex.enabled = false;
     }
@@ -38,7 +40,7 @@ public class GuiMerchant extends GuiContainer
      */
     protected void drawGuiContainerForegroundLayer(int par1, int par2)
     {
-        this.fontRenderer.drawString(StatCollector.translateToLocal("entity.Villager.name"), 56, 6, 4210752);
+        this.fontRenderer.drawString(this.field_94082_v, this.xSize / 2 - this.fontRenderer.getStringWidth(this.field_94082_v) / 2, 6, 4210752);
         this.fontRenderer.drawString(StatCollector.translateToLocal("container.inventory"), 8, this.ySize - 96 + 2, 4210752);
     }
 
@@ -84,7 +86,7 @@ public class GuiMerchant extends GuiContainer
             try
             {
                 var4.writeInt(this.currentRecipeIndex);
-                this.mc.getSendQueue().addToSendQueue(new Packet250CustomPayload("MC|TrSel", var3.toByteArray()));
+                this.mc.getNetHandler().addToSendQueue(new Packet250CustomPayload("MC|TrSel", var3.toByteArray()));
             }
             catch (Exception var6)
             {
@@ -98,22 +100,21 @@ public class GuiMerchant extends GuiContainer
      */
     protected void drawGuiContainerBackgroundLayer(float par1, int par2, int par3)
     {
-        int var4 = this.mc.renderEngine.getTexture("/gui/trading.png");
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        this.mc.renderEngine.bindTexture(var4);
-        int var5 = (this.width - this.xSize) / 2;
-        int var6 = (this.height - this.ySize) / 2;
-        this.drawTexturedModalRect(var5, var6, 0, 0, this.xSize, this.ySize);
-        MerchantRecipeList var7 = this.theIMerchant.getRecipes(this.mc.thePlayer);
+        this.mc.renderEngine.bindTexture("/gui/trading.png");
+        int var4 = (this.width - this.xSize) / 2;
+        int var5 = (this.height - this.ySize) / 2;
+        this.drawTexturedModalRect(var4, var5, 0, 0, this.xSize, this.ySize);
+        MerchantRecipeList var6 = this.theIMerchant.getRecipes(this.mc.thePlayer);
 
-        if (var7 != null && !var7.isEmpty())
+        if (var6 != null && !var6.isEmpty())
         {
-            int var8 = this.currentRecipeIndex;
-            MerchantRecipe var9 = (MerchantRecipe)var7.get(var8);
+            int var7 = this.currentRecipeIndex;
+            MerchantRecipe var8 = (MerchantRecipe)var6.get(var7);
 
-            if (var9.func_82784_g())
+            if (var8.func_82784_g())
             {
-                GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.mc.renderEngine.getTexture("/gui/trading.png"));
+                this.mc.renderEngine.bindTexture("/gui/trading.png");
                 GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
                 GL11.glDisable(GL11.GL_LIGHTING);
                 this.drawTexturedModalRect(this.guiLeft + 83, this.guiTop + 21, 212, 0, 28, 21);

@@ -4,9 +4,9 @@ import java.util.Random;
 
 public class BlockDragonEgg extends Block
 {
-    public BlockDragonEgg(int par1, int par2)
+    public BlockDragonEgg(int par1)
     {
-        super(par1, par2, Material.dragonEgg);
+        super(par1, Material.dragonEgg);
         this.setBlockBounds(0.0625F, 0.0F, 0.0625F, 0.9375F, 1.0F, 0.9375F);
     }
 
@@ -15,7 +15,7 @@ public class BlockDragonEgg extends Block
      */
     public void onBlockAdded(World par1World, int par2, int par3, int par4)
     {
-        par1World.scheduleBlockUpdate(par2, par3, par4, this.blockID, this.tickRate());
+        par1World.scheduleBlockUpdate(par2, par3, par4, this.blockID, this.tickRate(par1World));
     }
 
     /**
@@ -24,7 +24,7 @@ public class BlockDragonEgg extends Block
      */
     public void onNeighborBlockChange(World par1World, int par2, int par3, int par4, int par5)
     {
-        par1World.scheduleBlockUpdate(par2, par3, par4, this.blockID, this.tickRate());
+        par1World.scheduleBlockUpdate(par2, par3, par4, this.blockID, this.tickRate(par1World));
     }
 
     /**
@@ -51,7 +51,7 @@ public class BlockDragonEgg extends Block
             }
             else
             {
-                par1World.setBlockWithNotify(par2, par3, par4, 0);
+                par1World.setBlockToAir(par2, par3, par4);
 
                 while (BlockSand.canFallBelow(par1World, par2, par3 - 1, par4) && par3 > 0)
                 {
@@ -60,7 +60,7 @@ public class BlockDragonEgg extends Block
 
                 if (par3 > 0)
                 {
-                    par1World.setBlockWithNotify(par2, par3, par4, this.blockID);
+                    par1World.setBlock(par2, par3, par4, this.blockID, 0, 2);
                 }
             }
         }
@@ -100,8 +100,8 @@ public class BlockDragonEgg extends Block
                 {
                     if (!par1World.isRemote)
                     {
-                        par1World.setBlockAndMetadataWithNotify(var6, var7, var8, this.blockID, par1World.getBlockMetadata(par2, par3, par4));
-                        par1World.setBlockWithNotify(par2, par3, par4, 0);
+                        par1World.setBlock(var6, var7, var8, this.blockID, par1World.getBlockMetadata(par2, par3, par4), 2);
+                        par1World.setBlockToAir(par2, par3, par4);
                     }
                     else
                     {
@@ -129,7 +129,7 @@ public class BlockDragonEgg extends Block
     /**
      * How many world ticks before ticking
      */
-    public int tickRate()
+    public int tickRate(World par1World)
     {
         return 5;
     }

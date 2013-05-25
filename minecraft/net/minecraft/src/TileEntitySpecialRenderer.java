@@ -1,5 +1,7 @@
 package net.minecraft.src;
 
+import org.lwjgl.opengl.GL11;
+
 public abstract class TileEntitySpecialRenderer
 {
     /**
@@ -18,7 +20,7 @@ public abstract class TileEntitySpecialRenderer
 
         if (var2 != null)
         {
-            var2.bindTexture(var2.getTexture(par1Str));
+            var2.bindTexture(par1Str);
         }
     }
 
@@ -31,8 +33,10 @@ public abstract class TileEntitySpecialRenderer
 
         if (var3 != null)
         {
-            var3.bindTexture(var3.getTextureForDownloadableImage(par1Str, par2Str));
+            GL11.glBindTexture(GL11.GL_TEXTURE_2D, var3.getTextureForDownloadableImage(par1Str, par2Str));
         }
+
+        var3.resetBoundTexture();
     }
 
     /**

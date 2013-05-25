@@ -62,6 +62,15 @@ public class InventoryCrafting implements IInventory
     }
 
     /**
+     * If this returns false, the inventory name will be used as an unlocalized name, and translated into the player's
+     * language. Otherwise it will be used directly.
+     */
+    public boolean isInvNameLocalized()
+    {
+        return false;
+    }
+
+    /**
      * When some containers are closed they call this on each slot, then drop whatever it returns as an EntityItem -
      * like when you close a workbench GUI.
      */
@@ -149,4 +158,12 @@ public class InventoryCrafting implements IInventory
     public void openChest() {}
 
     public void closeChest() {}
+
+    /**
+     * Returns true if automation is allowed to insert the given stack (ignoring stack size) into the given slot.
+     */
+    public boolean isStackValidForSlot(int par1, ItemStack par2ItemStack)
+    {
+        return true;
+    }
 }

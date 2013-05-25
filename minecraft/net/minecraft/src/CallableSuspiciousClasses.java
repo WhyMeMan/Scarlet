@@ -10,14 +10,14 @@ import java.util.concurrent.Callable;
 
 class CallableSuspiciousClasses implements Callable
 {
-    final CrashReport field_85086_a;
+    final CrashReport theCrashReport;
 
     CallableSuspiciousClasses(CrashReport par1CrashReport)
     {
-        this.field_85086_a = par1CrashReport;
+        this.theCrashReport = par1CrashReport;
     }
 
-    public String func_85085_a()
+    public String callSuspiciousClasses()
     {
         StringBuilder var1 = new StringBuilder();
         ArrayList var3;
@@ -48,7 +48,7 @@ class CallableSuspiciousClasses implements Callable
             {
                 String var10 = var9.getCanonicalName();
 
-                if (var10 != null && !var10.startsWith("org.lwjgl.") && !var10.startsWith("paulscode.") && !var10.startsWith("org.bouncycastle.") && !var10.startsWith("argo.") && !var10.startsWith("com.jcraft.") && !var10.equals("util.GLX"))
+                if (var10 != null && !var10.startsWith("org.lwjgl.") && !var10.startsWith("paulscode.") && !var10.startsWith("org.bouncycastle.") && !var10.startsWith("argo.") && !var10.startsWith("com.jcraft.") && !var10.startsWith("com.fasterxml.") && !var10.equals("util.GLX"))
                 {
                     if (var5)
                     {
@@ -130,6 +130,6 @@ class CallableSuspiciousClasses implements Callable
 
     public Object call()
     {
-        return this.func_85085_a();
+        return this.callSuspiciousClasses();
     }
 }

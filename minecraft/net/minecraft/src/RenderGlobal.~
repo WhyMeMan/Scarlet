@@ -11,12 +11,14 @@ import java.util.Random;
 import net.minecraft.client.Minecraft;
 import net.minecraft.src.AxisAlignedBB;
 import net.minecraft.src.Block;
+import net.minecraft.src.BlockChest;
 import net.minecraft.src.CallableParticlePositionInfo;
 import net.minecraft.src.CompactArrayList;
 import net.minecraft.src.Config;
 import net.minecraft.src.CrashReport;
 import net.minecraft.src.CrashReportCategory;
 import net.minecraft.src.CustomColorizer;
+import net.minecraft.src.CustomSky;
 import net.minecraft.src.DestroyBlockProgress;
 import net.minecraft.src.Entity;
 import net.minecraft.src.EntityAuraFX;
@@ -55,8 +57,11 @@ import net.minecraft.src.FontRenderer;
 import net.minecraft.src.GLAllocation;
 import net.minecraft.src.ICamera;
 import net.minecraft.src.IWorldAccess;
+import net.minecraft.src.Icon;
+import net.minecraft.src.IconRegister;
 import net.minecraft.src.ImageBufferDownload;
 import net.minecraft.src.Item;
+import net.minecraft.src.ItemDye;
 import net.minecraft.src.ItemRecord;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
@@ -116,6 +121,7 @@ public class RenderGlobal implements IWorldAccess {
    private int field_72743_C;
    private int field_72737_D;
    public Map field_72738_E = new HashMap();
+   private Icon[] field_94141_F;
    private int field_72739_F = -1;
    private int field_72740_G = 2;
    private int field_72748_H;
@@ -138,6 +144,7 @@ public class RenderGlobal implements IWorldAccess {
    double prevReposX;
    double prevReposY;
    double prevReposZ;
+   public Entity renderedEntity;
    private long lastMovedTime = System.currentTimeMillis();
    private long lastActionTime = System.currentTimeMillis();
 
@@ -371,7 +378,7 @@ public class RenderGlobal implements IWorldAccess {
       } else {
          this.field_72769_h.field_72984_F.func_76320_a("prepare");
          TileEntityRenderer.field_76963_a.func_76953_a(this.field_72769_h, this.field_72770_i, this.field_72777_q.field_71466_p, this.field_72777_q.field_71451_h, p_72713_3_);
-         RenderManager.field_78727_a.func_78718_a(this.field_72769_h, this.field_72770_i, this.field_72777_q.field_71466_p, this.field_72777_q.field_71451_h, this.field_72777_q.field_71474_y, p_72713_3_);
+         RenderManager.field_78727_a.func_78718_a(this.field_72769_h, this.field_72770_i, this.field_72777_q.field_71466_p, this.field_72777_q.field_71451_h, this.field_72777_q.field_96291_i, this.field_72777_q.field_71474_y, p_72713_3_);
          this.field_72748_H = 0;
          this.field_72749_I = 0;
          this.field_72750_J = 0;
@@ -398,6 +405,8 @@ public class RenderGlobal implements IWorldAccess {
          }
 
          this.field_72769_h.field_72984_F.func_76318_c("entities");
+         boolean var8 = this.field_72777_q.field_71474_y.field_74347_j;
+         this.field_72777_q.field_71474_y.field_74347_j = Config.isDroppedItemsFancy();
 
          for(var6 = 0; var6 < var5.size(); ++var6) {
             var7 = (Entity)var5.get(var6);
@@ -407,36 +416,40 @@ public class RenderGlobal implements IWorldAccess {
                   var7.field_70155_l = 0.06D;
                }
 
+               this.renderedEntity = var7;
                RenderManager.field_78727_a.func_78720_a(var7, p_72713_3_);
+               this.renderedEntity = null;
             }
          }
 
+         this.field_72777_q.field_71474_y.field_74347_j = var8;
          this.field_72769_h.field_72984_F.func_76318_c("tileentities");
          RenderHelper.func_74519_b();
 
          for(var6 = 0; var6 < this.field_72762_a.size(); ++var6) {
-            TileEntity var8 = (TileEntity)this.field_72762_a.get(var6);
-            Class var9 = var8.getClass();
-            if(var9 == TileEntitySign.class && !Config.zoomMode) {
-               EntityClientPlayerMP var10 = this.field_72777_q.field_71439_g;
-               double var11 = var8.func_70318_a(var10.field_70165_t, var10.field_70163_u, var10.field_70161_v);
-               if(var11 > 256.0D) {
-                  FontRenderer var13 = TileEntityRenderer.field_76963_a.func_76954_a();
-                  var13.enabled = false;
-                  TileEntityRenderer.field_76963_a.func_76950_a(var8, p_72713_3_);
-                  var13.enabled = true;
+            TileEntity var9 = (TileEntity)this.field_72762_a.get(var6);
+            Class var10 = var9.getClass();
+            if(var10 == TileEntitySign.class && !Config.zoomMode) {
+               EntityClientPlayerMP var11 = this.field_72777_q.field_71439_g;
+               double var12 = var9.func_70318_a(var11.field_70165_t, var11.field_70163_u, var11.field_70161_v);
+               if(var12 > 256.0D) {
+                  FontRenderer var14 = TileEntityRenderer.field_76963_a.func_76954_a();
+                  var14.enabled = false;
+                  TileEntityRenderer.field_76963_a.func_76950_a(var9, p_72713_3_);
+                  var14.enabled = true;
                   continue;
                }
             }
 
-            if(var9 == TileEntityChest.class) {
-               int var14 = this.field_72769_h.func_72798_a(var8.field_70329_l, var8.field_70330_m, var8.field_70327_n);
-               if(var14 != Block.field_72077_au.field_71990_ca) {
+            if(var10 == TileEntityChest.class) {
+               int var15 = this.field_72769_h.func_72798_a(var9.field_70329_l, var9.field_70330_m, var9.field_70327_n);
+               Block var16 = Block.field_71973_m[var15];
+               if(!(var16 instanceof BlockChest)) {
                   continue;
                }
             }
 
-            TileEntityRenderer.field_76963_a.func_76950_a(var8, p_72713_3_);
+            TileEntityRenderer.field_76963_a.func_76950_a(var9, p_72713_3_);
          }
 
          this.field_72777_q.field_71460_t.func_78483_a((double)p_72713_3_);
@@ -832,7 +845,7 @@ public class RenderGlobal implements IWorldAccess {
          GL11.glBlendFunc(770, 771);
          RenderHelper.func_74518_a();
          GL11.glDepthMask(false);
-         this.field_72770_i.func_78342_b(this.field_72770_i.func_78341_b("/misc/tunnel.png"));
+         this.field_72770_i.func_98187_b("/misc/tunnel.png");
          Tessellator var20 = Tessellator.field_78398_a;
 
          for(int var22 = 0; var22 < 6; ++var22) {
@@ -957,10 +970,11 @@ public class RenderGlobal implements IWorldAccess {
          GL11.glColor4f(1.0F, 1.0F, 1.0F, var6);
          GL11.glTranslatef(var9, var10, var11);
          GL11.glRotatef(-90.0F, 0.0F, 1.0F, 0.0F);
+         CustomSky.renderSky(this.field_72769_h, this.field_72770_i, this.field_72769_h.func_72826_c(p_72714_1_), var6);
          GL11.glRotatef(this.field_72769_h.func_72826_c(p_72714_1_) * 360.0F, 1.0F, 0.0F, 0.0F);
          if(Config.isSunMoonEnabled()) {
             var12 = 30.0F;
-            GL11.glBindTexture(3553, this.field_72770_i.func_78341_b("/terrain/sun.png"));
+            this.field_72770_i.func_98187_b("/environment/sun.png");
             var24.func_78382_b();
             var24.func_78374_a((double)(-var12), 100.0D, (double)(-var12), 0.0D, 0.0D);
             var24.func_78374_a((double)var12, 100.0D, (double)(-var12), 1.0D, 0.0D);
@@ -968,8 +982,8 @@ public class RenderGlobal implements IWorldAccess {
             var24.func_78374_a((double)(-var12), 100.0D, (double)var12, 0.0D, 1.0D);
             var24.func_78381_a();
             var12 = 20.0F;
-            GL11.glBindTexture(3553, this.field_72770_i.func_78341_b("/terrain/moon_phases.png"));
-            int var26 = this.field_72769_h.func_72853_d(p_72714_1_);
+            this.field_72770_i.func_98187_b("/environment/moon_phases.png");
+            int var26 = this.field_72769_h.func_72853_d();
             int var27 = var26 % 4;
             var15 = var26 / 4 % 2;
             var16 = (float)(var27 + 0) / 4.0F;
@@ -986,7 +1000,7 @@ public class RenderGlobal implements IWorldAccess {
 
          GL11.glDisable(3553);
          var13 = this.field_72769_h.func_72880_h(p_72714_1_) * var6;
-         if(var13 > 0.0F && Config.isStarsEnabled()) {
+         if(var13 > 0.0F && Config.isStarsEnabled() && !CustomSky.hasSkyLayers(this.field_72769_h)) {
             GL11.glColor4f(var13, var13, var13, var13);
             GL11.glCallList(this.field_72772_v);
          }
@@ -1056,7 +1070,7 @@ public class RenderGlobal implements IWorldAccess {
    }
 
    public void func_72718_b(float p_72718_1_) {
-      if(this.field_72777_q.field_71474_y.ofClouds != 3) {
+      if(!Config.isCloudsOff()) {
          if(Reflector.ForgeWorldProvider_getCloudRenderer.exists()) {
             WorldProvider var2 = this.field_72777_q.field_71441_e.field_73011_w;
             Object var3 = Reflector.call(var2, Reflector.ForgeWorldProvider_getCloudRenderer, new Object[0]);
@@ -1075,7 +1089,7 @@ public class RenderGlobal implements IWorldAccess {
                byte var25 = 32;
                int var4 = 256 / var25;
                Tessellator var5 = Tessellator.field_78398_a;
-               GL11.glBindTexture(3553, this.field_72770_i.func_78341_b("/environment/clouds.png"));
+               this.field_72770_i.func_98187_b("/environment/clouds.png");
                GL11.glEnable(3042);
                GL11.glBlendFunc(770, 771);
                Vec3 var6 = this.field_72769_h.func_72824_f(p_72718_1_);
@@ -1145,7 +1159,7 @@ public class RenderGlobal implements IWorldAccess {
       int var14 = MathHelper.func_76128_c(var10 / 2048.0D);
       var8 -= (double)(var13 * 2048);
       var10 -= (double)(var14 * 2048);
-      GL11.glBindTexture(3553, this.field_72770_i.func_78341_b("/environment/clouds.png"));
+      this.field_72770_i.func_98187_b("/environment/clouds.png");
       GL11.glEnable(3042);
       GL11.glBlendFunc(770, 771);
       Vec3 var15 = this.field_72769_h.func_72824_f(p_72736_1_);
@@ -1370,8 +1384,7 @@ public class RenderGlobal implements IWorldAccess {
          GL11.glBlendFunc(770, 771);
          float var7 = MathHelper.func_76126_a((float)Minecraft.func_71386_F() / 100.0F) * 0.2F + 0.8F;
          GL11.glColor4f(var7, var7, var7, MathHelper.func_76126_a((float)Minecraft.func_71386_F() / 200.0F) * 0.2F + 0.5F);
-         int var8 = this.field_72770_i.func_78341_b("/terrain.png");
-         GL11.glBindTexture(3553, var8);
+         this.field_72770_i.func_98187_b("/terrain.png");
       }
 
       GL11.glDisable(3042);
@@ -1388,8 +1401,7 @@ public class RenderGlobal implements IWorldAccess {
       double var8 = var2.field_70136_U + (var2.field_70161_v - var2.field_70136_U) * (double)var3;
       if(!this.field_72738_E.isEmpty()) {
          GL11.glBlendFunc(774, 768);
-         int var10 = this.field_72770_i.func_78341_b("/terrain.png");
-         GL11.glBindTexture(3553, var10);
+         this.field_72770_i.func_98187_b("/terrain.png");
          GL11.glColor4f(1.0F, 1.0F, 1.0F, 0.5F);
          GL11.glPushMatrix();
          GL11.glDisable(3008);
@@ -1399,23 +1411,23 @@ public class RenderGlobal implements IWorldAccess {
          var1.func_78382_b();
          var1.func_78373_b(-var4, -var6, -var8);
          var1.func_78383_c();
-         Iterator var11 = this.field_72738_E.values().iterator();
+         Iterator var10 = this.field_72738_E.values().iterator();
 
-         while(var11.hasNext()) {
-            DestroyBlockProgress var12 = (DestroyBlockProgress)var11.next();
-            double var13 = (double)var12.func_73110_b() - var4;
-            double var15 = (double)var12.func_73109_c() - var6;
-            double var17 = (double)var12.func_73108_d() - var8;
-            if(var13 * var13 + var15 * var15 + var17 * var17 > 1024.0D) {
-               var11.remove();
+         while(var10.hasNext()) {
+            DestroyBlockProgress var11 = (DestroyBlockProgress)var10.next();
+            double var12 = (double)var11.func_73110_b() - var4;
+            double var14 = (double)var11.func_73109_c() - var6;
+            double var16 = (double)var11.func_73108_d() - var8;
+            if(var12 * var12 + var14 * var14 + var16 * var16 > 1024.0D) {
+               var10.remove();
             } else {
-               int var19 = this.field_72769_h.func_72798_a(var12.func_73110_b(), var12.func_73109_c(), var12.func_73108_d());
-               Block var20 = var19 > 0?Block.field_71973_m[var19]:null;
-               if(var20 == null) {
-                  var20 = Block.field_71981_t;
+               int var18 = this.field_72769_h.func_72798_a(var11.func_73110_b(), var11.func_73109_c(), var11.func_73108_d());
+               Block var19 = var18 > 0?Block.field_71973_m[var18]:null;
+               if(var19 == null) {
+                  var19 = Block.field_71981_t;
                }
 
-               this.field_72776_r.func_78604_a(var20, var12.func_73110_b(), var12.func_73109_c(), var12.func_73108_d(), 240 + var12.func_73106_e());
+               this.field_72776_r.func_78604_a(var19, var11.func_73110_b(), var11.func_73109_c(), var11.func_73108_d(), this.field_94141_F[var11.func_73106_e()]);
             }
          }
 
@@ -1580,7 +1592,6 @@ public class RenderGlobal implements IWorldAccess {
          double var17 = this.field_72777_q.field_71451_h.field_70163_u - p_72726_4_;
          double var19 = this.field_72777_q.field_71451_h.field_70161_v - p_72726_6_;
          Object var21 = null;
-         Object var22 = null;
          if(p_72726_1_.equals("hugeexplosion")) {
             if(Config.isAnimatedExplosion()) {
                this.field_72777_q.field_71452_i.func_78873_a(var21 = new EntityHugeExplodeFX(this.field_72769_h, p_72726_2_, p_72726_4_, p_72726_6_, p_72726_8_, p_72726_10_, p_72726_12_));
@@ -1596,13 +1607,13 @@ public class RenderGlobal implements IWorldAccess {
          if(var21 != null) {
             return (EntityFX)var21;
          } else {
-            double var23 = 16.0D;
-            double var25 = 16.0D;
+            double var22 = 16.0D;
+            double var24 = 16.0D;
             if(p_72726_1_.equals("crit")) {
-               var23 = 196.0D;
+               var22 = 196.0D;
             }
 
-            if(var15 * var15 + var17 * var17 + var19 * var19 > var23 * var23) {
+            if(var15 * var15 + var17 * var17 + var19 * var19 > var22 * var22) {
                return null;
             } else if(var14 > 1) {
                return null;
@@ -1626,33 +1637,45 @@ public class RenderGlobal implements IWorldAccess {
                } else if(p_72726_1_.equals("magicCrit")) {
                   var21 = new EntityCritFX(this.field_72769_h, p_72726_2_, p_72726_4_, p_72726_6_, p_72726_8_, p_72726_10_, p_72726_12_);
                   ((EntityFX)var21).func_70538_b(((EntityFX)var21).func_70534_d() * 0.3F, ((EntityFX)var21).func_70542_f() * 0.8F, ((EntityFX)var21).func_70535_g());
-                  ((EntityFX)var21).func_70536_a(((EntityFX)var21).func_70540_h() + 1);
+                  ((EntityFX)var21).func_94053_h();
                } else if(p_72726_1_.equals("smoke")) {
                   if(Config.isAnimatedSmoke()) {
                      var21 = new EntitySmokeFX(this.field_72769_h, p_72726_2_, p_72726_4_, p_72726_6_, p_72726_8_, p_72726_10_, p_72726_12_);
                   }
                } else if(p_72726_1_.equals("mobSpell")) {
-                  var21 = new EntitySpellParticleFX(this.field_72769_h, p_72726_2_, p_72726_4_, p_72726_6_, 0.0D, 0.0D, 0.0D);
-                  ((EntityFX)var21).func_70538_b((float)p_72726_8_, (float)p_72726_10_, (float)p_72726_12_);
+                  if(Config.isPotionParticles()) {
+                     var21 = new EntitySpellParticleFX(this.field_72769_h, p_72726_2_, p_72726_4_, p_72726_6_, 0.0D, 0.0D, 0.0D);
+                     ((EntityFX)var21).func_70538_b((float)p_72726_8_, (float)p_72726_10_, (float)p_72726_12_);
+                  }
                } else if(p_72726_1_.equals("mobSpellAmbient")) {
-                  var21 = new EntitySpellParticleFX(this.field_72769_h, p_72726_2_, p_72726_4_, p_72726_6_, 0.0D, 0.0D, 0.0D);
-                  ((EntityFX)var21).func_82338_g(0.15F);
-                  ((EntityFX)var21).func_70538_b((float)p_72726_8_, (float)p_72726_10_, (float)p_72726_12_);
+                  if(Config.isPotionParticles()) {
+                     var21 = new EntitySpellParticleFX(this.field_72769_h, p_72726_2_, p_72726_4_, p_72726_6_, 0.0D, 0.0D, 0.0D);
+                     ((EntityFX)var21).func_82338_g(0.15F);
+                     ((EntityFX)var21).func_70538_b((float)p_72726_8_, (float)p_72726_10_, (float)p_72726_12_);
+                  }
                } else if(p_72726_1_.equals("spell")) {
-                  var21 = new EntitySpellParticleFX(this.field_72769_h, p_72726_2_, p_72726_4_, p_72726_6_, p_72726_8_, p_72726_10_, p_72726_12_);
+                  if(Config.isPotionParticles()) {
+                     var21 = new EntitySpellParticleFX(this.field_72769_h, p_72726_2_, p_72726_4_, p_72726_6_, p_72726_8_, p_72726_10_, p_72726_12_);
+                  }
                } else if(p_72726_1_.equals("instantSpell")) {
-                  var21 = new EntitySpellParticleFX(this.field_72769_h, p_72726_2_, p_72726_4_, p_72726_6_, p_72726_8_, p_72726_10_, p_72726_12_);
-                  ((EntitySpellParticleFX)var21).func_70589_b(144);
+                  if(Config.isPotionParticles()) {
+                     var21 = new EntitySpellParticleFX(this.field_72769_h, p_72726_2_, p_72726_4_, p_72726_6_, p_72726_8_, p_72726_10_, p_72726_12_);
+                     ((EntitySpellParticleFX)var21).func_70589_b(144);
+                  }
                } else if(p_72726_1_.equals("witchMagic")) {
-                  var21 = new EntitySpellParticleFX(this.field_72769_h, p_72726_2_, p_72726_4_, p_72726_6_, p_72726_8_, p_72726_10_, p_72726_12_);
-                  ((EntitySpellParticleFX)var21).func_70589_b(144);
-                  float var27 = this.field_72769_h.field_73012_v.nextFloat() * 0.5F + 0.35F;
-                  ((EntityFX)var21).func_70538_b(1.0F * var27, 0.0F * var27, 1.0F * var27);
+                  if(Config.isPotionParticles()) {
+                     var21 = new EntitySpellParticleFX(this.field_72769_h, p_72726_2_, p_72726_4_, p_72726_6_, p_72726_8_, p_72726_10_, p_72726_12_);
+                     ((EntitySpellParticleFX)var21).func_70589_b(144);
+                     float var26 = this.field_72769_h.field_73012_v.nextFloat() * 0.5F + 0.35F;
+                     ((EntityFX)var21).func_70538_b(1.0F * var26, 0.0F * var26, 1.0F * var26);
+                  }
                } else if(p_72726_1_.equals("note")) {
                   var21 = new EntityNoteFX(this.field_72769_h, p_72726_2_, p_72726_4_, p_72726_6_, p_72726_8_, p_72726_10_, p_72726_12_);
                } else if(p_72726_1_.equals("portal")) {
-                  var21 = new EntityPortalFX(this.field_72769_h, p_72726_2_, p_72726_4_, p_72726_6_, p_72726_8_, p_72726_10_, p_72726_12_);
-                  CustomColorizer.updatePortalFX((EntityFX)var21);
+                  if(Config.isPortalParticles()) {
+                     var21 = new EntityPortalFX(this.field_72769_h, p_72726_2_, p_72726_4_, p_72726_6_, p_72726_8_, p_72726_10_, p_72726_12_);
+                     CustomColorizer.updatePortalFX((EntityFX)var21);
+                  }
                } else if(p_72726_1_.equals("enchantmenttable")) {
                   var21 = new EntityEnchantmentTableParticleFX(this.field_72769_h, p_72726_2_, p_72726_4_, p_72726_6_, p_72726_8_, p_72726_10_, p_72726_12_);
                } else if(p_72726_1_.equals("explode")) {
@@ -1682,8 +1705,7 @@ public class RenderGlobal implements IWorldAccess {
                      CustomColorizer.updateReddustFX((EntityFX)var21, this.field_72769_h, var15, var17, var19);
                   }
                } else if(p_72726_1_.equals("snowballpoof")) {
-                  var21 = new EntityBreakingFX(this.field_72769_h, p_72726_2_, p_72726_4_, p_72726_6_, Item.field_77768_aD);
-                  var22 = Item.field_77768_aD;
+                  var21 = new EntityBreakingFX(this.field_72769_h, p_72726_2_, p_72726_4_, p_72726_6_, Item.field_77768_aD, this.field_72770_i);
                } else if(p_72726_1_.equals("dripWater")) {
                   if(Config.isDrippingWaterLava()) {
                      var21 = new EntityDropParticleFX(this.field_72769_h, p_72726_2_, p_72726_4_, p_72726_6_, Material.field_76244_g);
@@ -1695,8 +1717,7 @@ public class RenderGlobal implements IWorldAccess {
                } else if(p_72726_1_.equals("snowshovel")) {
                   var21 = new EntitySnowShovelFX(this.field_72769_h, p_72726_2_, p_72726_4_, p_72726_6_, p_72726_8_, p_72726_10_, p_72726_12_);
                } else if(p_72726_1_.equals("slime")) {
-                  var21 = new EntityBreakingFX(this.field_72769_h, p_72726_2_, p_72726_4_, p_72726_6_, Item.field_77761_aM);
-                  var22 = Item.field_77761_aM;
+                  var21 = new EntityBreakingFX(this.field_72769_h, p_72726_2_, p_72726_4_, p_72726_6_, Item.field_77761_aM, this.field_72770_i);
                } else if(p_72726_1_.equals("heart")) {
                   var21 = new EntityHeartFX(this.field_72769_h, p_72726_2_, p_72726_4_, p_72726_6_, p_72726_8_, p_72726_10_, p_72726_12_);
                } else if(p_72726_1_.equals("angryVillager")) {
@@ -1708,23 +1729,17 @@ public class RenderGlobal implements IWorldAccess {
                   ((EntityFX)var21).func_70536_a(82);
                   ((EntityFX)var21).func_70538_b(1.0F, 1.0F, 1.0F);
                } else if(p_72726_1_.startsWith("iconcrack_")) {
-                  int var31 = Integer.parseInt(p_72726_1_.substring(p_72726_1_.indexOf("_") + 1));
-                  var21 = new EntityBreakingFX(this.field_72769_h, p_72726_2_, p_72726_4_, p_72726_6_, p_72726_8_, p_72726_10_, p_72726_12_, Item.field_77698_e[var31]);
-                  var22 = Item.field_77698_e[var31];
+                  int var30 = Integer.parseInt(p_72726_1_.substring(p_72726_1_.indexOf("_") + 1));
+                  var21 = new EntityBreakingFX(this.field_72769_h, p_72726_2_, p_72726_4_, p_72726_6_, p_72726_8_, p_72726_10_, p_72726_12_, Item.field_77698_e[var30], this.field_72770_i);
                } else if(p_72726_1_.startsWith("tilecrack_")) {
-                  String[] var30 = p_72726_1_.split("_", 3);
-                  int var28 = Integer.parseInt(var30[1]);
-                  int var29 = Integer.parseInt(var30[2]);
-                  var21 = (new EntityDiggingFX(this.field_72769_h, p_72726_2_, p_72726_4_, p_72726_6_, p_72726_8_, p_72726_10_, p_72726_12_, Block.field_71973_m[var28], 0, var29)).func_90019_g(var29);
-                  var22 = Block.field_71973_m[var28];
+                  String[] var29 = p_72726_1_.split("_", 3);
+                  int var27 = Integer.parseInt(var29[1]);
+                  int var28 = Integer.parseInt(var29[2]);
+                  var21 = (new EntityDiggingFX(this.field_72769_h, p_72726_2_, p_72726_4_, p_72726_6_, p_72726_8_, p_72726_10_, p_72726_12_, Block.field_71973_m[var27], 0, var28, this.field_72770_i)).func_90019_g(var28);
                }
 
                if(var21 != null) {
-                  if(Reflector.MinecraftForgeClient.exists()) {
-                     Reflector.callVoid(this.field_72777_q.field_71452_i, Reflector.ForgeEffectRenderer_addEffect, new Object[]{var21, var22});
-                  } else {
-                     this.field_72777_q.field_71452_i.func_78873_a((EntityFX)var21);
-                  }
+                  this.field_72777_q.field_71452_i.func_78873_a((EntityFX)var21);
                }
 
                return (EntityFX)var21;
@@ -1751,7 +1766,7 @@ public class RenderGlobal implements IWorldAccess {
             ThreadDownloadImage var5 = new ThreadDownloadImage(var3, var4, new ImageBufferDownload());
             var5.start();
             if(!Config.isShowCapes()) {
-               var2.field_71084_cw = "";
+               var2.field_70119_cs = "";
             }
          }
       }
@@ -1771,15 +1786,6 @@ public class RenderGlobal implements IWorldAccess {
          this.field_72770_i.func_78347_c(p_72709_1_.field_70119_cs);
       }
 
-   }
-
-   public void setAllRenderersVisible() {
-      if(this.field_72765_l != null) {
-         for(int var1 = 0; var1 < this.field_72765_l.length; ++var1) {
-            this.field_72765_l[var1].field_78936_t = true;
-         }
-
-      }
    }
 
    public void func_72728_f() {
@@ -1981,6 +1987,10 @@ public class RenderGlobal implements IWorldAccess {
             this.field_72769_h.func_72869_a("smoke", var36, var38, var40, 0.0D, 0.0D, 0.0D);
             this.field_72769_h.func_72869_a("flame", var36, var38, var40, 0.0D, 0.0D, 0.0D);
          }
+
+         return;
+      case 2005:
+         ItemDye.func_96603_a(this.field_72769_h, p_72706_3_, p_72706_4_, p_72706_5_, p_72706_6_);
       }
 
    }
@@ -1999,6 +2009,24 @@ public class RenderGlobal implements IWorldAccess {
          this.field_72738_E.remove(Integer.valueOf(p_72705_1_));
       }
 
+   }
+
+   public void func_94140_a(IconRegister p_94140_1_) {
+      this.field_94141_F = new Icon[10];
+
+      for(int var2 = 0; var2 < this.field_94141_F.length; ++var2) {
+         this.field_94141_F[var2] = p_94140_1_.func_94245_a("destroy_" + var2);
+      }
+
+   }
+
+   public void setAllRenderersVisible() {
+      if(this.field_72765_l != null) {
+         for(int var1 = 0; var1 < this.field_72765_l.length; ++var1) {
+            this.field_72765_l[var1].field_78936_t = true;
+         }
+
+      }
    }
 
    public boolean isMoving(EntityLiving var1) {
@@ -2044,9 +2072,9 @@ public class RenderGlobal implements IWorldAccess {
             if(var4 instanceof EntityPlayer) {
                EntityPlayer var5 = (EntityPlayer)var4;
                if(var1) {
-                  var5.field_71084_cw = var5.field_70119_cs;
+                  var5.field_70119_cs = var5.field_70119_cs;
                } else {
-                  var5.field_71084_cw = "";
+                  var5.field_70119_cs = "";
                }
             }
          }

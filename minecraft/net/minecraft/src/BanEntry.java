@@ -3,16 +3,12 @@ package net.minecraft.src;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Pattern;
+import net.minecraft.server.MinecraftServer;
 
 public class BanEntry
 {
     public static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
-
-    /** Creates Ban Entry in the logger. */
-    public static Logger loggerBanEntry = Logger.getLogger("Minecraft");
     private final String username;
     private Date banStartDate = new Date();
     private String bannedBy = "(Unknown)";
@@ -118,7 +114,7 @@ public class BanEntry
                 }
                 catch (ParseException var6)
                 {
-                    loggerBanEntry.log(Level.WARNING, "Could not read creation date format for ban entry \'" + var2.getBannedUsername() + "\' (was: \'" + var1[var7] + "\')", var6);
+                    MinecraftServer.getServer().getLogAgent().logWarningException("Could not read creation date format for ban entry \'" + var2.getBannedUsername() + "\' (was: \'" + var1[var7] + "\')", var6);
                 }
 
                 var10000 = var1.length;
@@ -151,7 +147,7 @@ public class BanEntry
                         }
                         catch (ParseException var5)
                         {
-                            loggerBanEntry.log(Level.WARNING, "Could not read expiry date format for ban entry \'" + var2.getBannedUsername() + "\' (was: \'" + var1[var7] + "\')", var5);
+                            MinecraftServer.getServer().getLogAgent().logWarningException("Could not read expiry date format for ban entry \'" + var2.getBannedUsername() + "\' (was: \'" + var1[var7] + "\')", var5);
                         }
 
                         var10000 = var1.length;

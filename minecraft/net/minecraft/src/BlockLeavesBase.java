@@ -8,10 +8,10 @@ public class BlockLeavesBase extends Block
      */
     protected boolean graphicsLevel;
 
-    protected BlockLeavesBase(int par1, int par2, Material par3Material, boolean par4)
+    protected BlockLeavesBase(int par1, Material par2Material, boolean par3)
     {
-        super(par1, par2, par3Material);
-        this.graphicsLevel = par4;
+        super(par1, par2Material);
+        this.graphicsLevel = par3;
     }
 
     /**

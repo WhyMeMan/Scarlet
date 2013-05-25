@@ -113,9 +113,9 @@ public class Slot
     /**
      * Returns the icon index on items.png that is used as background image of the slot.
      */
-    public int getBackgroundIconIndex()
+    public Icon getBackgroundIconIndex()
     {
-        return -1;
+        return null;
     }
 
     /**

@@ -16,7 +16,7 @@ public class WorldGenGlowStone1 extends WorldGenerator
         }
         else
         {
-            par1World.setBlockWithNotify(par3, par4, par5, Block.glowStone.blockID);
+            par1World.setBlock(par3, par4, par5, Block.glowStone.blockID, 0, 2);
 
             for (int var6 = 0; var6 < 1500; ++var6)
             {
@@ -70,7 +70,7 @@ public class WorldGenGlowStone1 extends WorldGenerator
 
                     if (var10 == 1)
                     {
-                        par1World.setBlockWithNotify(var7, var8, var9, Block.glowStone.blockID);
+                        par1World.setBlock(var7, var8, var9, Block.glowStone.blockID, 0, 2);
                     }
                 }
             }

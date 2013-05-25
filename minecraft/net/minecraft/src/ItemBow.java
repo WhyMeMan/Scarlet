@@ -2,6 +2,9 @@ package net.minecraft.src;
 
 public class ItemBow extends Item
 {
+    public static final String[] bowPullIconNameArray = new String[] {"bow_pull_0", "bow_pull_1", "bow_pull_2"};
+    private Icon[] iconArray;
+
     public ItemBow(int par1)
     {
         super(par1);
@@ -78,7 +81,7 @@ public class ItemBow extends Item
         }
     }
 
-    public ItemStack onFoodEaten(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer)
+    public ItemStack onEaten(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer)
     {
         return par1ItemStack;
     }
@@ -118,5 +121,24 @@ public class ItemBow extends Item
     public int getItemEnchantability()
     {
         return 1;
+    }
+
+    public void registerIcons(IconRegister par1IconRegister)
+    {
+        super.registerIcons(par1IconRegister);
+        this.iconArray = new Icon[bowPullIconNameArray.length];
+
+        for (int var2 = 0; var2 < this.iconArray.length; ++var2)
+        {
+            this.iconArray[var2] = par1IconRegister.registerIcon(bowPullIconNameArray[var2]);
+        }
+    }
+
+    /**
+     * used to cycle through icons based on their used duration, i.e. for the bow
+     */
+    public Icon getItemIconForUseDuration(int par1)
+    {
+        return this.iconArray[par1];
     }
 }

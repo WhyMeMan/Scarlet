@@ -1,6 +1,7 @@
 package net.minecraft.src;
 
 import java.awt.image.BufferedImage;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.Bidi;
@@ -22,13 +23,11 @@ import org.lwjgl.opengl.GL11;
 public class FontRenderer {
 
    private float[] field_78286_d = new float[256];
-   public int field_78290_a = 0;
    public int field_78288_b = 9;
    public Random field_78289_c = new Random();
    private byte[] field_78287_e = new byte[65536];
-   private final int[] field_78284_f = new int[256];
    private int[] field_78285_g = new int[32];
-   private int field_78297_h;
+   private final String field_98307_f;
    private final RenderEngine field_78298_i;
    private float field_78295_j;
    private float field_78296_k;
@@ -38,193 +37,133 @@ public class FontRenderer {
    private float field_78292_o;
    private float field_78306_p;
    private float field_78305_q;
-   private GameSettings gameSettings;
-   private String textureFile;
-   private long lastUpdateTime = 0L;
-   public boolean enabled = true;
    private int field_78304_r;
    private boolean field_78303_s = false;
    private boolean field_78302_t = false;
    private boolean field_78301_u = false;
    private boolean field_78300_v = false;
    private boolean field_78299_w = false;
+   public GameSettings gameSettings;
+   public boolean enabled = true;
 
    FontRenderer() {
       this.field_78298_i = null;
+      this.field_98307_f = null;
    }
 
    public FontRenderer(GameSettings p_i3067_1_, String p_i3067_2_, RenderEngine p_i3067_3_, boolean p_i3067_4_) {
+      this.gameSettings = p_i3067_1_;
+      this.field_98307_f = p_i3067_2_;
       this.field_78298_i = p_i3067_3_;
       this.field_78293_l = p_i3067_4_;
-      this.gameSettings = p_i3067_1_;
-      this.textureFile = p_i3067_2_;
-      this.init();
-   }
+      this.func_98304_a();
+      p_i3067_3_.func_98187_b(p_i3067_2_);
 
-   private void init() {
-      this.field_78286_d = new float[256];
-      this.field_78290_a = 0;
-      this.field_78287_e = new byte[65536];
+      for(int var5 = 0; var5 < 32; ++var5) {
+         int var6 = (var5 >> 3 & 1) * 85;
+         int var7 = (var5 >> 2 & 1) * 170 + var6;
+         int var8 = (var5 >> 1 & 1) * 170 + var6;
+         int var9 = (var5 >> 0 & 1) * 170 + var6;
+         if(var5 == 6) {
+            var7 += 85;
+         }
 
-      BufferedImage var1;
-      try {
-         var1 = ImageIO.read(this.getFontTexturePack().func_77532_a(this.textureFile));
-         InputStream var2 = this.getFontTexturePack().func_77532_a("/font/glyph_sizes.bin");
-         var2.read(this.field_78287_e);
-      } catch (IOException var22) {
-         throw new RuntimeException(var22);
+         if(p_i3067_1_.field_74337_g) {
+            int var10 = (var7 * 30 + var8 * 59 + var9 * 11) / 100;
+            int var11 = (var7 * 30 + var8 * 70) / 100;
+            int var12 = (var7 * 30 + var9 * 70) / 100;
+            var7 = var10;
+            var8 = var11;
+            var9 = var12;
+         }
+
+         if(var5 >= 16) {
+            var7 /= 4;
+            var8 /= 4;
+            var9 /= 4;
+         }
+
+         this.field_78285_g[var5] = (var7 & 255) << 16 | (var8 & 255) << 8 | var9 & 255;
       }
 
-      int var23 = var1.getWidth();
-      int var3 = var1.getHeight();
-      int var4 = var23 / 16;
-      int var5 = var3 / 16;
-      float var6 = (float)var23 / 128.0F;
-      int[] var7 = new int[var23 * var3];
-      var1.getRGB(0, 0, var23, var3, var7, 0, var23);
-      int var8 = 0;
+   }
 
-      int var9;
-      int var10;
-      int var12;
-      int var14;
-      int var15;
-      int var16;
-      int var25;
-      while(var8 < 256) {
-         var9 = var8 % 16;
-         var10 = var8 / 16;
-         boolean var11 = false;
-         var25 = var4 - 1;
+   public void func_98304_a() {
+      this.func_98306_d();
+      this.func_98305_c(this.field_98307_f);
+   }
+
+   private void func_98305_c(String p_98305_1_) {
+      BufferedImage var2;
+      try {
+         p_98305_1_ = fixHdFontName(p_98305_1_);
+         var2 = ImageIO.read(getFontTexturePack().func_77532_a(p_98305_1_));
+      } catch (IOException var19) {
+         throw new RuntimeException(var19);
+      }
+
+      int var3 = var2.getWidth();
+      int var4 = var2.getHeight();
+      int var5 = var3 / 16;
+      int var6 = var4 / 16;
+      float var7 = (float)var3 / 128.0F;
+      int[] var8 = new int[var3 * var4];
+      var2.getRGB(0, 0, var3, var4, var8, 0, var3);
+      int var9 = 0;
+
+      while(var9 < 256) {
+         int var10 = var9 % 16;
+         int var11 = var9 / 16;
+         boolean var12 = false;
+         int var20 = var5 - 1;
 
          while(true) {
-            if(var25 >= 0) {
-               var12 = var9 * var4 + var25;
-               boolean var13 = true;
+            if(var20 >= 0) {
+               int var13 = var10 * var5 + var20;
+               boolean var14 = true;
 
-               for(var14 = 0; var14 < var5 && var13; ++var14) {
-                  var15 = (var10 * var5 + var14) * var23;
-                  var16 = var7[var12 + var15];
-                  int var17 = var16 >> 24 & 255;
-                  if(var17 > 16) {
-                     var13 = false;
+               for(int var15 = 0; var15 < var6 && var14; ++var15) {
+                  int var16 = (var11 * var6 + var15) * var3;
+                  int var17 = var8[var13 + var16];
+                  int var18 = var17 >> 24 & 255;
+                  if(var18 > 16) {
+                     var14 = false;
                   }
                }
 
-               if(var13) {
-                  --var25;
+               if(var14) {
+                  --var20;
                   continue;
                }
             }
 
-            if(var8 == 65) {
-               var8 = var8;
+            if(var9 == 65) {
+               var9 = var9;
             }
 
-            if(var8 == 32) {
-               if(var4 <= 8) {
-                  var25 = (int)(2.0F * var6);
+            if(var9 == 32) {
+               if(var5 <= 8) {
+                  var20 = (int)(2.0F * var7);
                } else {
-                  var25 = (int)(1.5F * var6);
+                  var20 = (int)(1.5F * var7);
                }
             }
 
-            this.field_78286_d[var8] = (float)(var25 + 1) / var6 + 1.0F;
-            ++var8;
+            this.field_78286_d[var9] = (float)(var20 + 1) / var7 + 1.0F;
+            ++var9;
             break;
          }
       }
 
       this.readCustomCharWidths();
-      RenderEngine var10000 = this.field_78298_i;
-      boolean var24 = RenderEngine.useMipmaps;
+   }
 
+   private void func_98306_d() {
       try {
-         var10000 = this.field_78298_i;
-         RenderEngine.useMipmaps = false;
-         if(this.field_78290_a <= 0) {
-            this.field_78290_a = this.field_78298_i.func_78353_a(var1);
-         } else {
-            this.field_78298_i.func_78351_a(var1, this.field_78290_a);
-         }
-      } finally {
-         var10000 = this.field_78298_i;
-         RenderEngine.useMipmaps = var24;
-      }
-
-      for(var9 = 0; var9 < 32; ++var9) {
-         var10 = (var9 >> 3 & 1) * 85;
-         var25 = (var9 >> 2 & 1) * 170 + var10;
-         var12 = (var9 >> 1 & 1) * 170 + var10;
-         int var26 = (var9 >> 0 & 1) * 170 + var10;
-         if(var9 == 6) {
-            var25 += 85;
-         }
-
-         if(this.gameSettings.field_74337_g) {
-            var14 = (var25 * 30 + var12 * 59 + var26 * 11) / 100;
-            var15 = (var25 * 30 + var12 * 70) / 100;
-            var16 = (var25 * 30 + var26 * 70) / 100;
-            var25 = var14;
-            var12 = var15;
-            var26 = var16;
-         }
-
-         if(var9 >= 16) {
-            var25 /= 4;
-            var12 /= 4;
-            var26 /= 4;
-         }
-
-         this.field_78285_g[var9] = (var25 & 255) << 16 | (var12 & 255) << 8 | var26 & 255;
-      }
-
-   }
-
-   private void readCustomCharWidths() {
-      String var1 = ".png";
-      if(this.textureFile.endsWith(var1)) {
-         String var2 = this.textureFile.substring(0, this.textureFile.length() - var1.length()) + ".properties";
-         InputStream var3 = this.getFontTexturePack().func_77532_a(var2);
-         if(var3 != null) {
-            try {
-               Config.log("Loading " + var2);
-               Properties var4 = new Properties();
-               var4.load(var3);
-               Set var5 = var4.keySet();
-               Iterator var6 = var5.iterator();
-
-               while(var6.hasNext()) {
-                  String var7 = (String)var6.next();
-                  String var8 = "width.";
-                  if(var7.startsWith(var8)) {
-                     String var9 = var7.substring(var8.length());
-                     int var10 = Config.parseInt(var9, -1);
-                     if(var10 >= 0 && var10 < this.field_78286_d.length) {
-                        String var11 = var4.getProperty(var7);
-                        float var12 = Config.parseFloat(var11, -1.0F);
-                        if(var12 >= 0.0F) {
-                           this.field_78286_d[var10] = var12;
-                        }
-                     }
-                  }
-               }
-            } catch (IOException var13) {
-               var13.printStackTrace();
-            }
-
-         }
-      }
-   }
-
-   private ITexturePack getFontTexturePack() {
-      return this.gameSettings.ofCustomFonts?this.gameSettings.field_74317_L.field_71418_C.func_77292_e():(ITexturePack)this.gameSettings.field_74317_L.field_71418_C.func_77293_d().get(0);
-   }
-
-   private void checkUpdated() {
-      if(Config.getTextureUpdateTime() != this.lastUpdateTime) {
-         this.lastUpdateTime = Config.getTextureUpdateTime();
-         this.init();
+         InputStream var1 = getFontTexturePack().func_77532_a("/font/glyph_sizes.bin");
+         var1.read(this.field_78287_e);
+      } catch (IOException var2) {
+         throw new RuntimeException(var2);
       }
    }
 
@@ -236,11 +175,7 @@ public class FontRenderer {
       float var3 = (float)(p_78266_1_ % 16 * 8);
       float var4 = (float)(p_78266_1_ / 16 * 8);
       float var5 = p_78266_2_?1.0F:0.0F;
-      if(this.field_78297_h != this.field_78290_a) {
-         GL11.glBindTexture(3553, this.field_78290_a);
-         this.field_78297_h = this.field_78290_a;
-      }
-
+      this.field_78298_i.func_98187_b(this.field_98307_f);
       float var6 = this.field_78286_d[p_78266_1_] - 0.01F;
       GL11.glBegin(5);
       GL11.glTexCoord2f(var3 / 128.0F, var4 / 128.0F);
@@ -257,16 +192,7 @@ public class FontRenderer {
 
    private void func_78257_a(int p_78257_1_) {
       String var2 = String.format("/font/glyph_%02X.png", new Object[]{Integer.valueOf(p_78257_1_)});
-
-      BufferedImage var3;
-      try {
-         var3 = ImageIO.read(RenderEngine.class.getResourceAsStream(var2));
-      } catch (IOException var5) {
-         throw new RuntimeException(var5);
-      }
-
-      this.field_78284_f[p_78257_1_] = this.field_78298_i.func_78353_a(var3);
-      this.field_78297_h = this.field_78284_f[p_78257_1_];
+      this.field_78298_i.func_98187_b(var2);
    }
 
    private float func_78277_a(char p_78277_1_, boolean p_78277_2_) {
@@ -274,15 +200,7 @@ public class FontRenderer {
          return 0.0F;
       } else {
          int var3 = p_78277_1_ / 256;
-         if(this.field_78284_f[var3] == 0) {
-            this.func_78257_a(var3);
-         }
-
-         if(this.field_78297_h != this.field_78284_f[var3]) {
-            GL11.glBindTexture(3553, this.field_78284_f[var3]);
-            this.field_78297_h = this.field_78284_f[var3];
-         }
-
+         this.func_78257_a(var3);
          int var4 = this.field_78287_e[p_78277_1_] >>> 4;
          int var5 = this.field_78287_e[p_78277_1_] & 15;
          float var6 = (float)var4;
@@ -453,41 +371,63 @@ public class FontRenderer {
                var5 = var6;
             }
 
-            float var7 = this.func_78278_a(var5, var4, this.field_78301_u);
-            if(this.field_78302_t) {
-               ++this.field_78295_j;
-               this.func_78278_a(var5, var4, this.field_78301_u);
-               --this.field_78295_j;
-               ++var7;
+            float var7 = this.field_78293_l?0.5F:1.0F;
+            boolean var8 = (var5 <= 0 || this.field_78293_l) && p_78255_2_;
+            if(var8) {
+               this.field_78295_j -= var7;
+               this.field_78296_k -= var7;
             }
 
-            Tessellator var8;
+            float var9 = this.func_78278_a(var5, var4, this.field_78301_u);
+            if(var8) {
+               this.field_78295_j += var7;
+               this.field_78296_k += var7;
+            }
+
+            if(this.field_78302_t) {
+               this.field_78295_j += var7;
+               if(var8) {
+                  this.field_78295_j -= var7;
+                  this.field_78296_k -= var7;
+               }
+
+               this.func_78278_a(var5, var4, this.field_78301_u);
+               this.field_78295_j -= var7;
+               if(var8) {
+                  this.field_78295_j += var7;
+                  this.field_78296_k += var7;
+               }
+
+               ++var9;
+            }
+
+            Tessellator var10;
             if(this.field_78299_w) {
-               var8 = Tessellator.field_78398_a;
+               var10 = Tessellator.field_78398_a;
                GL11.glDisable(3553);
-               var8.func_78382_b();
-               var8.func_78377_a((double)this.field_78295_j, (double)(this.field_78296_k + (float)(this.field_78288_b / 2)), 0.0D);
-               var8.func_78377_a((double)(this.field_78295_j + var7), (double)(this.field_78296_k + (float)(this.field_78288_b / 2)), 0.0D);
-               var8.func_78377_a((double)(this.field_78295_j + var7), (double)(this.field_78296_k + (float)(this.field_78288_b / 2) - 1.0F), 0.0D);
-               var8.func_78377_a((double)this.field_78295_j, (double)(this.field_78296_k + (float)(this.field_78288_b / 2) - 1.0F), 0.0D);
-               var8.func_78381_a();
+               var10.func_78382_b();
+               var10.func_78377_a((double)this.field_78295_j, (double)(this.field_78296_k + (float)(this.field_78288_b / 2)), 0.0D);
+               var10.func_78377_a((double)(this.field_78295_j + var9), (double)(this.field_78296_k + (float)(this.field_78288_b / 2)), 0.0D);
+               var10.func_78377_a((double)(this.field_78295_j + var9), (double)(this.field_78296_k + (float)(this.field_78288_b / 2) - 1.0F), 0.0D);
+               var10.func_78377_a((double)this.field_78295_j, (double)(this.field_78296_k + (float)(this.field_78288_b / 2) - 1.0F), 0.0D);
+               var10.func_78381_a();
                GL11.glEnable(3553);
             }
 
             if(this.field_78300_v) {
-               var8 = Tessellator.field_78398_a;
+               var10 = Tessellator.field_78398_a;
                GL11.glDisable(3553);
-               var8.func_78382_b();
-               int var9 = this.field_78300_v?-1:0;
-               var8.func_78377_a((double)(this.field_78295_j + (float)var9), (double)(this.field_78296_k + (float)this.field_78288_b), 0.0D);
-               var8.func_78377_a((double)(this.field_78295_j + var7), (double)(this.field_78296_k + (float)this.field_78288_b), 0.0D);
-               var8.func_78377_a((double)(this.field_78295_j + var7), (double)(this.field_78296_k + (float)this.field_78288_b - 1.0F), 0.0D);
-               var8.func_78377_a((double)(this.field_78295_j + (float)var9), (double)(this.field_78296_k + (float)this.field_78288_b - 1.0F), 0.0D);
-               var8.func_78381_a();
+               var10.func_78382_b();
+               int var11 = this.field_78300_v?-1:0;
+               var10.func_78377_a((double)(this.field_78295_j + (float)var11), (double)(this.field_78296_k + (float)this.field_78288_b), 0.0D);
+               var10.func_78377_a((double)(this.field_78295_j + var9), (double)(this.field_78296_k + (float)this.field_78288_b), 0.0D);
+               var10.func_78377_a((double)(this.field_78295_j + var9), (double)(this.field_78296_k + (float)this.field_78288_b - 1.0F), 0.0D);
+               var10.func_78377_a((double)(this.field_78295_j + (float)var11), (double)(this.field_78296_k + (float)this.field_78288_b - 1.0F), 0.0D);
+               var10.func_78381_a();
                GL11.glEnable(3553);
             }
 
-            this.field_78295_j += var7;
+            this.field_78295_j += var9;
          }
       }
 
@@ -507,7 +447,6 @@ public class FontRenderer {
       if(p_78258_1_ == null) {
          return 0;
       } else {
-         this.field_78297_h = 0;
          if((p_78258_4_ & -67108864) == 0) {
             p_78258_4_ |= -16777216;
          }
@@ -529,7 +468,6 @@ public class FontRenderer {
    }
 
    public int func_78256_a(String p_78256_1_) {
-      this.checkUpdated();
       if(p_78256_1_ == null) {
          return 0;
       } else {
@@ -648,7 +586,6 @@ public class FontRenderer {
    }
 
    public void func_78279_b(String p_78279_1_, int p_78279_2_, int p_78279_3_, int p_78279_4_, int p_78279_5_) {
-      this.checkUpdated();
       this.func_78265_b();
       this.field_78304_r = p_78279_5_;
       p_78279_1_ = this.func_78273_d(p_78279_1_);
@@ -656,7 +593,6 @@ public class FontRenderer {
    }
 
    private void func_78268_b(String p_78268_1_, int p_78268_2_, int p_78268_3_, int p_78268_4_, boolean p_78268_5_) {
-      this.checkUpdated();
       List var6 = this.func_78271_c(p_78268_1_, p_78268_4_);
 
       for(Iterator var7 = var6.iterator(); var7.hasNext(); p_78268_3_ += this.field_78288_b) {
@@ -667,7 +603,6 @@ public class FontRenderer {
    }
 
    public int func_78267_b(String p_78267_1_, int p_78267_2_) {
-      this.checkUpdated();
       return this.field_78288_b * this.func_78271_c(p_78267_1_, p_78267_2_).size();
    }
 
@@ -719,7 +654,7 @@ public class FontRenderer {
                ++var5;
                char var9 = p_78259_1_.charAt(var5);
                if(var9 != 108 && var9 != 76) {
-                  if(var9 == 114 || var9 == 82) {
+                  if(var9 == 114 || var9 == 82 || func_78272_b(var9)) {
                      var7 = false;
                   }
                } else {
@@ -777,5 +712,68 @@ public class FontRenderer {
 
    public boolean func_78260_a() {
       return this.field_78294_m;
+   }
+
+   private void readCustomCharWidths() {
+      String var1 = fixHdFontName(this.field_98307_f);
+      String var2 = ".png";
+      if(var1.endsWith(var2)) {
+         String var3 = var1.substring(0, var1.length() - var2.length()) + ".properties";
+
+         try {
+            InputStream var4 = getFontTexturePack().func_77532_a(var3);
+            if(var4 == null) {
+               return;
+            }
+
+            Config.log("Loading " + var3);
+            Properties var5 = new Properties();
+            var5.load(var4);
+            Set var6 = var5.keySet();
+            Iterator var7 = var6.iterator();
+
+            while(var7.hasNext()) {
+               String var8 = (String)var7.next();
+               String var9 = "width.";
+               if(var8.startsWith(var9)) {
+                  String var10 = var8.substring(var9.length());
+                  int var11 = Config.parseInt(var10, -1);
+                  if(var11 >= 0 && var11 < this.field_78286_d.length) {
+                     String var12 = var5.getProperty(var8);
+                     float var13 = Config.parseFloat(var12, -1.0F);
+                     if(var13 >= 0.0F) {
+                        this.field_78286_d[var11] = var13;
+                     }
+                  }
+               }
+            }
+         } catch (FileNotFoundException var14) {
+            ;
+         } catch (IOException var15) {
+            var15.printStackTrace();
+         }
+
+      }
+   }
+
+   private static String fixHdFontName(String var0) {
+      if(!Config.isCustomFonts()) {
+         return var0;
+      } else if(var0 == null) {
+         return var0;
+      } else {
+         String var1 = ".png";
+         if(!var0.endsWith(var1)) {
+            return var0;
+         } else {
+            String var2 = var0.substring(0, var0.length() - var1.length());
+            String var3 = var2 + "_hd" + var1;
+            return getFontTexturePack().func_98138_b(var3, true)?var3:var0;
+         }
+      }
+   }
+
+   private static ITexturePack getFontTexturePack() {
+      return Config.isCustomFonts()?Config.getMinecraft().field_71418_C.func_77292_e():(ITexturePack)Config.getMinecraft().field_71418_C.func_77293_d().get(0);
    }
 }

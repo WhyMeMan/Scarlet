@@ -22,7 +22,10 @@ public class GuiControls extends GuiScreen
         this.options = par2GameSettings;
     }
 
-    private int func_73907_g()
+    /**
+     * Gets the distance from the left border of the window to left border of the controls screen
+     */
+    private int getLeftBorder()
     {
         return this.width / 2 - 155;
     }
@@ -33,14 +36,14 @@ public class GuiControls extends GuiScreen
     public void initGui()
     {
         StringTranslate var1 = StringTranslate.getInstance();
-        int var2 = this.func_73907_g();
+        int var2 = this.getLeftBorder();
 
         for (int var3 = 0; var3 < this.options.keyBindings.length; ++var3)
         {
-            this.controlList.add(new GuiSmallButton(var3, var2 + var3 % 2 * 160, this.height / 6 + 24 * (var3 >> 1), 70, 20, this.options.getOptionDisplayString(var3)));
+            this.buttonList.add(new GuiSmallButton(var3, var2 + var3 % 2 * 160, this.height / 6 + 24 * (var3 >> 1), 70, 20, this.options.getOptionDisplayString(var3)));
         }
 
-        this.controlList.add(new GuiButton(200, this.width / 2 - 100, this.height / 6 + 168, var1.translateKey("gui.done")));
+        this.buttonList.add(new GuiButton(200, this.width / 2 - 100, this.height / 6 + 168, var1.translateKey("gui.done")));
         this.screenTitle = var1.translateKey("controls.title");
     }
 
@@ -51,7 +54,7 @@ public class GuiControls extends GuiScreen
     {
         for (int var2 = 0; var2 < this.options.keyBindings.length; ++var2)
         {
-            ((GuiButton)this.controlList.get(var2)).displayString = this.options.getOptionDisplayString(var2);
+            ((GuiButton)this.buttonList.get(var2)).displayString = this.options.getOptionDisplayString(var2);
         }
 
         if (par1GuiButton.id == 200)
@@ -73,7 +76,7 @@ public class GuiControls extends GuiScreen
         if (this.buttonId >= 0)
         {
             this.options.setKeyBinding(this.buttonId, -100 + par3);
-            ((GuiButton)this.controlList.get(this.buttonId)).displayString = this.options.getOptionDisplayString(this.buttonId);
+            ((GuiButton)this.buttonList.get(this.buttonId)).displayString = this.options.getOptionDisplayString(this.buttonId);
             this.buttonId = -1;
             KeyBinding.resetKeyBindingArrayAndHash();
         }
@@ -91,7 +94,7 @@ public class GuiControls extends GuiScreen
         if (this.buttonId >= 0)
         {
             this.options.setKeyBinding(this.buttonId, par2);
-            ((GuiButton)this.controlList.get(this.buttonId)).displayString = this.options.getOptionDisplayString(this.buttonId);
+            ((GuiButton)this.buttonList.get(this.buttonId)).displayString = this.options.getOptionDisplayString(this.buttonId);
             this.buttonId = -1;
             KeyBinding.resetKeyBindingArrayAndHash();
         }
@@ -108,7 +111,7 @@ public class GuiControls extends GuiScreen
     {
         this.drawDefaultBackground();
         this.drawCenteredString(this.fontRenderer, this.screenTitle, this.width / 2, 20, 16777215);
-        int var4 = this.func_73907_g();
+        int var4 = this.getLeftBorder();
         int var5 = 0;
 
         while (var5 < this.options.keyBindings.length)
@@ -131,15 +134,15 @@ public class GuiControls extends GuiScreen
 
                 if (this.buttonId == var5)
                 {
-                    ((GuiButton)this.controlList.get(var5)).displayString = "\u00a7f> \u00a7e??? \u00a7f<";
+                    ((GuiButton)this.buttonList.get(var5)).displayString = "" + EnumChatFormatting.WHITE + "> " + EnumChatFormatting.YELLOW + "??? " + EnumChatFormatting.WHITE + "<";
                 }
                 else if (var6)
                 {
-                    ((GuiButton)this.controlList.get(var5)).displayString = "\u00a7c" + this.options.getOptionDisplayString(var5);
+                    ((GuiButton)this.buttonList.get(var5)).displayString = EnumChatFormatting.RED + this.options.getOptionDisplayString(var5);
                 }
                 else
                 {
-                    ((GuiButton)this.controlList.get(var5)).displayString = this.options.getOptionDisplayString(var5);
+                    ((GuiButton)this.buttonList.get(var5)).displayString = this.options.getOptionDisplayString(var5);
                 }
 
                 this.drawString(this.fontRenderer, this.options.getKeyBindingDescription(var5), var4 + var5 % 2 * 160 + 70 + 6, this.height / 6 + 24 * (var5 >> 1) + 7, -1);

@@ -210,9 +210,9 @@ public abstract class StructureComponent
                 return 1;
             }
         }
-        else if (par1 != Block.doorWood.blockID && par1 != Block.doorSteel.blockID)
+        else if (par1 != Block.doorWood.blockID && par1 != Block.doorIron.blockID)
         {
-            if (par1 != Block.stairCompactCobblestone.blockID && par1 != Block.stairCompactPlanks.blockID && par1 != Block.stairsNetherBrick.blockID && par1 != Block.stairsStoneBrickSmooth.blockID && par1 != Block.stairsSandStone.blockID)
+            if (par1 != Block.stairsCobblestone.blockID && par1 != Block.stairsWoodOak.blockID && par1 != Block.stairsNetherBrick.blockID && par1 != Block.stairsStoneBrick.blockID && par1 != Block.stairsSandStone.blockID)
             {
                 if (par1 == Block.ladder.blockID)
                 {
@@ -340,7 +340,7 @@ public abstract class StructureComponent
                         {
                             if (par2 == 2 || par2 == 3)
                             {
-                                return Facing.faceToSide[par2];
+                                return Facing.oppositeSide[par2];
                             }
                         }
                         else if (this.coordBaseMode == 1)
@@ -393,7 +393,7 @@ public abstract class StructureComponent
                 {
                     if (par2 == 0 || par2 == 2)
                     {
-                        return Direction.footInvisibleFaceRemap[par2];
+                        return Direction.rotateOpposite[par2];
                     }
                 }
                 else if (this.coordBaseMode == 1)
@@ -537,7 +537,7 @@ public abstract class StructureComponent
 
         if (par7StructureBoundingBox.isVecInside(var8, var9, var10))
         {
-            par1World.setBlockAndMetadata(var8, var9, var10, par2, par3);
+            par1World.setBlock(var8, var9, var10, par2, par3, 2);
         }
     }
 
@@ -736,7 +736,7 @@ public abstract class StructureComponent
         {
             while (!par1World.isAirBlock(var6, var7, var8) && var7 < 255)
             {
-                par1World.setBlockAndMetadata(var6, var7, var8, 0, 0);
+                par1World.setBlock(var6, var7, var8, 0, 0, 2);
                 ++var7;
             }
         }
@@ -755,7 +755,7 @@ public abstract class StructureComponent
         {
             while ((par1World.isAirBlock(var8, var9, var10) || par1World.getBlockMaterial(var8, var9, var10).isLiquid()) && var9 > 1)
             {
-                par1World.setBlockAndMetadata(var8, var9, var10, par2, par3);
+                par1World.setBlock(var8, var9, var10, par2, par3, 2);
                 --var9;
             }
         }
@@ -772,7 +772,7 @@ public abstract class StructureComponent
 
         if (par2StructureBoundingBox.isVecInside(var9, var10, var11) && par1World.getBlockId(var9, var10, var11) != Block.chest.blockID)
         {
-            par1World.setBlockWithNotify(var9, var10, var11, Block.chest.blockID);
+            par1World.setBlock(var9, var10, var11, Block.chest.blockID, 0, 2);
             TileEntityChest var12 = (TileEntityChest)par1World.getBlockTileEntity(var9, var10, var11);
 
             if (var12 != null)
@@ -799,7 +799,7 @@ public abstract class StructureComponent
 
         if (par2StructureBoundingBox.isVecInside(var10, var11, var12) && par1World.getBlockId(var10, var11, var12) != Block.dispenser.blockID)
         {
-            par1World.setBlockAndMetadataWithNotify(var10, var11, var12, Block.dispenser.blockID, this.getMetadataWithOffset(Block.dispenser.blockID, par7));
+            par1World.setBlock(var10, var11, var12, Block.dispenser.blockID, this.getMetadataWithOffset(Block.dispenser.blockID, par7), 2);
             TileEntityDispenser var13 = (TileEntityDispenser)par1World.getBlockTileEntity(var10, var11, var12);
 
             if (var13 != null)

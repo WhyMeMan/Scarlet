@@ -31,7 +31,7 @@ public class Packet15Place extends Packet
         this.yPosition = par2;
         this.zPosition = par3;
         this.direction = par4;
-        this.itemStack = par5ItemStack;
+        this.itemStack = par5ItemStack != null ? par5ItemStack.copy() : null;
         this.xOffset = par6;
         this.yOffset = par7;
         this.zOffset = par8;

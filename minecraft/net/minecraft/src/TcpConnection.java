@@ -22,7 +22,8 @@ public class TcpConnection implements INetworkManager
     public static AtomicInteger field_74469_b = new AtomicInteger();
 
     /** The object used for synchronization on the send queue. */
-    private Object sendQueueLock;
+    private final Object sendQueueLock;
+    private final ILogAgent field_98215_i;
 
     /** The socket used by this network manager. */
     private Socket networkSocket;
@@ -91,12 +92,12 @@ public class TcpConnection implements INetworkManager
      */
     private int chunkDataPacketsDelay;
 
-    public TcpConnection(Socket par1Socket, String par2Str, NetHandler par3NetHandler) throws IOException
+    public TcpConnection(ILogAgent par1ILogAgent, Socket par2Socket, String par3Str, NetHandler par4NetHandler) throws IOException
     {
-        this(par1Socket, par2Str, par3NetHandler, (PrivateKey)null);
+        this(par1ILogAgent, par2Socket, par3Str, par4NetHandler, (PrivateKey)null);
     }
 
-    public TcpConnection(Socket par1Socket, String par2Str, NetHandler par3NetHandler, PrivateKey par4PrivateKey) throws IOException
+    public TcpConnection(ILogAgent par1ILogAgent, Socket par2Socket, String par3Str, NetHandler par4NetHandler, PrivateKey par5PrivateKey) throws IOException
     {
         this.sendQueueLock = new Object();
         this.isRunning = true;
@@ -114,25 +115,26 @@ public class TcpConnection implements INetworkManager
         this.sharedKeyForEncryption = null;
         this.field_74463_A = null;
         this.chunkDataPacketsDelay = 50;
-        this.field_74463_A = par4PrivateKey;
-        this.networkSocket = par1Socket;
-        this.remoteSocketAddress = par1Socket.getRemoteSocketAddress();
-        this.theNetHandler = par3NetHandler;
+        this.field_74463_A = par5PrivateKey;
+        this.networkSocket = par2Socket;
+        this.field_98215_i = par1ILogAgent;
+        this.remoteSocketAddress = par2Socket.getRemoteSocketAddress();
+        this.theNetHandler = par4NetHandler;
 
         try
         {
-            par1Socket.setSoTimeout(30000);
-            par1Socket.setTrafficClass(24);
+            par2Socket.setSoTimeout(30000);
+            par2Socket.setTrafficClass(24);
         }
-        catch (SocketException var6)
+        catch (SocketException var7)
         {
-            System.err.println(var6.getMessage());
+            System.err.println(var7.getMessage());
         }
 
-        this.socketInputStream = new DataInputStream(par1Socket.getInputStream());
-        this.socketOutputStream = new DataOutputStream(new BufferedOutputStream(par1Socket.getOutputStream(), 5120));
-        this.readThread = new TcpReaderThread(this, par2Str + " read thread");
-        this.writeThread = new TcpWriterThread(this, par2Str + " write thread");
+        this.socketInputStream = new DataInputStream(par2Socket.getInputStream());
+        this.socketOutputStream = new DataOutputStream(new BufferedOutputStream(par2Socket.getOutputStream(), 5120));
+        this.readThread = new TcpReaderThread(this, par3Str + " read thread");
+        this.writeThread = new TcpWriterThread(this, par3Str + " write thread");
         this.readThread.start();
         this.writeThread.start();
     }
@@ -312,7 +314,7 @@ public class TcpConnection implements INetworkManager
 
         try
         {
-            Packet var2 = Packet.readPacket(this.socketInputStream, this.theNetHandler.isServerHandler(), this.networkSocket);
+            Packet var2 = Packet.readPacket(this.field_98215_i, this.socketInputStream, this.theNetHandler.isServerHandler(), this.networkSocket);
 
             if (var2 != null)
             {

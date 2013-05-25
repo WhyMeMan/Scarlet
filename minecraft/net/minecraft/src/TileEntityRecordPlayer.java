@@ -3,7 +3,7 @@ package net.minecraft.src;
 public class TileEntityRecordPlayer extends TileEntity
 {
     /** ID of record which is in Jukebox */
-    public ItemStack record;
+    private ItemStack record;
 
     /**
      * Reads a tile entity from NBT.
@@ -14,11 +14,11 @@ public class TileEntityRecordPlayer extends TileEntity
 
         if (par1NBTTagCompound.hasKey("RecordItem"))
         {
-            this.record = ItemStack.loadItemStackFromNBT(par1NBTTagCompound.getCompoundTag("RecordItem"));
+            this.func_96098_a(ItemStack.loadItemStackFromNBT(par1NBTTagCompound.getCompoundTag("RecordItem")));
         }
-        else
+        else if (par1NBTTagCompound.getInteger("Record") > 0)
         {
-            this.record = new ItemStack(par1NBTTagCompound.getInteger("Record"), 1, 0);
+            this.func_96098_a(new ItemStack(par1NBTTagCompound.getInteger("Record"), 1, 0));
         }
     }
 
@@ -29,10 +29,21 @@ public class TileEntityRecordPlayer extends TileEntity
     {
         super.writeToNBT(par1NBTTagCompound);
 
-        if (this.record != null)
+        if (this.func_96097_a() != null)
         {
-            par1NBTTagCompound.setCompoundTag("RecordItem", this.record.writeToNBT(new NBTTagCompound()));
-            par1NBTTagCompound.setInteger("Record", this.record.itemID);
+            par1NBTTagCompound.setCompoundTag("RecordItem", this.func_96097_a().writeToNBT(new NBTTagCompound()));
+            par1NBTTagCompound.setInteger("Record", this.func_96097_a().itemID);
         }
+    }
+
+    public ItemStack func_96097_a()
+    {
+        return this.record;
+    }
+
+    public void func_96098_a(ItemStack par1ItemStack)
+    {
+        this.record = par1ItemStack;
+        this.onInventoryChanged();
     }
 }

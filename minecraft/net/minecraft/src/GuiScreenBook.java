@@ -78,25 +78,25 @@ public class GuiScreenBook extends GuiScreen
      */
     public void initGui()
     {
-        this.controlList.clear();
+        this.buttonList.clear();
         Keyboard.enableRepeatEvents(true);
 
         if (this.bookIsUnsigned)
         {
-            this.controlList.add(this.buttonSign = new GuiButton(3, this.width / 2 - 100, 4 + this.bookImageHeight, 98, 20, StatCollector.translateToLocal("book.signButton")));
-            this.controlList.add(this.buttonDone = new GuiButton(0, this.width / 2 + 2, 4 + this.bookImageHeight, 98, 20, StatCollector.translateToLocal("gui.done")));
-            this.controlList.add(this.buttonFinalize = new GuiButton(5, this.width / 2 - 100, 4 + this.bookImageHeight, 98, 20, StatCollector.translateToLocal("book.finalizeButton")));
-            this.controlList.add(this.buttonCancel = new GuiButton(4, this.width / 2 + 2, 4 + this.bookImageHeight, 98, 20, StatCollector.translateToLocal("gui.cancel")));
+            this.buttonList.add(this.buttonSign = new GuiButton(3, this.width / 2 - 100, 4 + this.bookImageHeight, 98, 20, StatCollector.translateToLocal("book.signButton")));
+            this.buttonList.add(this.buttonDone = new GuiButton(0, this.width / 2 + 2, 4 + this.bookImageHeight, 98, 20, StatCollector.translateToLocal("gui.done")));
+            this.buttonList.add(this.buttonFinalize = new GuiButton(5, this.width / 2 - 100, 4 + this.bookImageHeight, 98, 20, StatCollector.translateToLocal("book.finalizeButton")));
+            this.buttonList.add(this.buttonCancel = new GuiButton(4, this.width / 2 + 2, 4 + this.bookImageHeight, 98, 20, StatCollector.translateToLocal("gui.cancel")));
         }
         else
         {
-            this.controlList.add(this.buttonDone = new GuiButton(0, this.width / 2 - 100, 4 + this.bookImageHeight, 200, 20, StatCollector.translateToLocal("gui.done")));
+            this.buttonList.add(this.buttonDone = new GuiButton(0, this.width / 2 - 100, 4 + this.bookImageHeight, 200, 20, StatCollector.translateToLocal("gui.done")));
         }
 
         int var1 = (this.width - this.bookImageWidth) / 2;
         byte var2 = 2;
-        this.controlList.add(this.buttonNextPage = new GuiButtonNextPage(1, var1 + 120, var2 + 154, true));
-        this.controlList.add(this.buttonPreviousPage = new GuiButtonNextPage(2, var1 + 38, var2 + 154, false));
+        this.buttonList.add(this.buttonNextPage = new GuiButtonNextPage(1, var1 + 120, var2 + 154, true));
+        this.buttonList.add(this.buttonPreviousPage = new GuiButtonNextPage(2, var1 + 38, var2 + 154, false));
         this.updateButtons();
     }
 
@@ -167,7 +167,7 @@ public class GuiScreenBook extends GuiScreen
                 try
                 {
                     Packet.writeItemStack(this.itemstackBook, var4);
-                    this.mc.getSendQueue().addToSendQueue(new Packet250CustomPayload(var8, var3.toByteArray()));
+                    this.mc.getNetHandler().addToSendQueue(new Packet250CustomPayload(var8, var3.toByteArray()));
                 }
                 catch (Exception var6)
                 {
@@ -356,7 +356,7 @@ public class GuiScreenBook extends GuiScreen
     {
         String var2 = this.func_74158_i();
         String var3 = var2 + par1Str;
-        int var4 = this.fontRenderer.splitStringWidth(var3 + "\u00a70_", 118);
+        int var4 = this.fontRenderer.splitStringWidth(var3 + "" + EnumChatFormatting.BLACK + "_", 118);
 
         if (var4 <= 118 && var3.length() < 256)
         {
@@ -369,73 +369,72 @@ public class GuiScreenBook extends GuiScreen
      */
     public void drawScreen(int par1, int par2, float par3)
     {
-        int var4 = this.mc.renderEngine.getTexture("/gui/book.png");
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        this.mc.renderEngine.bindTexture(var4);
-        int var5 = (this.width - this.bookImageWidth) / 2;
-        byte var6 = 2;
-        this.drawTexturedModalRect(var5, var6, 0, 0, this.bookImageWidth, this.bookImageHeight);
+        this.mc.renderEngine.bindTexture("/gui/book.png");
+        int var4 = (this.width - this.bookImageWidth) / 2;
+        byte var5 = 2;
+        this.drawTexturedModalRect(var4, var5, 0, 0, this.bookImageWidth, this.bookImageHeight);
+        String var6;
         String var7;
-        String var8;
-        int var9;
+        int var8;
 
         if (this.editingTitle)
         {
-            var7 = this.bookTitle;
+            var6 = this.bookTitle;
 
             if (this.bookIsUnsigned)
             {
                 if (this.updateCount / 6 % 2 == 0)
                 {
-                    var7 = var7 + "\u00a70_";
+                    var6 = var6 + "" + EnumChatFormatting.BLACK + "_";
                 }
                 else
                 {
-                    var7 = var7 + "\u00a77_";
+                    var6 = var6 + "" + EnumChatFormatting.GRAY + "_";
                 }
             }
 
-            var8 = StatCollector.translateToLocal("book.editTitle");
-            var9 = this.fontRenderer.getStringWidth(var8);
-            this.fontRenderer.drawString(var8, var5 + 36 + (116 - var9) / 2, var6 + 16 + 16, 0);
-            int var10 = this.fontRenderer.getStringWidth(var7);
-            this.fontRenderer.drawString(var7, var5 + 36 + (116 - var10) / 2, var6 + 48, 0);
-            String var11 = String.format(StatCollector.translateToLocal("book.byAuthor"), new Object[] {this.editingPlayer.username});
-            int var12 = this.fontRenderer.getStringWidth(var11);
-            this.fontRenderer.drawString("\u00a78" + var11, var5 + 36 + (116 - var12) / 2, var6 + 48 + 10, 0);
-            String var13 = StatCollector.translateToLocal("book.finalizeWarning");
-            this.fontRenderer.drawSplitString(var13, var5 + 36, var6 + 80, 116, 0);
+            var7 = StatCollector.translateToLocal("book.editTitle");
+            var8 = this.fontRenderer.getStringWidth(var7);
+            this.fontRenderer.drawString(var7, var4 + 36 + (116 - var8) / 2, var5 + 16 + 16, 0);
+            int var9 = this.fontRenderer.getStringWidth(var6);
+            this.fontRenderer.drawString(var6, var4 + 36 + (116 - var9) / 2, var5 + 48, 0);
+            String var10 = String.format(StatCollector.translateToLocal("book.byAuthor"), new Object[] {this.editingPlayer.username});
+            int var11 = this.fontRenderer.getStringWidth(var10);
+            this.fontRenderer.drawString(EnumChatFormatting.DARK_GRAY + var10, var4 + 36 + (116 - var11) / 2, var5 + 48 + 10, 0);
+            String var12 = StatCollector.translateToLocal("book.finalizeWarning");
+            this.fontRenderer.drawSplitString(var12, var4 + 36, var5 + 80, 116, 0);
         }
         else
         {
-            var7 = String.format(StatCollector.translateToLocal("book.pageIndicator"), new Object[] {Integer.valueOf(this.currPage + 1), Integer.valueOf(this.bookTotalPages)});
-            var8 = "";
+            var6 = String.format(StatCollector.translateToLocal("book.pageIndicator"), new Object[] {Integer.valueOf(this.currPage + 1), Integer.valueOf(this.bookTotalPages)});
+            var7 = "";
 
             if (this.bookPages != null && this.currPage >= 0 && this.currPage < this.bookPages.tagCount())
             {
-                NBTTagString var14 = (NBTTagString)this.bookPages.tagAt(this.currPage);
-                var8 = var14.toString();
+                NBTTagString var13 = (NBTTagString)this.bookPages.tagAt(this.currPage);
+                var7 = var13.toString();
             }
 
             if (this.bookIsUnsigned)
             {
                 if (this.fontRenderer.getBidiFlag())
                 {
-                    var8 = var8 + "_";
+                    var7 = var7 + "_";
                 }
                 else if (this.updateCount / 6 % 2 == 0)
                 {
-                    var8 = var8 + "\u00a70_";
+                    var7 = var7 + "" + EnumChatFormatting.BLACK + "_";
                 }
                 else
                 {
-                    var8 = var8 + "\u00a77_";
+                    var7 = var7 + "" + EnumChatFormatting.GRAY + "_";
                 }
             }
 
-            var9 = this.fontRenderer.getStringWidth(var7);
-            this.fontRenderer.drawString(var7, var5 - var9 + this.bookImageWidth - 44, var6 + 16, 0);
-            this.fontRenderer.drawSplitString(var8, var5 + 36, var6 + 16 + 16, 116, 0);
+            var8 = this.fontRenderer.getStringWidth(var6);
+            this.fontRenderer.drawString(var6, var4 - var8 + this.bookImageWidth - 44, var5 + 16, 0);
+            this.fontRenderer.drawSplitString(var7, var4 + 36, var5 + 16 + 16, 116, 0);
         }
 
         super.drawScreen(par1, par2, par3);

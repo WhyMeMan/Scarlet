@@ -152,8 +152,7 @@ public class EntitySilverfish extends EntityMob
 
                                 if (var8 == Block.silverfish.blockID)
                                 {
-                                    this.worldObj.playAuxSFX(2001, var1 + var6, var2 + var5, var3 + var7, Block.silverfish.blockID + (this.worldObj.getBlockMetadata(var1 + var6, var2 + var5, var3 + var7) << 12));
-                                    this.worldObj.setBlockWithNotify(var1 + var6, var2 + var5, var3 + var7, 0);
+                                    this.worldObj.destroyBlock(var1 + var6, var2 + var5, var3 + var7, false);
                                     Block.silverfish.onBlockDestroyedByPlayer(this.worldObj, var1 + var6, var2 + var5, var3 + var7, 0);
 
                                     if (this.rand.nextBoolean())
@@ -178,7 +177,7 @@ public class EntitySilverfish extends EntityMob
 
                 if (BlockSilverfish.getPosingIdByMetadata(var5))
                 {
-                    this.worldObj.setBlockAndMetadataWithNotify(var1 + Facing.offsetsXForSide[var9], var2 + Facing.offsetsYForSide[var9], var3 + Facing.offsetsZForSide[var9], Block.silverfish.blockID, BlockSilverfish.getMetadataForBlockType(var5));
+                    this.worldObj.setBlock(var1 + Facing.offsetsXForSide[var9], var2 + Facing.offsetsYForSide[var9], var3 + Facing.offsetsZForSide[var9], Block.silverfish.blockID, BlockSilverfish.getMetadataForBlockType(var5), 3);
                     this.spawnExplosionParticle();
                     this.setDead();
                 }

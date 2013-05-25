@@ -30,6 +30,8 @@ public class ModManager extends Manager
 		//addMod(new MagicCarpet());
 		addMod(new Nuker());
 		addMod(new Nofall());
+		addMod(new Step());
+		addMod(new Wallhack());
 		//addMod(new Tracers());
 	}
 	public void update()
@@ -40,7 +42,7 @@ public class ModManager extends Manager
 		int delta = (int) (System.currentTimeMillis() - lastMS);
 		int yIndex = 2;
 		FontRenderer f = Minecraft.getMinecraft().fontRenderer;
-		f.drawStringWithShadow("Scarlet 1.4.7", 2, 2, 0xFFFFFFFF);
+		f.drawStringWithShadow("Scarlet 1.5", 2, 2, 0xFFFFFFFF);
 		for (Mod m : mods)
 		{
 			if (m instanceof ModHack)

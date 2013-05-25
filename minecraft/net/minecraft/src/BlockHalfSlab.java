@@ -5,11 +5,11 @@ import java.util.Random;
 
 public abstract class BlockHalfSlab extends Block
 {
-    private final boolean isDoubleSlab;
+    protected final boolean isDoubleSlab;
 
     public BlockHalfSlab(int par1, boolean par2, Material par3Material)
     {
-        super(par1, 6, par3Material);
+        super(par1, par3Material);
         this.isDoubleSlab = par2;
 
         if (par2)
@@ -64,20 +64,13 @@ public abstract class BlockHalfSlab extends Block
     }
 
     /**
-     * if the specified block is in the given AABB, add its collision bounding box to the given list
+     * Adds all intersecting collision boxes to a list. (Be sure to only add boxes to the list if they intersect the
+     * mask.) Parameters: World, X, Y, Z, mask, list, colliding entity
      */
-    public void addCollidingBlockToList(World par1World, int par2, int par3, int par4, AxisAlignedBB par5AxisAlignedBB, List par6List, Entity par7Entity)
+    public void addCollisionBoxesToList(World par1World, int par2, int par3, int par4, AxisAlignedBB par5AxisAlignedBB, List par6List, Entity par7Entity)
     {
         this.setBlockBoundsBasedOnState(par1World, par2, par3, par4);
-        super.addCollidingBlockToList(par1World, par2, par3, par4, par5AxisAlignedBB, par6List, par7Entity);
-    }
-
-    /**
-     * Returns the block texture based on the side being looked at.  Args: side
-     */
-    public int getBlockTextureFromSide(int par1)
-    {
-        return this.getBlockTextureFromSideAndMetadata(par1, 0);
+        super.addCollisionBoxesToList(par1World, par2, par3, par4, par5AxisAlignedBB, par6List, par7Entity);
     }
 
     /**
@@ -137,9 +130,9 @@ public abstract class BlockHalfSlab extends Block
         }
         else
         {
-            int var6 = par2 + Facing.offsetsXForSide[Facing.faceToSide[par5]];
-            int var7 = par3 + Facing.offsetsYForSide[Facing.faceToSide[par5]];
-            int var8 = par4 + Facing.offsetsZForSide[Facing.faceToSide[par5]];
+            int var6 = par2 + Facing.offsetsXForSide[Facing.oppositeSide[par5]];
+            int var7 = par3 + Facing.offsetsYForSide[Facing.oppositeSide[par5]];
+            int var8 = par4 + Facing.offsetsZForSide[Facing.oppositeSide[par5]];
             boolean var9 = (par1IBlockAccess.getBlockMetadata(var6, var7, var8) & 8) != 0;
             return var9 ? (par5 == 0 ? true : (par5 == 1 && super.shouldSideBeRendered(par1IBlockAccess, par2, par3, par4, par5) ? true : !isBlockSingleSlab(par1IBlockAccess.getBlockId(par2, par3, par4)) || (par1IBlockAccess.getBlockMetadata(par2, par3, par4) & 8) == 0)) : (par5 == 1 ? true : (par5 == 0 && super.shouldSideBeRendered(par1IBlockAccess, par2, par3, par4, par5) ? true : !isBlockSingleSlab(par1IBlockAccess.getBlockId(par2, par3, par4)) || (par1IBlockAccess.getBlockMetadata(par2, par3, par4) & 8) != 0));
         }

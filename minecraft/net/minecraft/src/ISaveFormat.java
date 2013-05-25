@@ -9,7 +9,7 @@ public interface ISaveFormat
      */
     ISaveHandler getSaveLoader(String var1, boolean var2);
 
-    List getSaveList();
+    List getSaveList() throws AnvilConverterException;
 
     void flushCache();
 

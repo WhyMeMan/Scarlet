@@ -2,14 +2,13 @@ package net.minecraft.src;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import net.minecraft.client.Minecraft;
 
 public class ChatClickData
 {
-    public static final Pattern pattern = Pattern.compile("^(?:(https?)://)?([-\\w_\\.]{2,}\\.[a-z]{2,3})(/\\S*)?$");
+    public static final Pattern pattern = Pattern.compile("^(?:(https?)://)?([-\\w_\\.]{2,}\\.[a-z]{2,4})(/\\S*)?$");
     private final FontRenderer fontR;
     private final ChatLine line;
     private final int field_78312_d;
@@ -67,7 +66,7 @@ public class ChatClickData
                 }
                 catch (URISyntaxException var4)
                 {
-                    Logger.getLogger("Minecraft").log(Level.SEVERE, "Couldn\'t create URI from chat", var4);
+                    Minecraft.getMinecraft().getLogAgent().logSevereException("Couldn\'t create URI from chat", var4);
                 }
             }
 

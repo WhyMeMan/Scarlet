@@ -35,7 +35,7 @@ class ThreadPollServers extends Thread
                             try
                             {
                                 var27 = true;
-                                this.pollServersServerData.serverMOTD = "\u00a78Polling..";
+                                this.pollServersServerData.serverMOTD = EnumChatFormatting.DARK_GRAY + "Polling..";
                                 long var1 = System.nanoTime();
                                 GuiMultiplayer.func_82291_a(this.pollServersServerData);
                                 long var3 = System.nanoTime();
@@ -46,27 +46,27 @@ class ThreadPollServers extends Thread
                             catch (UnknownHostException var35)
                             {
                                 this.pollServersServerData.pingToServer = -1L;
-                                this.pollServersServerData.serverMOTD = "\u00a74Can\'t resolve hostname";
+                                this.pollServersServerData.serverMOTD = EnumChatFormatting.DARK_RED + "Can\'t resolve hostname";
                                 var27 = false;
                             }
                             catch (SocketTimeoutException var36)
                             {
                                 this.pollServersServerData.pingToServer = -1L;
-                                this.pollServersServerData.serverMOTD = "\u00a74Can\'t reach server";
+                                this.pollServersServerData.serverMOTD = EnumChatFormatting.DARK_RED + "Can\'t reach server";
                                 var27 = false;
                                 break label187;
                             }
                             catch (ConnectException var37)
                             {
                                 this.pollServersServerData.pingToServer = -1L;
-                                this.pollServersServerData.serverMOTD = "\u00a74Can\'t reach server";
+                                this.pollServersServerData.serverMOTD = EnumChatFormatting.DARK_RED + "Can\'t reach server";
                                 var27 = false;
                                 break label186;
                             }
                             catch (IOException var38)
                             {
                                 this.pollServersServerData.pingToServer = -1L;
-                                this.pollServersServerData.serverMOTD = "\u00a74Communication error";
+                                this.pollServersServerData.serverMOTD = EnumChatFormatting.DARK_RED + "Communication error";
                                 var27 = false;
                                 break label185;
                             }
@@ -81,51 +81,51 @@ class ThreadPollServers extends Thread
                             {
                                 if (var27)
                                 {
-                                    synchronized (GuiMultiplayer.func_74011_h())
+                                    synchronized (GuiMultiplayer.getLock())
                                     {
-                                        GuiMultiplayer.func_74018_k();
+                                        GuiMultiplayer.decreaseThreadsPending();
                                     }
                                 }
                             }
 
-                            synchronized (GuiMultiplayer.func_74011_h())
+                            synchronized (GuiMultiplayer.getLock())
                             {
-                                GuiMultiplayer.func_74018_k();
+                                GuiMultiplayer.decreaseThreadsPending();
                                 return;
                             }
                         }
 
-                        synchronized (GuiMultiplayer.func_74011_h())
+                        synchronized (GuiMultiplayer.getLock())
                         {
-                            GuiMultiplayer.func_74018_k();
+                            GuiMultiplayer.decreaseThreadsPending();
                             return;
                         }
                     }
 
-                    synchronized (GuiMultiplayer.func_74011_h())
+                    synchronized (GuiMultiplayer.getLock())
                     {
-                        GuiMultiplayer.func_74018_k();
+                        GuiMultiplayer.decreaseThreadsPending();
                         return;
                     }
                 }
 
-                synchronized (GuiMultiplayer.func_74011_h())
+                synchronized (GuiMultiplayer.getLock())
                 {
-                    GuiMultiplayer.func_74018_k();
+                    GuiMultiplayer.decreaseThreadsPending();
                     return;
                 }
             }
 
-            synchronized (GuiMultiplayer.func_74011_h())
+            synchronized (GuiMultiplayer.getLock())
             {
-                GuiMultiplayer.func_74018_k();
+                GuiMultiplayer.decreaseThreadsPending();
                 return;
             }
         }
 
-        synchronized (GuiMultiplayer.func_74011_h())
+        synchronized (GuiMultiplayer.getLock())
         {
-            GuiMultiplayer.func_74018_k();
+            GuiMultiplayer.decreaseThreadsPending();
         }
     }
 }

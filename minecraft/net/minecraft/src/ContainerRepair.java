@@ -11,7 +11,7 @@ public class ContainerRepair extends Container
     /**
      * The 2slots where you put your items in that you want to merge and/or rename.
      */
-    private IInventory inputSlots = new InventoryRepair(this, "Repair", 2);
+    private IInventory inputSlots = new InventoryRepair(this, "Repair", true, 2);
     private World theWorld;
     private int field_82861_i;
     private int field_82858_j;
@@ -175,9 +175,9 @@ public class ContainerRepair extends Container
 
                         var14 = var10000;
                         int var15 = var14 - var13;
-                        boolean var16 = var22.func_92089_a(var1);
+                        boolean var16 = var22.canApply(var1);
 
-                        if (this.thePlayer.capabilities.isCreativeMode)
+                        if (this.thePlayer.capabilities.isCreativeMode || var1.itemID == ItemEnchantedBook.enchantedBook.itemID)
                         {
                             var16 = true;
                         }
@@ -242,7 +242,7 @@ public class ContainerRepair extends Container
                 }
             }
 
-            if (this.repairedItemName != null && !this.repairedItemName.equalsIgnoreCase(var1.getDisplayName()) && this.repairedItemName.length() > 0)
+            if (this.repairedItemName != null && this.repairedItemName.length() > 0 && !this.repairedItemName.equalsIgnoreCase(this.thePlayer.getTranslator().translateNamedKey(var1.getItemName())) && !this.repairedItemName.equals(var1.getDisplayName()))
             {
                 var4 = var1.isItemStackDamageable() ? 7 : var1.stackSize * 5;
                 var2 += var4;
@@ -311,7 +311,7 @@ public class ContainerRepair extends Container
 
             if (var4 == var2 && var4 > 0 && this.maximumCost >= 40)
             {
-                System.out.println("Naming an item only, cost too high; giving discount to cap cost to 39 levels");
+                this.theWorld.getWorldLogAgent().logInfo("Naming an item only, cost too high; giving discount to cap cost to 39 levels");
                 this.maximumCost = 39;
             }
 

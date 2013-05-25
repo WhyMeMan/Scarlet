@@ -5,11 +5,12 @@ import java.util.Random;
 public class BlockStem extends BlockFlower
 {
     /** Defines if it is a Melon or a Pumpkin that the stem is producing. */
-    private Block fruitType;
+    private final Block fruitType;
+    private Icon theIcon;
 
     protected BlockStem(int par1, Block par2Block)
     {
-        super(par1, 111);
+        super(par1);
         this.fruitType = par2Block;
         this.setTickRandomly(true);
         float var3 = 0.125F;
@@ -44,7 +45,7 @@ public class BlockStem extends BlockFlower
                 if (var7 < 7)
                 {
                     ++var7;
-                    par1World.setBlockMetadataWithNotify(par2, par3, par4, var7);
+                    par1World.setBlockMetadataWithNotify(par2, par3, par4, var7, 2);
                 }
                 else
                 {
@@ -96,7 +97,7 @@ public class BlockStem extends BlockFlower
 
                     if (par1World.getBlockId(var9, par3, var10) == 0 && (var11 == Block.tilledField.blockID || var11 == Block.dirt.blockID || var11 == Block.grass.blockID))
                     {
-                        par1World.setBlockWithNotify(var9, par3, var10, this.fruitType.blockID);
+                        par1World.setBlock(var9, par3, var10, this.fruitType.blockID);
                     }
                 }
             }
@@ -105,7 +106,14 @@ public class BlockStem extends BlockFlower
 
     public void fertilizeStem(World par1World, int par2, int par3, int par4)
     {
-        par1World.setBlockMetadataWithNotify(par2, par3, par4, 7);
+        int var5 = par1World.getBlockMetadata(par2, par3, par4) + MathHelper.getRandomIntegerInRange(par1World.rand, 2, 5);
+
+        if (var5 > 7)
+        {
+            var5 = 7;
+        }
+
+        par1World.setBlockMetadataWithNotify(par2, par3, par4, var5, 2);
     }
 
     private float getGrowthModifier(World par1World, int par2, int par3, int par4)
@@ -175,14 +183,6 @@ public class BlockStem extends BlockFlower
     public int colorMultiplier(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
     {
         return this.getRenderColor(par1IBlockAccess.getBlockMetadata(par2, par3, par4));
-    }
-
-    /**
-     * From the specified side and block metadata retrieves the blocks texture. Args: side, metadata
-     */
-    public int getBlockTextureFromSideAndMetadata(int par1, int par2)
-    {
-        return this.blockIndexInTexture;
     }
 
     /**
@@ -275,5 +275,20 @@ public class BlockStem extends BlockFlower
     public int idPicked(World par1World, int par2, int par3, int par4)
     {
         return this.fruitType == Block.pumpkin ? Item.pumpkinSeeds.itemID : (this.fruitType == Block.melon ? Item.melonSeeds.itemID : 0);
+    }
+
+    /**
+     * When this method is called, your block should register all the icons it needs with the given IconRegister. This
+     * is the only chance you get to register icons.
+     */
+    public void registerIcons(IconRegister par1IconRegister)
+    {
+        this.blockIcon = par1IconRegister.registerIcon("stem_straight");
+        this.theIcon = par1IconRegister.registerIcon("stem_bent");
+    }
+
+    public Icon func_94368_p()
+    {
+        return this.theIcon;
     }
 }

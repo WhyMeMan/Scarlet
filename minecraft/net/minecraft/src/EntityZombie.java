@@ -24,9 +24,14 @@ public class EntityZombie extends EntityMob
         this.tasks.addTask(6, new EntityAIWander(this, this.moveSpeed));
         this.tasks.addTask(7, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
         this.tasks.addTask(7, new EntityAILookIdle(this));
-        this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, false));
+        this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, true));
         this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityPlayer.class, 16.0F, 0, true));
         this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityVillager.class, 16.0F, 0, false));
+    }
+
+    protected int func_96121_ay()
+    {
+        return 40;
     }
 
     /**
@@ -174,20 +179,33 @@ public class EntityZombie extends EntityMob
         super.onUpdate();
     }
 
+    public boolean attackEntityAsMob(Entity par1Entity)
+    {
+        boolean var2 = super.attackEntityAsMob(par1Entity);
+
+        if (var2 && this.getHeldItem() == null && this.isBurning() && this.rand.nextFloat() < (float)this.worldObj.difficultySetting * 0.3F)
+        {
+            par1Entity.setFire(2 * this.worldObj.difficultySetting);
+        }
+
+        return var2;
+    }
+
     /**
      * Returns the amount of damage a mob should deal.
      */
     public int getAttackStrength(Entity par1Entity)
     {
         ItemStack var2 = this.getHeldItem();
-        int var3 = 4;
+        float var3 = (float)(this.getMaxHealth() - this.getHealth()) / (float)this.getMaxHealth();
+        int var4 = 3 + MathHelper.floor_float(var3 * 4.0F);
 
         if (var2 != null)
         {
-            var3 += var2.getDamageVsEntity(this);
+            var4 += var2.getDamageVsEntity(this);
         }
 
-        return var3;
+        return var4;
     }
 
     /**
@@ -255,9 +273,12 @@ public class EntityZombie extends EntityMob
         }
     }
 
-    protected void func_82164_bB()
+    /**
+     * Makes entity wear random armor based on difficulty
+     */
+    protected void addRandomArmor()
     {
-        super.func_82164_bB();
+        super.addRandomArmor();
 
         if (this.rand.nextFloat() < (this.worldObj.difficultySetting == 3 ? 0.05F : 0.01F))
         {
@@ -265,11 +286,11 @@ public class EntityZombie extends EntityMob
 
             if (var1 == 0)
             {
-                this.setCurrentItemOrArmor(0, new ItemStack(Item.swordSteel));
+                this.setCurrentItemOrArmor(0, new ItemStack(Item.swordIron));
             }
             else
             {
-                this.setCurrentItemOrArmor(0, new ItemStack(Item.shovelSteel));
+                this.setCurrentItemOrArmor(0, new ItemStack(Item.shovelIron));
             }
         }
     }
@@ -352,14 +373,14 @@ public class EntityZombie extends EntityMob
      */
     public void initCreature()
     {
-        this.canPickUpLoot = this.rand.nextFloat() < pickUpLootProability[this.worldObj.difficultySetting];
+        this.setCanPickUpLoot(this.rand.nextFloat() < pickUpLootProability[this.worldObj.difficultySetting]);
 
         if (this.worldObj.rand.nextFloat() < 0.05F)
         {
             this.setVillager(true);
         }
 
-        this.func_82164_bB();
+        this.addRandomArmor();
         this.func_82162_bC();
 
         if (this.getCurrentItemOrArmor(4) == null)

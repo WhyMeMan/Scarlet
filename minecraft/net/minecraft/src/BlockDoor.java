@@ -4,14 +4,23 @@ import java.util.Random;
 
 public class BlockDoor extends Block
 {
+    private static final String[] doorIconNames = new String[] {"doorWood_lower", "doorWood_upper", "doorIron_lower", "doorIron_upper"};
+
+    /** Used for pointing at icon names. */
+    private final int doorTypeForIcon;
+    private Icon[] iconArray;
+
     protected BlockDoor(int par1, Material par2Material)
     {
         super(par1, par2Material);
-        this.blockIndexInTexture = 97;
 
         if (par2Material == Material.iron)
         {
-            ++this.blockIndexInTexture;
+            this.doorTypeForIcon = 2;
+        }
+        else
+        {
+            this.doorTypeForIcon = 0;
         }
 
         float var3 = 0.5F;
@@ -20,72 +29,90 @@ public class BlockDoor extends Block
     }
 
     /**
+     * From the specified side and block metadata retrieves the blocks texture. Args: side, metadata
+     */
+    public Icon getIcon(int par1, int par2)
+    {
+        return this.iconArray[this.doorTypeForIcon];
+    }
+
+    /**
      * Retrieves the block texture to use based on the display side. Args: iBlockAccess, x, y, z, side
      */
-    public int getBlockTexture(IBlockAccess par1IBlockAccess, int par2, int par3, int par4, int par5)
+    public Icon getBlockTexture(IBlockAccess par1IBlockAccess, int par2, int par3, int par4, int par5)
     {
-        if (par5 != 0 && par5 != 1)
+        if (par5 != 1 && par5 != 0)
         {
             int var6 = this.getFullMetadata(par1IBlockAccess, par2, par3, par4);
-            int var7 = this.blockIndexInTexture;
+            int var7 = var6 & 3;
+            boolean var8 = (var6 & 4) != 0;
+            boolean var9 = false;
+            boolean var10 = (var6 & 8) != 0;
 
-            if ((var6 & 8) != 0)
+            if (var8)
             {
-                var7 -= 16;
-            }
-
-            int var8 = var6 & 3;
-            boolean var9 = (var6 & 4) != 0;
-
-            if (var9)
-            {
-                if (var8 == 0 && par5 == 2)
+                if (var7 == 0 && par5 == 2)
                 {
-                    var7 = -var7;
+                    var9 = !var9;
                 }
-                else if (var8 == 1 && par5 == 5)
+                else if (var7 == 1 && par5 == 5)
                 {
-                    var7 = -var7;
+                    var9 = !var9;
                 }
-                else if (var8 == 2 && par5 == 3)
+                else if (var7 == 2 && par5 == 3)
                 {
-                    var7 = -var7;
+                    var9 = !var9;
                 }
-                else if (var8 == 3 && par5 == 4)
+                else if (var7 == 3 && par5 == 4)
                 {
-                    var7 = -var7;
+                    var9 = !var9;
                 }
             }
             else
             {
-                if (var8 == 0 && par5 == 5)
+                if (var7 == 0 && par5 == 5)
                 {
-                    var7 = -var7;
+                    var9 = !var9;
                 }
-                else if (var8 == 1 && par5 == 3)
+                else if (var7 == 1 && par5 == 3)
                 {
-                    var7 = -var7;
+                    var9 = !var9;
                 }
-                else if (var8 == 2 && par5 == 4)
+                else if (var7 == 2 && par5 == 4)
                 {
-                    var7 = -var7;
+                    var9 = !var9;
                 }
-                else if (var8 == 3 && par5 == 2)
+                else if (var7 == 3 && par5 == 2)
                 {
-                    var7 = -var7;
+                    var9 = !var9;
                 }
 
                 if ((var6 & 16) != 0)
                 {
-                    var7 = -var7;
+                    var9 = !var9;
                 }
             }
 
-            return var7;
+            return this.iconArray[this.doorTypeForIcon + (var9 ? doorIconNames.length : 0) + (var10 ? 1 : 0)];
         }
         else
         {
-            return this.blockIndexInTexture;
+            return this.iconArray[this.doorTypeForIcon];
+        }
+    }
+
+    /**
+     * When this method is called, your block should register all the icons it needs with the given IconRegister. This
+     * is the only chance you get to register icons.
+     */
+    public void registerIcons(IconRegister par1IconRegister)
+    {
+        this.iconArray = new Icon[doorIconNames.length * 2];
+
+        for (int var2 = 0; var2 < doorIconNames.length; ++var2)
+        {
+            this.iconArray[var2] = par1IconRegister.registerIcon(doorIconNames[var2]);
+            this.iconArray[var2 + doorIconNames.length] = new IconFlipped(this.iconArray[var2], true, false);
         }
     }
 
@@ -264,12 +291,12 @@ public class BlockDoor extends Block
 
             if ((var10 & 8) == 0)
             {
-                par1World.setBlockMetadataWithNotify(par2, par3, par4, var11);
+                par1World.setBlockMetadataWithNotify(par2, par3, par4, var11, 2);
                 par1World.markBlockRangeForRenderUpdate(par2, par3, par4, par2, par3, par4);
             }
             else
             {
-                par1World.setBlockMetadataWithNotify(par2, par3 - 1, par4, var11);
+                par1World.setBlockMetadataWithNotify(par2, par3 - 1, par4, var11, 2);
                 par1World.markBlockRangeForRenderUpdate(par2, par3 - 1, par4, par2, par3, par4);
             }
 
@@ -293,12 +320,12 @@ public class BlockDoor extends Block
 
             if ((var6 & 8) == 0)
             {
-                par1World.setBlockMetadataWithNotify(par2, par3, par4, var8);
+                par1World.setBlockMetadataWithNotify(par2, par3, par4, var8, 2);
                 par1World.markBlockRangeForRenderUpdate(par2, par3, par4, par2, par3, par4);
             }
             else
             {
-                par1World.setBlockMetadataWithNotify(par2, par3 - 1, par4, var8);
+                par1World.setBlockMetadataWithNotify(par2, par3 - 1, par4, var8, 2);
                 par1World.markBlockRangeForRenderUpdate(par2, par3 - 1, par4, par2, par3, par4);
             }
 
@@ -320,18 +347,18 @@ public class BlockDoor extends Block
 
             if (par1World.getBlockId(par2, par3 + 1, par4) != this.blockID)
             {
-                par1World.setBlockWithNotify(par2, par3, par4, 0);
+                par1World.setBlockToAir(par2, par3, par4);
                 var7 = true;
             }
 
             if (!par1World.doesBlockHaveSolidTopSurface(par2, par3 - 1, par4))
             {
-                par1World.setBlockWithNotify(par2, par3, par4, 0);
+                par1World.setBlockToAir(par2, par3, par4);
                 var7 = true;
 
                 if (par1World.getBlockId(par2, par3 + 1, par4) == this.blockID)
                 {
-                    par1World.setBlockWithNotify(par2, par3 + 1, par4, 0);
+                    par1World.setBlockToAir(par2, par3 + 1, par4);
                 }
             }
 
@@ -356,7 +383,7 @@ public class BlockDoor extends Block
         {
             if (par1World.getBlockId(par2, par3 - 1, par4) != this.blockID)
             {
-                par1World.setBlockWithNotify(par2, par3, par4, 0);
+                par1World.setBlockToAir(par2, par3, par4);
             }
 
             if (par5 > 0 && par5 != this.blockID)
@@ -371,7 +398,7 @@ public class BlockDoor extends Block
      */
     public int idDropped(int par1, Random par2Random, int par3)
     {
-        return (par1 & 8) != 0 ? 0 : (this.blockMaterial == Material.iron ? Item.doorSteel.itemID : Item.doorWood.itemID);
+        return (par1 & 8) != 0 ? 0 : (this.blockMaterial == Material.iron ? Item.doorIron.itemID : Item.doorWood.itemID);
     }
 
     /**
@@ -431,7 +458,7 @@ public class BlockDoor extends Block
      */
     public int idPicked(World par1World, int par2, int par3, int par4)
     {
-        return this.blockMaterial == Material.iron ? Item.doorSteel.itemID : Item.doorWood.itemID;
+        return this.blockMaterial == Material.iron ? Item.doorIron.itemID : Item.doorWood.itemID;
     }
 
     /**
@@ -441,7 +468,7 @@ public class BlockDoor extends Block
     {
         if (par6EntityPlayer.capabilities.isCreativeMode && (par5 & 8) != 0 && par1World.getBlockId(par2, par3 - 1, par4) == this.blockID)
         {
-            par1World.setBlockWithNotify(par2, par3 - 1, par4, 0);
+            par1World.setBlockToAir(par2, par3 - 1, par4);
         }
     }
 }

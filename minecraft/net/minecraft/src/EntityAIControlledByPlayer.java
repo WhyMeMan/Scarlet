@@ -108,10 +108,10 @@ public class EntityAIControlledByPlayer extends EntityAIBase
             }
         }
 
-        float var22 = 0.16277136F / (var8 * var8 * var8);
+        float var23 = 0.16277136F / (var8 * var8 * var8);
         float var10 = MathHelper.sin(var2.rotationYaw * (float)Math.PI / 180.0F);
         float var11 = MathHelper.cos(var2.rotationYaw * (float)Math.PI / 180.0F);
-        float var12 = var2.getAIMoveSpeed() * var22;
+        float var12 = var2.getAIMoveSpeed() * var23;
         float var13 = Math.max(var7, 1.0F);
         var13 = var12 / var13;
         float var14 = var7 * var13;
@@ -151,29 +151,41 @@ public class EntityAIControlledByPlayer extends EntityAIBase
         int var18 = MathHelper.floor_double(this.thisEntity.posZ + (double)var16);
         PathPoint var19 = new PathPoint(MathHelper.floor_float(this.thisEntity.width + 1.0F), MathHelper.floor_float(this.thisEntity.height + var1.height + 1.0F), MathHelper.floor_float(this.thisEntity.width + 1.0F));
 
-        if ((var4 != var17 || var6 != var18) && PathFinder.func_82565_a(this.thisEntity, var17, var5, var18, var19, false, false, true) == 0 && PathFinder.func_82565_a(this.thisEntity, var4, var5 + 1, var6, var19, false, false, true) == 1 && PathFinder.func_82565_a(this.thisEntity, var17, var5 + 1, var18, var19, false, false, true) == 1)
+        if (var4 != var17 || var6 != var18)
         {
-            var2.getJumpHelper().setJumping();
+            int var20 = this.thisEntity.worldObj.getBlockId(var4, var5, var6);
+            int var21 = this.thisEntity.worldObj.getBlockId(var4, var5 - 1, var6);
+            boolean var22 = this.func_98216_b(var20) || Block.blocksList[var20] == null && this.func_98216_b(var21);
+
+            if (!var22 && PathFinder.func_82565_a(this.thisEntity, var17, var5, var18, var19, false, false, true) == 0 && PathFinder.func_82565_a(this.thisEntity, var4, var5 + 1, var6, var19, false, false, true) == 1 && PathFinder.func_82565_a(this.thisEntity, var17, var5 + 1, var18, var19, false, false, true) == 1)
+            {
+                var2.getJumpHelper().setJumping();
+            }
         }
 
         if (!var1.capabilities.isCreativeMode && this.currentSpeed >= this.maxSpeed * 0.5F && this.thisEntity.getRNG().nextFloat() < 0.006F && !this.speedBoosted)
         {
-            ItemStack var20 = var1.getHeldItem();
+            ItemStack var24 = var1.getHeldItem();
 
-            if (var20 != null && var20.itemID == Item.carrotOnAStick.itemID)
+            if (var24 != null && var24.itemID == Item.carrotOnAStick.itemID)
             {
-                var20.damageItem(1, var1);
+                var24.damageItem(1, var1);
 
-                if (var20.stackSize == 0)
+                if (var24.stackSize == 0)
                 {
-                    ItemStack var21 = new ItemStack(Item.fishingRod);
-                    var21.setTagCompound(var20.stackTagCompound);
-                    var1.inventory.mainInventory[var1.inventory.currentItem] = var21;
+                    ItemStack var25 = new ItemStack(Item.fishingRod);
+                    var25.setTagCompound(var24.stackTagCompound);
+                    var1.inventory.mainInventory[var1.inventory.currentItem] = var25;
                 }
             }
         }
 
         this.thisEntity.moveEntityWithHeading(0.0F, var7);
+    }
+
+    private boolean func_98216_b(int par1)
+    {
+        return Block.blocksList[par1] != null && (Block.blocksList[par1].getRenderType() == 10 || Block.blocksList[par1] instanceof BlockHalfSlab);
     }
 
     /**

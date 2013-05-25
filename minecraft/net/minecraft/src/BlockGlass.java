@@ -4,9 +4,9 @@ import java.util.Random;
 
 public class BlockGlass extends BlockBreakable
 {
-    public BlockGlass(int par1, int par2, Material par3Material, boolean par4)
+    public BlockGlass(int par1, Material par2Material, boolean par3)
     {
-        super(par1, par2, par3Material, par4);
+        super(par1, "glass", par2Material, par3);
         this.setCreativeTab(CreativeTabs.tabBlock);
     }
 

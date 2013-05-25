@@ -8,7 +8,7 @@ public class GuiYesNo extends GuiScreen
     protected GuiScreen parentScreen;
 
     /** First line of text. */
-    private String message1;
+    protected String message1;
 
     /** Second line of text. */
     private String message2;
@@ -48,8 +48,8 @@ public class GuiYesNo extends GuiScreen
      */
     public void initGui()
     {
-        this.controlList.add(new GuiSmallButton(0, this.width / 2 - 155, this.height / 6 + 96, this.buttonText1));
-        this.controlList.add(new GuiSmallButton(1, this.width / 2 - 155 + 160, this.height / 6 + 96, this.buttonText2));
+        this.buttonList.add(new GuiSmallButton(0, this.width / 2 - 155, this.height / 6 + 96, this.buttonText1));
+        this.buttonList.add(new GuiSmallButton(1, this.width / 2 - 155 + 160, this.height / 6 + 96, this.buttonText2));
     }
 
     /**

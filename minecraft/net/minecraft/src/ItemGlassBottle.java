@@ -9,6 +9,14 @@ public class ItemGlassBottle extends Item
     }
 
     /**
+     * Gets an icon index based on an item's damage value
+     */
+    public Icon getIconFromDamage(int par1)
+    {
+        return Item.potion.getIconFromDamage(0);
+    }
+
+    /**
      * Called whenever this item is equipped and the right mouse button is pressed. Args: itemStack, world, entityPlayer
      */
     public ItemStack onItemRightClick(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer)
@@ -56,4 +64,6 @@ public class ItemGlassBottle extends Item
             return par1ItemStack;
         }
     }
+
+    public void registerIcons(IconRegister par1IconRegister) {}
 }

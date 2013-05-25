@@ -12,6 +12,9 @@ public class ItemPotion extends Item
     /** maps potion damage values to lists of effect names */
     private HashMap effectCache = new HashMap();
     private static final Map field_77835_b = new LinkedHashMap();
+    private Icon field_94591_c;
+    private Icon field_94590_d;
+    private Icon field_94592_ct;
 
     public ItemPotion(int par1)
     {
@@ -70,7 +73,7 @@ public class ItemPotion extends Item
         return var2;
     }
 
-    public ItemStack onFoodEaten(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer)
+    public ItemStack onEaten(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer)
     {
         if (!par3EntityPlayer.capabilities.isCreativeMode)
         {
@@ -162,17 +165,17 @@ public class ItemPotion extends Item
     /**
      * Gets an icon index based on an item's damage value
      */
-    public int getIconFromDamage(int par1)
+    public Icon getIconFromDamage(int par1)
     {
-        return isSplash(par1) ? 154 : 140;
+        return isSplash(par1) ? this.field_94591_c : this.field_94590_d;
     }
 
     /**
      * Gets an icon index based on an item's damage value and the given render pass
      */
-    public int getIconFromDamageForRenderPass(int par1, int par2)
+    public Icon getIconFromDamageForRenderPass(int par1, int par2)
     {
-        return par2 == 0 ? 141 : super.getIconFromDamageForRenderPass(par1, par2);
+        return par2 == 0 ? this.field_94592_ct : super.getIconFromDamageForRenderPass(par1, par2);
     }
 
     /**
@@ -288,18 +291,18 @@ public class ItemPotion extends Item
 
                     if (Potion.potionTypes[var7.getPotionID()].isBadEffect())
                     {
-                        par3List.add("\u00a7c" + var8);
+                        par3List.add(EnumChatFormatting.RED + var8);
                     }
                     else
                     {
-                        par3List.add("\u00a77" + var8);
+                        par3List.add(EnumChatFormatting.GRAY + var8);
                     }
                 }
             }
             else
             {
                 String var6 = StatCollector.translateToLocal("potion.empty").trim();
-                par3List.add("\u00a77" + var6);
+                par3List.add(EnumChatFormatting.GRAY + var6);
             }
         }
     }
@@ -316,26 +319,70 @@ public class ItemPotion extends Item
     public void getSubItems(int par1, CreativeTabs par2CreativeTabs, List par3List)
     {
         super.getSubItems(par1, par2CreativeTabs, par3List);
+        int var5;
 
         if (field_77835_b.isEmpty())
         {
-            for (int var4 = 0; var4 <= 32767; ++var4)
+            for (int var4 = 0; var4 <= 15; ++var4)
             {
-                List var5 = PotionHelper.getPotionEffects(var4, false);
-
-                if (var5 != null && !var5.isEmpty())
+                for (var5 = 0; var5 <= 1; ++var5)
                 {
-                    field_77835_b.put(var5, Integer.valueOf(var4));
+                    int var6;
+
+                    if (var5 == 0)
+                    {
+                        var6 = var4 | 8192;
+                    }
+                    else
+                    {
+                        var6 = var4 | 16384;
+                    }
+
+                    for (int var7 = 0; var7 <= 2; ++var7)
+                    {
+                        int var8 = var6;
+
+                        if (var7 != 0)
+                        {
+                            if (var7 == 1)
+                            {
+                                var8 = var6 | 32;
+                            }
+                            else if (var7 == 2)
+                            {
+                                var8 = var6 | 64;
+                            }
+                        }
+
+                        List var9 = PotionHelper.getPotionEffects(var8, false);
+
+                        if (var9 != null && !var9.isEmpty())
+                        {
+                            field_77835_b.put(var9, Integer.valueOf(var8));
+                        }
+                    }
                 }
             }
         }
 
-        Iterator var6 = field_77835_b.values().iterator();
+        Iterator var10 = field_77835_b.values().iterator();
 
-        while (var6.hasNext())
+        while (var10.hasNext())
         {
-            int var7 = ((Integer)var6.next()).intValue();
-            par3List.add(new ItemStack(par1, 1, var7));
+            var5 = ((Integer)var10.next()).intValue();
+            par3List.add(new ItemStack(par1, 1, var5));
         }
+    }
+
+    public void registerIcons(IconRegister par1IconRegister)
+    {
+        this.field_94590_d = par1IconRegister.registerIcon("potion");
+        this.field_94591_c = par1IconRegister.registerIcon("potion_splash");
+        this.field_94592_ct = par1IconRegister.registerIcon("potion_contents");
+    }
+
+    public static Icon func_94589_d(String par0Str)
+    {
+        return par0Str == "potion" ? Item.potion.field_94590_d : (par0Str == "potion_splash" ? Item.potion.field_94591_c : (par0Str == "potion_contents" ? Item.potion.field_94592_ct : null));
     }
 }

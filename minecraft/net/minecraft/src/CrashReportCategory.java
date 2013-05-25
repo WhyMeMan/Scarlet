@@ -7,23 +7,26 @@ import java.util.concurrent.Callable;
 
 public class CrashReportCategory
 {
-    private final CrashReport field_85078_a;
+    private final CrashReport theCrashReport;
     private final String field_85076_b;
     private final List field_85077_c = new ArrayList();
     private StackTraceElement[] stackTrace = new StackTraceElement[0];
 
     public CrashReportCategory(CrashReport par1CrashReport, String par2Str)
     {
-        this.field_85078_a = par1CrashReport;
+        this.theCrashReport = par1CrashReport;
         this.field_85076_b = par2Str;
     }
 
     public static String func_85074_a(double par0, double par2, double par4)
     {
-        return String.format("%.2f,%.2f,%.2f - %s", new Object[] {Double.valueOf(par0), Double.valueOf(par2), Double.valueOf(par4), func_85071_a(MathHelper.floor_double(par0), MathHelper.floor_double(par2), MathHelper.floor_double(par4))});
+        return String.format("%.2f,%.2f,%.2f - %s", new Object[] {Double.valueOf(par0), Double.valueOf(par2), Double.valueOf(par4), getLocationInfo(MathHelper.floor_double(par0), MathHelper.floor_double(par2), MathHelper.floor_double(par4))});
     }
 
-    public static String func_85071_a(int par0, int par1, int par2)
+    /**
+     * Returns a string with world information on location.Args:x,y,z
+     */
+    public static String getLocationInfo(int par0, int par1, int par2)
     {
         StringBuilder var3 = new StringBuilder();
 

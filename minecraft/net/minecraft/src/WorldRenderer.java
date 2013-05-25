@@ -140,7 +140,7 @@ public class WorldRenderer
                 {
                     float var1 = 0.0F;
                     GL11.glNewList(this.glRenderList + 2, GL11.GL_COMPILE);
-                    RenderItem.renderAABB(AxisAlignedBB.getAABBPool().addOrModifyAABBInPool((double)((float)this.posXClip - var1), (double)((float)this.posYClip - var1), (double)((float)this.posZClip - var1), (double)((float)(this.posXClip + 16) + var1), (double)((float)(this.posYClip + 16) + var1), (double)((float)(this.posZClip + 16) + var1)));
+                    RenderItem.renderAABB(AxisAlignedBB.getAABBPool().getAABB((double)((float)this.posXClip - var1), (double)((float)this.posYClip - var1), (double)((float)this.posZClip - var1), (double)((float)(this.posXClip + 16) + var1), (double)((float)(this.posYClip + 16) + var1), (double)((float)(this.posZClip + 16) + var1)));
                     GL11.glEndList();
                     this.needsBoxUpdate = false;
                 }
@@ -172,7 +172,7 @@ public class WorldRenderer
                 var25.addAll(this.tileEntityRenderers);
                 this.tileEntityRenderers.clear();
                 byte var8 = 1;
-                ChunkCache var9 = new ChunkCache(this.worldObj, var24 - var8, var2 - var8, var3 - var8, var4 + var8, var5 + var8, var6 + var8);
+                ChunkCache var9 = new ChunkCache(this.worldObj, var24 - var8, var2 - var8, var3 - var8, var4 + var8, var5 + var8, var6 + var8, var8);
 
                 if (!var9.extendedLevelsInChunkCache())
                 {
@@ -203,12 +203,6 @@ public class WorldRenderer
                                             var16 = true;
                                             GL11.glNewList(this.glRenderList + var13, GL11.GL_COMPILE);
                                             var11.setRenderingChunk(true);
-
-                                            if (var12)
-                                            {
-                                                Reflector.callVoid(Reflector.ForgeHooksClient_beforeRenderPass, new Object[] {Integer.valueOf(var13)});
-                                            }
-
                                             var11.startDrawingQuads();
                                             var11.setTranslation((double)(-globalChunkOffsetX), 0.0D, (double)(-globalChunkOffsetZ));
                                         }
@@ -243,17 +237,7 @@ public class WorldRenderer
 
                                             if (var23)
                                             {
-                                                if (var12)
-                                                {
-                                                    Reflector.callVoid(Reflector.ForgeHooksClient_beforeBlockRender, new Object[] {var21, var10});
-                                                }
-
                                                 var15 |= var10.renderBlockByRenderType(var21, var19, var17, var18);
-
-                                                if (var12)
-                                                {
-                                                    Reflector.callVoid(Reflector.ForgeHooksClient_afterBlockRender, new Object[] {var21, var10});
-                                                }
                                             }
                                         }
                                     }
@@ -263,11 +247,6 @@ public class WorldRenderer
 
                         if (var16)
                         {
-                            if (var12)
-                            {
-                                Reflector.callVoid(Reflector.ForgeHooksClient_afterRenderPass, new Object[] {Integer.valueOf(var13)});
-                            }
-
                             this.bytesDrawn += var11.draw();
                             GL11.glEndList();
                             var11.setRenderingChunk(false);

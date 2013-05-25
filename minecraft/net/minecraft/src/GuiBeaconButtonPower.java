@@ -8,10 +8,10 @@ class GuiBeaconButtonPower extends GuiBeaconButton
     /** Beacon GUI this button belongs to. */
     final GuiBeacon beaconGui;
 
-    public GuiBeaconButtonPower(GuiBeacon par1, int par2, int par3, int par4, int par5, int par6)
+    public GuiBeaconButtonPower(GuiBeacon par1GuiBeacon, int par2, int par3, int par4, int par5, int par6)
     {
         super(par2, par3, par4, "/gui/inventory.png", 0 + Potion.potionTypes[par5].getStatusIconIndex() % 8 * 18, 198 + Potion.potionTypes[par5].getStatusIconIndex() / 8 * 18);
-        this.beaconGui = par1;
+        this.beaconGui = par1GuiBeacon;
         this.field_82261_l = par5;
         this.field_82262_m = par6;
     }

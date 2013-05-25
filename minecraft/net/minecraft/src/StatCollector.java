@@ -19,4 +19,9 @@ public class StatCollector
     {
         return localizedName.translateKeyFormat(par0Str, par1ArrayOfObj);
     }
+
+    public static boolean func_94522_b(String par0Str)
+    {
+        return localizedName.containsTranslateKey(par0Str);
+    }
 }

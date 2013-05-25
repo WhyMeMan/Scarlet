@@ -61,8 +61,7 @@ public class EntityOtherPlayerMP extends EntityPlayer
 
     public void updateCloak()
     {
-        this.playerCloakUrl = "http://skins.minecraft.net/MinecraftCloaks/" + StringUtils.stripControlCodes(this.username) + ".png";
-        this.cloakUrl = this.playerCloakUrl;
+        this.cloakUrl = "http://skins.minecraft.net/MinecraftCloaks/" + StringUtils.stripControlCodes(this.username) + ".png";
     }
 
     /**
@@ -72,7 +71,7 @@ public class EntityOtherPlayerMP extends EntityPlayer
     {
         this.field_71082_cx = 0.0F;
         super.onUpdate();
-        this.prevLegYaw = this.legYaw;
+        this.prevLimbYaw = this.limbYaw;
         double var1 = this.posX - this.prevPosX;
         double var3 = this.posZ - this.prevPosZ;
         float var5 = MathHelper.sqrt_double(var1 * var1 + var3 * var3) * 4.0F;
@@ -82,8 +81,8 @@ public class EntityOtherPlayerMP extends EntityPlayer
             var5 = 1.0F;
         }
 
-        this.legYaw += (var5 - this.legYaw) * 0.4F;
-        this.legSwing += this.legYaw;
+        this.limbYaw += (var5 - this.limbYaw) * 0.4F;
+        this.limbSwing += this.limbYaw;
 
         if (!this.isItemInUse && this.isEating() && this.inventory.mainInventory[this.inventory.currentItem] != null)
         {

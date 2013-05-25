@@ -10,14 +10,15 @@ import org.darkstorm.minecraft.gui.component.Button;
 import org.darkstorm.minecraft.gui.component.Component;
 import org.darkstorm.minecraft.gui.theme.AbstractComponentUI;
 import org.darkstorm.minecraft.gui.util.RenderUtil;
+import org.darkstorm.minecraft.gui.util.UtilDrawer;
 
 public class SimpleButtonUI extends AbstractComponentUI<Button> {
 	private final SimpleTheme theme;
-
+	private UtilDrawer graphicsRenderer;
 	SimpleButtonUI(SimpleTheme theme) {
 		super(Button.class);
 		this.theme = theme;
-
+		this.graphicsRenderer = new UtilDrawer();
 		foreground = Color.WHITE;
 		background = new Color(128, 128, 128, 128 + 128 / 2);
 	}
@@ -31,14 +32,16 @@ public class SimpleButtonUI extends AbstractComponentUI<Button> {
 
 		glDisable(GL_TEXTURE_2D);
 		RenderUtil.setColor(button.getBackgroundColor());
-		glBegin(GL_QUADS);
-		{
-			glVertex2d(0, 0);
-			glVertex2d(area.width, 0);
-			glVertex2d(area.width, area.height);
-			glVertex2d(0, area.height);
-		}
-		glEnd();
+//		glBegin(GL_QUADS);
+//		{
+//			glVertex2d(0, 0);
+//			glVertex2d(area.width, 0);
+//			glVertex2d(area.width, area.height);
+//			glVertex2d(0, area.height);
+//		}
+//		glEnd();
+		this.graphicsRenderer.drawGradientBorderedRect(0, 0, area.width, area.height, 0xFF7c7971, 0xff5d5c5b, 0x22000000);
+		
 		Point mouse = RenderUtil.calculateMouseLocation();
 		Component parent = button.getParent();
 		while(parent != null) {
@@ -48,14 +51,19 @@ public class SimpleButtonUI extends AbstractComponentUI<Button> {
 		}
 		if(area.contains(mouse)) {
 			glColor4f(0.0f, 0.0f, 0.0f, Mouse.isButtonDown(0) ? 0.5f : 0.3f);
-			glBegin(GL_QUADS);
-			{
-				glVertex2d(0, 0);
-				glVertex2d(area.width, 0);
-				glVertex2d(area.width, area.height);
-				glVertex2d(0, area.height);
-			}
-			glEnd();
+//			glBegin(GL_QUADS);
+//			{
+//				glVertex2d(0, 0);
+//				glVertex2d(area.width, 0);
+//				glVertex2d(area.width, area.height);
+//				glVertex2d(0, area.height);
+//			}
+//			glEnd();
+			if (Mouse.isButtonDown(0))
+				this.graphicsRenderer.drawGradientBorderedRect(-1, 0, area.width+1, area.height, 0xff5d5c5b, 0xFF7c7971, 0x22000000);
+			else
+				this.graphicsRenderer.drawGradientBorderedRect(-1, 0, area.width+1, area.height, 0xFF7c7971, 0xff5d5c5b, 0x22000000);
+			
 		}
 		glEnable(GL_TEXTURE_2D);
 

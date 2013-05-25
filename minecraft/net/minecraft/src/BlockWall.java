@@ -9,7 +9,7 @@ public class BlockWall extends Block
 
     public BlockWall(int par1, Block par2Block)
     {
-        super(par1, par2Block.blockIndexInTexture, par2Block.blockMaterial);
+        super(par1, par2Block.blockMaterial);
         this.setHardness(par2Block.blockHardness);
         this.setResistance(par2Block.blockResistance / 3.0F);
         this.setStepSound(par2Block.stepSound);
@@ -19,9 +19,9 @@ public class BlockWall extends Block
     /**
      * From the specified side and block metadata retrieves the blocks texture. Args: side, metadata
      */
-    public int getBlockTextureFromSideAndMetadata(int par1, int par2)
+    public Icon getIcon(int par1, int par2)
     {
-        return par2 == 1 ? Block.cobblestoneMossy.blockIndexInTexture : super.getBlockTextureFromSide(par1);
+        return par2 == 1 ? Block.cobblestoneMossy.getBlockTextureFromSide(par1) : Block.cobblestone.getBlockTextureFromSide(par1);
     }
 
     /**
@@ -159,4 +159,10 @@ public class BlockWall extends Block
     {
         return par5 == 0 ? super.shouldSideBeRendered(par1IBlockAccess, par2, par3, par4, par5) : true;
     }
+
+    /**
+     * When this method is called, your block should register all the icons it needs with the given IconRegister. This
+     * is the only chance you get to register icons.
+     */
+    public void registerIcons(IconRegister par1IconRegister) {}
 }

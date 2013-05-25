@@ -140,7 +140,7 @@ public class SoundUpdaterMinecart implements IUpdatePlayerListBox
                 this.theSoundManager.stopEntitySound(this.theMinecart);
             }
 
-            if (this.theSoundManager.isEntitySoundPlaying(this.thePlayer))
+            if (this.playerSPRidingMinecart && this.theSoundManager.isEntitySoundPlaying(this.thePlayer))
             {
                 this.theSoundManager.stopEntitySound(this.thePlayer);
             }

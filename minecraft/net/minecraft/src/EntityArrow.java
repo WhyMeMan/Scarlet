@@ -55,7 +55,7 @@ public class EntityArrow extends Entity implements IProjectile
 
         this.posY = par2EntityLiving.posY + (double)par2EntityLiving.getEyeHeight() - 0.10000000149011612D;
         double var6 = par3EntityLiving.posX - par2EntityLiving.posX;
-        double var8 = par3EntityLiving.posY + (double)par3EntityLiving.getEyeHeight() - 0.699999988079071D - this.posY;
+        double var8 = par3EntityLiving.boundingBox.minY + (double)(par3EntityLiving.height / 3.0F) - this.posY;
         double var10 = par3EntityLiving.posZ - par2EntityLiving.posZ;
         double var12 = (double)MathHelper.sqrt_double(var6 * var6 + var10 * var10);
 
@@ -110,9 +110,9 @@ public class EntityArrow extends Entity implements IProjectile
         par1 /= (double)var9;
         par3 /= (double)var9;
         par5 /= (double)var9;
-        par1 += this.rand.nextGaussian() * 0.007499999832361937D * (double)par8;
-        par3 += this.rand.nextGaussian() * 0.007499999832361937D * (double)par8;
-        par5 += this.rand.nextGaussian() * 0.007499999832361937D * (double)par8;
+        par1 += this.rand.nextGaussian() * (double)(this.rand.nextBoolean() ? -1 : 1) * 0.007499999832361937D * (double)par8;
+        par3 += this.rand.nextGaussian() * (double)(this.rand.nextBoolean() ? -1 : 1) * 0.007499999832361937D * (double)par8;
+        par5 += this.rand.nextGaussian() * (double)(this.rand.nextBoolean() ? -1 : 1) * 0.007499999832361937D * (double)par8;
         par1 *= (double)par7;
         par3 *= (double)par7;
         par5 *= (double)par7;
@@ -260,30 +260,40 @@ public class EntityArrow extends Entity implements IProjectile
                 var4 = new MovingObjectPosition(var5);
             }
 
+            if (var4 != null && var4.entityHit != null && var4.entityHit instanceof EntityPlayer)
+            {
+                EntityPlayer var21 = (EntityPlayer)var4.entityHit;
+
+                if (var21.capabilities.disableDamage || this.shootingEntity instanceof EntityPlayer && !((EntityPlayer)this.shootingEntity).func_96122_a(var21))
+                {
+                    var4 = null;
+                }
+            }
+
             float var20;
-            float var26;
+            float var27;
 
             if (var4 != null)
             {
                 if (var4.entityHit != null)
                 {
                     var20 = MathHelper.sqrt_double(this.motionX * this.motionX + this.motionY * this.motionY + this.motionZ * this.motionZ);
-                    int var23 = MathHelper.ceiling_double_int((double)var20 * this.damage);
+                    int var24 = MathHelper.ceiling_double_int((double)var20 * this.damage);
 
                     if (this.getIsCritical())
                     {
-                        var23 += this.rand.nextInt(var23 / 2 + 2);
+                        var24 += this.rand.nextInt(var24 / 2 + 2);
                     }
 
-                    DamageSource var21 = null;
+                    DamageSource var22 = null;
 
                     if (this.shootingEntity == null)
                     {
-                        var21 = DamageSource.causeArrowDamage(this, this);
+                        var22 = DamageSource.causeArrowDamage(this, this);
                     }
                     else
                     {
-                        var21 = DamageSource.causeArrowDamage(this, this.shootingEntity);
+                        var22 = DamageSource.causeArrowDamage(this, this.shootingEntity);
                     }
 
                     if (this.isBurning() && !(var4.entityHit instanceof EntityEnderman))
@@ -291,30 +301,30 @@ public class EntityArrow extends Entity implements IProjectile
                         var4.entityHit.setFire(5);
                     }
 
-                    if (var4.entityHit.attackEntityFrom(var21, var23))
+                    if (var4.entityHit.attackEntityFrom(var22, var24))
                     {
                         if (var4.entityHit instanceof EntityLiving)
                         {
-                            EntityLiving var24 = (EntityLiving)var4.entityHit;
+                            EntityLiving var25 = (EntityLiving)var4.entityHit;
 
                             if (!this.worldObj.isRemote)
                             {
-                                var24.setArrowCountInEntity(var24.getArrowCountInEntity() + 1);
+                                var25.setArrowCountInEntity(var25.getArrowCountInEntity() + 1);
                             }
 
                             if (this.knockbackStrength > 0)
                             {
-                                var26 = MathHelper.sqrt_double(this.motionX * this.motionX + this.motionZ * this.motionZ);
+                                var27 = MathHelper.sqrt_double(this.motionX * this.motionX + this.motionZ * this.motionZ);
 
-                                if (var26 > 0.0F)
+                                if (var27 > 0.0F)
                                 {
-                                    var4.entityHit.addVelocity(this.motionX * (double)this.knockbackStrength * 0.6000000238418579D / (double)var26, 0.1D, this.motionZ * (double)this.knockbackStrength * 0.6000000238418579D / (double)var26);
+                                    var4.entityHit.addVelocity(this.motionX * (double)this.knockbackStrength * 0.6000000238418579D / (double)var27, 0.1D, this.motionZ * (double)this.knockbackStrength * 0.6000000238418579D / (double)var27);
                                 }
                             }
 
                             if (this.shootingEntity != null)
                             {
-                                EnchantmentThorns.func_92096_a(this.shootingEntity, var24, this.rand);
+                                EnchantmentThorns.func_92096_a(this.shootingEntity, var25, this.rand);
                             }
 
                             if (this.shootingEntity != null && var4.entityHit != this.shootingEntity && var4.entityHit instanceof EntityPlayer && this.shootingEntity instanceof EntityPlayerMP)
@@ -402,23 +412,23 @@ public class EntityArrow extends Entity implements IProjectile
 
             this.rotationPitch = this.prevRotationPitch + (this.rotationPitch - this.prevRotationPitch) * 0.2F;
             this.rotationYaw = this.prevRotationYaw + (this.rotationYaw - this.prevRotationYaw) * 0.2F;
-            float var22 = 0.99F;
+            float var23 = 0.99F;
             var11 = 0.05F;
 
             if (this.isInWater())
             {
-                for (int var25 = 0; var25 < 4; ++var25)
+                for (int var26 = 0; var26 < 4; ++var26)
                 {
-                    var26 = 0.25F;
-                    this.worldObj.spawnParticle("bubble", this.posX - this.motionX * (double)var26, this.posY - this.motionY * (double)var26, this.posZ - this.motionZ * (double)var26, this.motionX, this.motionY, this.motionZ);
+                    var27 = 0.25F;
+                    this.worldObj.spawnParticle("bubble", this.posX - this.motionX * (double)var27, this.posY - this.motionY * (double)var27, this.posZ - this.motionZ * (double)var27, this.motionX, this.motionY, this.motionZ);
                 }
 
-                var22 = 0.8F;
+                var23 = 0.8F;
             }
 
-            this.motionX *= (double)var22;
-            this.motionY *= (double)var22;
-            this.motionZ *= (double)var22;
+            this.motionX *= (double)var23;
+            this.motionY *= (double)var23;
+            this.motionZ *= (double)var23;
             this.motionY -= (double)var11;
             this.setPosition(this.posX, this.posY, this.posZ);
             this.doBlockCollisions();

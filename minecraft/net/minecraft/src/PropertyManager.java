@@ -5,43 +5,43 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class PropertyManager
 {
-    /** Reference to the logger. */
-    public static Logger logger = Logger.getLogger("Minecraft");
-    private Properties properties = new Properties();
-    private File associatedFile;
+    private final Properties properties = new Properties();
 
-    public PropertyManager(File par1File)
+    /** Reference to the logger. */
+    private final ILogAgent logger;
+    private final File associatedFile;
+
+    public PropertyManager(File par1File, ILogAgent par2ILogAgent)
     {
         this.associatedFile = par1File;
+        this.logger = par2ILogAgent;
 
         if (par1File.exists())
         {
-            FileInputStream var2 = null;
+            FileInputStream var3 = null;
 
             try
             {
-                var2 = new FileInputStream(par1File);
-                this.properties.load(var2);
+                var3 = new FileInputStream(par1File);
+                this.properties.load(var3);
             }
-            catch (Exception var12)
+            catch (Exception var13)
             {
-                logger.log(Level.WARNING, "Failed to load " + par1File, var12);
+                par2ILogAgent.logWarningException("Failed to load " + par1File, var13);
                 this.logMessageAndSave();
             }
             finally
             {
-                if (var2 != null)
+                if (var3 != null)
                 {
                     try
                     {
-                        var2.close();
+                        var3.close();
                     }
-                    catch (IOException var11)
+                    catch (IOException var12)
                     {
                         ;
                     }
@@ -50,7 +50,7 @@ public class PropertyManager
         }
         else
         {
-            logger.log(Level.WARNING, par1File + " does not exist");
+            par2ILogAgent.logWarning(par1File + " does not exist");
             this.logMessageAndSave();
         }
     }
@@ -61,7 +61,7 @@ public class PropertyManager
      */
     public void logMessageAndSave()
     {
-        logger.log(Level.INFO, "Generating new properties file");
+        this.logger.logInfo("Generating new properties file");
         this.saveProperties();
     }
 
@@ -79,7 +79,7 @@ public class PropertyManager
         }
         catch (Exception var11)
         {
-            logger.log(Level.WARNING, "Failed to save " + this.associatedFile, var11);
+            this.logger.logWarningException("Failed to save " + this.associatedFile, var11);
             this.logMessageAndSave();
         }
         finally

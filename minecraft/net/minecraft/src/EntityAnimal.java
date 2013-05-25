@@ -324,7 +324,7 @@ public abstract class EntityAnimal extends EntityAgeable implements IAnimals
     {
         ItemStack var2 = par1EntityPlayer.inventory.getCurrentItem();
 
-        if (var2 != null && this.isBreedingItem(var2) && this.getGrowingAge() == 0)
+        if (var2 != null && this.isBreedingItem(var2) && this.getGrowingAge() == 0 && this.inLove <= 0)
         {
             if (!par1EntityPlayer.capabilities.isCreativeMode)
             {

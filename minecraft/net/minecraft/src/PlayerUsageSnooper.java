@@ -25,6 +25,7 @@ public class PlayerUsageSnooper
     /** set to fire the snooperThread every 15 mins */
     private final java.util.Timer threadTrigger = new java.util.Timer("Snooper Timer", true);
     private final Object syncLock = new Object();
+    private final long field_98224_g = System.currentTimeMillis();
     private boolean isRunning = false;
 
     /** incremented on every getSelfCounterFor */
@@ -65,7 +66,7 @@ public class PlayerUsageSnooper
         this.addData("os_version", System.getProperty("os.version"));
         this.addData("os_architecture", System.getProperty("os.arch"));
         this.addData("java_version", System.getProperty("java.version"));
-        this.addData("version", "1.4.7");
+        this.addData("version", "1.5.2");
         this.playerStatsCollector.addServerTypeToSnooper(this);
     }
 
@@ -95,6 +96,7 @@ public class PlayerUsageSnooper
         this.addData("memory_max", Long.valueOf(Runtime.getRuntime().maxMemory()));
         this.addData("memory_free", Long.valueOf(Runtime.getRuntime().freeMemory()));
         this.addData("cpu_cores", Integer.valueOf(Runtime.getRuntime().availableProcessors()));
+        this.addData("run_time", Long.valueOf((System.currentTimeMillis() - this.field_98224_g) / 60L * 1000L));
         this.playerStatsCollector.addServerStatsToSnooper(this);
     }
 

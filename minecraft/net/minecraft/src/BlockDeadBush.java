@@ -4,11 +4,11 @@ import java.util.Random;
 
 public class BlockDeadBush extends BlockFlower
 {
-    protected BlockDeadBush(int par1, int par2)
+    protected BlockDeadBush(int par1)
     {
-        super(par1, par2, Material.vine);
-        float var3 = 0.4F;
-        this.setBlockBounds(0.5F - var3, 0.0F, 0.5F - var3, 0.5F + var3, 0.8F, 0.5F + var3);
+        super(par1, Material.vine);
+        float var2 = 0.4F;
+        this.setBlockBounds(0.5F - var2, 0.0F, 0.5F - var2, 0.5F + var2, 0.8F, 0.5F + var2);
     }
 
     /**
@@ -18,14 +18,6 @@ public class BlockDeadBush extends BlockFlower
     protected boolean canThisPlantGrowOnThisBlockID(int par1)
     {
         return par1 == Block.sand.blockID;
-    }
-
-    /**
-     * From the specified side and block metadata retrieves the blocks texture. Args: side, metadata
-     */
-    public int getBlockTextureFromSideAndMetadata(int par1, int par2)
-    {
-        return this.blockIndexInTexture;
     }
 
     /**

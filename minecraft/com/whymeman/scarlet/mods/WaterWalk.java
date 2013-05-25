@@ -10,7 +10,7 @@ import com.whymeman.scarlet.modbase.mod.ModHack;
 public class WaterWalk extends ModHack {
 
 	public WaterWalk() {
-		super("WaterWalk", Keyboard.KEY_J);
+		super("Waterwalk", Keyboard.KEY_J);
 		this.getProperties().setBypassed(true);
 		this.setHackType(HackType.HACK_MOVEMENT);
 	}

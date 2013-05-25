@@ -58,16 +58,21 @@ public class EntityMooshroom extends EntityCow
         }
     }
 
-    /**
-     * This function is used when two same-species animals in 'love mode' breed to generate the new baby animal.
-     */
-    public EntityMooshroom spawnBabyAnimal(EntityAgeable par1EntityAgeable)
+    public EntityMooshroom func_94900_c(EntityAgeable par1EntityAgeable)
     {
         return new EntityMooshroom(this.worldObj);
     }
 
+    /**
+     * This function is used when two same-species animals in 'love mode' breed to generate the new baby animal.
+     */
+    public EntityCow spawnBabyAnimal(EntityAgeable par1EntityAgeable)
+    {
+        return this.func_94900_c(par1EntityAgeable);
+    }
+
     public EntityAgeable createChild(EntityAgeable par1EntityAgeable)
     {
-        return this.spawnBabyAnimal(par1EntityAgeable);
+        return this.func_94900_c(par1EntityAgeable);
     }
 }

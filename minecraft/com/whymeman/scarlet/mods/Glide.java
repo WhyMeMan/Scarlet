@@ -18,5 +18,6 @@ public class Glide extends ModHack {
 			return;
 		if (getPlayer().motionY < -0.15f && !getPlayer().isOnLadder())
 			getPlayer().motionY = -0.15f;
+	
 	}
 }	

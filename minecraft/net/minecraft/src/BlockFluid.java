@@ -4,9 +4,11 @@ import java.util.Random;
 
 public abstract class BlockFluid extends Block
 {
+    private Icon[] theIcon;
+
     protected BlockFluid(int par1, Material par2Material)
     {
-        super(par1, (par2Material == Material.lava ? 14 : 12) * 16 + 13, par2Material);
+        super(par1, par2Material);
         float var3 = 0.0F;
         float var4 = 0.0F;
         this.setBlockBounds(0.0F + var4, 0.0F + var3, 0.0F + var4, 1.0F + var4, 1.0F + var3, 1.0F + var4);
@@ -68,11 +70,11 @@ public abstract class BlockFluid extends Block
     }
 
     /**
-     * Returns the block texture based on the side being looked at.  Args: side
+     * From the specified side and block metadata retrieves the blocks texture. Args: side, metadata
      */
-    public int getBlockTextureFromSide(int par1)
+    public Icon getIcon(int par1, int par2)
     {
-        return par1 != 0 && par1 != 1 ? this.blockIndexInTexture + 1 : this.blockIndexInTexture;
+        return par1 != 0 && par1 != 1 ? this.theIcon[1] : this.theIcon[0];
     }
 
     /**
@@ -309,9 +311,9 @@ public abstract class BlockFluid extends Block
     /**
      * How many world ticks before ticking
      */
-    public int tickRate()
+    public int tickRate(World par1World)
     {
-        return this.blockMaterial == Material.water ? 5 : (this.blockMaterial == Material.lava ? 30 : 0);
+        return this.blockMaterial == Material.water ? 5 : (this.blockMaterial == Material.lava ? (par1World.provider.hasNoSky ? 10 : 30) : 0);
     }
 
     /**
@@ -503,12 +505,12 @@ public abstract class BlockFluid extends Block
 
         if (par4Material == Material.water)
         {
-            var5 = ((BlockFluid)Block.waterMoving).getFlowVector(par0IBlockAccess, par1, par2, par3);
+            var5 = Block.waterMoving.getFlowVector(par0IBlockAccess, par1, par2, par3);
         }
 
         if (par4Material == Material.lava)
         {
-            var5 = ((BlockFluid)Block.lavaMoving).getFlowVector(par0IBlockAccess, par1, par2, par3);
+            var5 = Block.lavaMoving.getFlowVector(par0IBlockAccess, par1, par2, par3);
         }
 
         return var5.xCoord == 0.0D && var5.zCoord == 0.0D ? -1000.0D : Math.atan2(var5.zCoord, var5.xCoord) - (Math.PI / 2D);
@@ -573,11 +575,11 @@ public abstract class BlockFluid extends Block
 
                     if (var6 == 0)
                     {
-                        par1World.setBlockWithNotify(par2, par3, par4, Block.obsidian.blockID);
+                        par1World.setBlock(par2, par3, par4, Block.obsidian.blockID);
                     }
                     else if (var6 <= 4)
                     {
-                        par1World.setBlockWithNotify(par2, par3, par4, Block.cobblestone.blockID);
+                        par1World.setBlock(par2, par3, par4, Block.cobblestone.blockID);
                     }
 
                     this.triggerLavaMixEffects(par1World, par2, par3, par4);
@@ -597,5 +599,26 @@ public abstract class BlockFluid extends Block
         {
             par1World.spawnParticle("largesmoke", (double)par2 + Math.random(), (double)par3 + 1.2D, (double)par4 + Math.random(), 0.0D, 0.0D, 0.0D);
         }
+    }
+
+    /**
+     * When this method is called, your block should register all the icons it needs with the given IconRegister. This
+     * is the only chance you get to register icons.
+     */
+    public void registerIcons(IconRegister par1IconRegister)
+    {
+        if (this.blockMaterial == Material.lava)
+        {
+            this.theIcon = new Icon[] {par1IconRegister.registerIcon("lava"), par1IconRegister.registerIcon("lava_flow")};
+        }
+        else
+        {
+            this.theIcon = new Icon[] {par1IconRegister.registerIcon("water"), par1IconRegister.registerIcon("water_flow")};
+        }
+    }
+
+    public static Icon func_94424_b(String par0Str)
+    {
+        return par0Str == "water" ? Block.waterMoving.theIcon[0] : (par0Str == "water_flow" ? Block.waterMoving.theIcon[1] : (par0Str == "lava" ? Block.lavaMoving.theIcon[0] : (par0Str == "lava_flow" ? Block.lavaMoving.theIcon[1] : null)));
     }
 }

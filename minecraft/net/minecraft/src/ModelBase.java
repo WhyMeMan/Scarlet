@@ -40,7 +40,7 @@ public abstract class ModelBase
      */
     public void setLivingAnimations(EntityLiving par1EntityLiving, float par2, float par3, float par4) {}
 
-    public ModelRenderer func_85181_a(Random par1Random)
+    public ModelRenderer getRandomModelBox(Random par1Random)
     {
         return (ModelRenderer)this.boxList.get(par1Random.nextInt(this.boxList.size()));
     }

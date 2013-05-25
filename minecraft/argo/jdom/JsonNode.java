@@ -13,9 +13,24 @@ public abstract class JsonNode
 
     public abstract List getElements();
 
+    public final Boolean getBooleanValue(Object ... par1ArrayOfObj)
+    {
+        return (Boolean)this.wrapExceptionsFor(JsonNodeSelectors.func_98315_c(par1ArrayOfObj), this, par1ArrayOfObj);
+    }
+
     public final String getStringValue(Object ... par1ArrayOfObj)
     {
         return (String)this.wrapExceptionsFor(JsonNodeSelectors.func_74682_a(par1ArrayOfObj), this, par1ArrayOfObj);
+    }
+
+    public final String getNumberValue(Object ... par1ArrayOfObj)
+    {
+        return (String)this.wrapExceptionsFor(JsonNodeSelectors.func_98316_b(par1ArrayOfObj), this, par1ArrayOfObj);
+    }
+
+    public final boolean isArrayNode(Object ... par1ArrayOfObj)
+    {
+        return JsonNodeSelectors.func_74683_b(par1ArrayOfObj).matches(this);
     }
 
     public final List getArrayNode(Object ... par1ArrayOfObj)

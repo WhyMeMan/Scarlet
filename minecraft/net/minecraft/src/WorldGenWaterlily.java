@@ -14,7 +14,7 @@ public class WorldGenWaterlily extends WorldGenerator
 
             if (par1World.isAirBlock(var7, var8, var9) && Block.waterlily.canPlaceBlockAt(par1World, var7, var8, var9))
             {
-                par1World.setBlock(var7, var8, var9, Block.waterlily.blockID);
+                par1World.setBlock(var7, var8, var9, Block.waterlily.blockID, 0, 2);
             }
         }
 

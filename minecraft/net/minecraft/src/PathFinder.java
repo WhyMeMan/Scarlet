@@ -321,11 +321,21 @@ public class PathFinder
                         }
 
                         Block var13 = Block.blocksList[var12];
+                        int var14 = var13.getRenderType();
 
-                        if (!var13.getBlocksMovement(par0Entity.worldObj, var9, var10, var11) && (!par6 || var12 != Block.doorWood.blockID))
+                        if (par0Entity.worldObj.blockGetRenderType(var9, var10, var11) == 9)
                         {
-                            int var14 = var13.getRenderType();
+                            int var18 = MathHelper.floor_double(par0Entity.posX);
+                            int var16 = MathHelper.floor_double(par0Entity.posY);
+                            int var17 = MathHelper.floor_double(par0Entity.posZ);
 
+                            if (par0Entity.worldObj.blockGetRenderType(var18, var16, var17) != 9 && par0Entity.worldObj.blockGetRenderType(var18, var16 - 1, var17) != 9)
+                            {
+                                return -3;
+                            }
+                        }
+                        else if (!var13.getBlocksMovement(par0Entity.worldObj, var9, var10, var11) && (!par6 || var12 != Block.doorWood.blockID))
+                        {
                             if (var14 == 11 || var12 == Block.fenceGate.blockID || var14 == 32)
                             {
                                 return -3;

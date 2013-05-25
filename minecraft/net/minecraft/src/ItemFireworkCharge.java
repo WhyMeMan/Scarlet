@@ -4,6 +4,8 @@ import java.util.List;
 
 public class ItemFireworkCharge extends Item
 {
+    private Icon theIcon;
+
     public ItemFireworkCharge(int par1)
     {
         super(par1);
@@ -12,9 +14,9 @@ public class ItemFireworkCharge extends Item
     /**
      * Gets an icon index based on an item's damage value and the given render pass
      */
-    public int getIconFromDamageForRenderPass(int par1, int par2)
+    public Icon getIconFromDamageForRenderPass(int par1, int par2)
     {
-        return par2 == 1 ? this.iconIndex + 1 : super.getIconFromDamageForRenderPass(par1, par2);
+        return par2 > 0 ? this.theIcon : super.getIconFromDamageForRenderPass(par1, par2);
     }
 
     public int getColorFromItemStack(ItemStack par1ItemStack, int par2)
@@ -209,5 +211,11 @@ public class ItemFireworkCharge extends Item
         {
             par1List.add(StatCollector.translateToLocal("item.fireworksCharge.flicker"));
         }
+    }
+
+    public void registerIcons(IconRegister par1IconRegister)
+    {
+        super.registerIcons(par1IconRegister);
+        this.theIcon = par1IconRegister.registerIcon("fireworksCharge_overlay");
     }
 }

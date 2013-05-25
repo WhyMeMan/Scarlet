@@ -2,6 +2,7 @@ package net.minecraft.src;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -13,17 +14,17 @@ public class PlayerSelector
     /**
      * This matches the at-tokens introduced for command blocks, including their arguments, if any.
      */
-    private static final Pattern tokenPattern = Pattern.compile("^@([parf])(?:\\[([\\w=,-]*)\\])?$");
+    private static final Pattern tokenPattern = Pattern.compile("^@([parf])(?:\\[([\\w=,!-]*)\\])?$");
 
     /**
      * This matches things like "-1,,4", and is used for getting x,y,z,range from the token's argument list.
      */
-    private static final Pattern intListPattern = Pattern.compile("\\G(-?\\w*)(?:$|,)");
+    private static final Pattern intListPattern = Pattern.compile("\\G([-!]?\\w*)(?:$|,)");
 
     /**
      * This matches things like "rm=4,c=2" and is used for handling named token arguments.
      */
-    private static final Pattern keyValueListPattern = Pattern.compile("\\G(\\w{1,2})=(-?\\w+)(?:$|,)");
+    private static final Pattern keyValueListPattern = Pattern.compile("\\G(\\w+)=([-!]?\\w*)(?:$|,)");
 
     /**
      * Returns the one player that matches the given at-token.  Returns null if more than one player matches.
@@ -47,7 +48,7 @@ public class PlayerSelector
 
             for (int var4 = 0; var4 < var3.length; ++var4)
             {
-                var3[var4] = var2[var4].getEntityName();
+                var3[var4] = var2[var4].getTranslatedEntityName();
             }
 
             return CommandBase.joinNiceString(var3);
@@ -76,6 +77,9 @@ public class PlayerSelector
             int var9 = getDefaultCount(var4);
             int var10 = EnumGameType.NOT_SET.getID();
             ChunkCoordinates var11 = par0ICommandSender.getPlayerCoordinates();
+            Map var12 = func_96560_a(var3);
+            String var13 = null;
+            String var14 = null;
 
             if (var3.containsKey("rm"))
             {
@@ -122,7 +126,17 @@ public class PlayerSelector
                 var9 = MathHelper.parseIntWithDefault((String)var3.get("c"), var9);
             }
 
-            List var12;
+            if (var3.containsKey("team"))
+            {
+                var14 = (String)var3.get("team");
+            }
+
+            if (var3.containsKey("name"))
+            {
+                var13 = (String)var3.get("name");
+            }
+
+            List var15;
 
             if (!var4.equals("p") && !var4.equals("a"))
             {
@@ -132,22 +146,41 @@ public class PlayerSelector
                 }
                 else
                 {
-                    var12 = MinecraftServer.getServer().getConfigurationManager().findPlayers(var11, var5, var6, 0, var10, var7, var8);
-                    Collections.shuffle(var12);
-                    var12 = var12.subList(0, Math.min(var9, var12.size()));
-                    return var12 != null && !var12.isEmpty() ? (EntityPlayerMP[])var12.toArray(new EntityPlayerMP[0]) : new EntityPlayerMP[0];
+                    var15 = MinecraftServer.getServer().getConfigurationManager().findPlayers(var11, var5, var6, 0, var10, var7, var8, var12, var13, var14);
+                    Collections.shuffle(var15);
+                    var15 = var15.subList(0, Math.min(var9, var15.size()));
+                    return var15 != null && !var15.isEmpty() ? (EntityPlayerMP[])var15.toArray(new EntityPlayerMP[0]) : new EntityPlayerMP[0];
                 }
             }
             else
             {
-                var12 = MinecraftServer.getServer().getConfigurationManager().findPlayers(var11, var5, var6, var9, var10, var7, var8);
-                return var12 != null && !var12.isEmpty() ? (EntityPlayerMP[])var12.toArray(new EntityPlayerMP[0]) : new EntityPlayerMP[0];
+                var15 = MinecraftServer.getServer().getConfigurationManager().findPlayers(var11, var5, var6, var9, var10, var7, var8, var12, var13, var14);
+                return var15 != null && !var15.isEmpty() ? (EntityPlayerMP[])var15.toArray(new EntityPlayerMP[0]) : new EntityPlayerMP[0];
             }
         }
         else
         {
             return null;
         }
+    }
+
+    public static Map func_96560_a(Map par0Map)
+    {
+        HashMap var1 = new HashMap();
+        Iterator var2 = par0Map.keySet().iterator();
+
+        while (var2.hasNext())
+        {
+            String var3 = (String)var2.next();
+
+            if (var3.startsWith("score_") && var3.length() > "score_".length())
+            {
+                String var4 = var3.substring("score_".length());
+                var1.put(var4, Integer.valueOf(MathHelper.parseIntWithDefault((String)par0Map.get(var3), 1)));
+            }
+        }
+
+        return var1;
     }
 
     /**
@@ -183,14 +216,14 @@ public class PlayerSelector
     {
         Matcher var2 = tokenPattern.matcher(par0Str);
 
-        if (!var2.matches())
-        {
-            return false;
-        }
-        else
+        if (var2.matches())
         {
             String var3 = var2.group(1);
             return par1Str == null || par1Str.equals(var3);
+        }
+        else
+        {
+            return false;
         }
     }
 

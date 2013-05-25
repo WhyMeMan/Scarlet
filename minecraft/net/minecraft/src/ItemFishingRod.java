@@ -2,6 +2,8 @@ package net.minecraft.src;
 
 public class ItemFishingRod extends Item
 {
+    private Icon theIcon;
+
     public ItemFishingRod(int par1)
     {
         super(par1);
@@ -51,5 +53,16 @@ public class ItemFishingRod extends Item
         }
 
         return par1ItemStack;
+    }
+
+    public void registerIcons(IconRegister par1IconRegister)
+    {
+        super.registerIcons(par1IconRegister);
+        this.theIcon = par1IconRegister.registerIcon("fishingRod_empty");
+    }
+
+    public Icon func_94597_g()
+    {
+        return this.theIcon;
     }
 }

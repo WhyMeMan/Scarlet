@@ -321,7 +321,7 @@ public class EntityOcelot extends EntityTameable
         }
         else
         {
-            if (this.worldObj.checkIfAABBIsClear(this.boundingBox) && this.worldObj.getCollidingBoundingBoxes(this, this.boundingBox).isEmpty() && !this.worldObj.isAnyLiquid(this.boundingBox))
+            if (this.worldObj.checkNoEntityCollision(this.boundingBox) && this.worldObj.getCollidingBoundingBoxes(this, this.boundingBox).isEmpty() && !this.worldObj.isAnyLiquid(this.boundingBox))
             {
                 int var1 = MathHelper.floor_double(this.posX);
                 int var2 = MathHelper.floor_double(this.boundingBox.minY);
@@ -349,7 +349,7 @@ public class EntityOcelot extends EntityTameable
      */
     public String getEntityName()
     {
-        return this.isTamed() ? "entity.Cat.name" : super.getEntityName();
+        return this.func_94056_bM() ? this.func_94057_bL() : (this.isTamed() ? "entity.Cat.name" : super.getEntityName());
     }
 
     /**

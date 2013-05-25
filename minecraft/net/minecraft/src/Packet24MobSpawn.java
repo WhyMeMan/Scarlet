@@ -149,7 +149,7 @@ public class Packet24MobSpawn extends Packet
     {
         if (this.metadata == null)
         {
-            this.metadata = this.metaData.func_75685_c();
+            this.metadata = this.metaData.getAllWatched();
         }
 
         return this.metadata;

@@ -2,10 +2,18 @@ package net.minecraft.src;
 
 public class BlockFenceGate extends BlockDirectional
 {
-    public BlockFenceGate(int par1, int par2)
+    public BlockFenceGate(int par1)
     {
-        super(par1, par2, Material.wood);
+        super(par1, Material.wood);
         this.setCreativeTab(CreativeTabs.tabRedstone);
+    }
+
+    /**
+     * From the specified side and block metadata retrieves the blocks texture. Args: side, metadata
+     */
+    public Icon getIcon(int par1, int par2)
+    {
+        return Block.planks.getBlockTextureFromSide(par1);
     }
 
     /**
@@ -23,7 +31,7 @@ public class BlockFenceGate extends BlockDirectional
     public AxisAlignedBB getCollisionBoundingBoxFromPool(World par1World, int par2, int par3, int par4)
     {
         int var5 = par1World.getBlockMetadata(par2, par3, par4);
-        return isFenceGateOpen(var5) ? null : (var5 != 2 && var5 != 0 ? AxisAlignedBB.getAABBPool().addOrModifyAABBInPool((double)((float)par2 + 0.375F), (double)par3, (double)par4, (double)((float)par2 + 0.625F), (double)((float)par3 + 1.5F), (double)(par4 + 1)) : AxisAlignedBB.getAABBPool().addOrModifyAABBInPool((double)par2, (double)par3, (double)((float)par4 + 0.375F), (double)(par2 + 1), (double)((float)par3 + 1.5F), (double)((float)par4 + 0.625F)));
+        return isFenceGateOpen(var5) ? null : (var5 != 2 && var5 != 0 ? AxisAlignedBB.getAABBPool().getAABB((double)((float)par2 + 0.375F), (double)par3, (double)par4, (double)((float)par2 + 0.625F), (double)((float)par3 + 1.5F), (double)(par4 + 1)) : AxisAlignedBB.getAABBPool().getAABB((double)par2, (double)par3, (double)((float)par4 + 0.375F), (double)(par2 + 1), (double)((float)par3 + 1.5F), (double)((float)par4 + 0.625F)));
     }
 
     /**
@@ -76,10 +84,10 @@ public class BlockFenceGate extends BlockDirectional
     /**
      * Called when the block is placed in the world.
      */
-    public void onBlockPlacedBy(World par1World, int par2, int par3, int par4, EntityLiving par5EntityLiving)
+    public void onBlockPlacedBy(World par1World, int par2, int par3, int par4, EntityLiving par5EntityLiving, ItemStack par6ItemStack)
     {
-        int var6 = (MathHelper.floor_double((double)(par5EntityLiving.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3) % 4;
-        par1World.setBlockMetadataWithNotify(par2, par3, par4, var6);
+        int var7 = (MathHelper.floor_double((double)(par5EntityLiving.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3) % 4;
+        par1World.setBlockMetadataWithNotify(par2, par3, par4, var7, 2);
     }
 
     /**
@@ -91,7 +99,7 @@ public class BlockFenceGate extends BlockDirectional
 
         if (isFenceGateOpen(var10))
         {
-            par1World.setBlockMetadataWithNotify(par2, par3, par4, var10 & -5);
+            par1World.setBlockMetadataWithNotify(par2, par3, par4, var10 & -5, 2);
         }
         else
         {
@@ -103,7 +111,7 @@ public class BlockFenceGate extends BlockDirectional
                 var10 = var11;
             }
 
-            par1World.setBlockMetadataWithNotify(par2, par3, par4, var10 | 4);
+            par1World.setBlockMetadataWithNotify(par2, par3, par4, var10 | 4, 2);
         }
 
         par1World.playAuxSFXAtEntity(par5EntityPlayer, 1003, par2, par3, par4, 0);
@@ -121,16 +129,16 @@ public class BlockFenceGate extends BlockDirectional
             int var6 = par1World.getBlockMetadata(par2, par3, par4);
             boolean var7 = par1World.isBlockIndirectlyGettingPowered(par2, par3, par4);
 
-            if (var7 || par5 > 0 && Block.blocksList[par5].canProvidePower() || par5 == 0)
+            if (var7 || par5 > 0 && Block.blocksList[par5].canProvidePower())
             {
                 if (var7 && !isFenceGateOpen(var6))
                 {
-                    par1World.setBlockMetadataWithNotify(par2, par3, par4, var6 | 4);
+                    par1World.setBlockMetadataWithNotify(par2, par3, par4, var6 | 4, 2);
                     par1World.playAuxSFXAtEntity((EntityPlayer)null, 1003, par2, par3, par4, 0);
                 }
                 else if (!var7 && isFenceGateOpen(var6))
                 {
-                    par1World.setBlockMetadataWithNotify(par2, par3, par4, var6 & -5);
+                    par1World.setBlockMetadataWithNotify(par2, par3, par4, var6 & -5, 2);
                     par1World.playAuxSFXAtEntity((EntityPlayer)null, 1003, par2, par3, par4, 0);
                 }
             }
@@ -153,4 +161,10 @@ public class BlockFenceGate extends BlockDirectional
     {
         return true;
     }
+
+    /**
+     * When this method is called, your block should register all the icons it needs with the given IconRegister. This
+     * is the only chance you get to register icons.
+     */
+    public void registerIcons(IconRegister par1IconRegister) {}
 }

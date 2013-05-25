@@ -23,7 +23,7 @@ public class SaveFormatOld implements ISaveFormat
         this.savesDirectory = par1File;
     }
 
-    public List getSaveList()
+    public List getSaveList() throws AnvilConverterException
     {
         ArrayList var1 = new ArrayList();
 

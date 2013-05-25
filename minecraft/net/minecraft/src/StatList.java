@@ -179,7 +179,7 @@ public class StatList
         {
             if (Block.blocksList[var3] != null && Block.blocksList[var3].getEnableStats())
             {
-                String var4 = StatCollector.translateToLocalFormatted(par0Str, new Object[] {Block.blocksList[var3].translateBlockName()});
+                String var4 = StatCollector.translateToLocalFormatted(par0Str, new Object[] {Block.blocksList[var3].getLocalizedName()});
                 var2[var3] = (new StatCrafting(par1 + var3, var4, var3)).registerStat();
                 objectMineStats.add((StatCrafting)var2[var3]);
             }
@@ -245,7 +245,7 @@ public class StatList
         replaceSimilarBlocks(par0ArrayOfStatBase, Block.waterStill.blockID, Block.waterMoving.blockID);
         replaceSimilarBlocks(par0ArrayOfStatBase, Block.lavaStill.blockID, Block.lavaStill.blockID);
         replaceSimilarBlocks(par0ArrayOfStatBase, Block.pumpkinLantern.blockID, Block.pumpkin.blockID);
-        replaceSimilarBlocks(par0ArrayOfStatBase, Block.stoneOvenActive.blockID, Block.stoneOvenIdle.blockID);
+        replaceSimilarBlocks(par0ArrayOfStatBase, Block.furnaceBurning.blockID, Block.furnaceIdle.blockID);
         replaceSimilarBlocks(par0ArrayOfStatBase, Block.oreRedstoneGlowing.blockID, Block.oreRedstone.blockID);
         replaceSimilarBlocks(par0ArrayOfStatBase, Block.redstoneRepeaterActive.blockID, Block.redstoneRepeaterIdle.blockID);
         replaceSimilarBlocks(par0ArrayOfStatBase, Block.torchRedstoneActive.blockID, Block.torchRedstoneIdle.blockID);

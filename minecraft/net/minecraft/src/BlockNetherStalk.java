@@ -4,9 +4,12 @@ import java.util.Random;
 
 public class BlockNetherStalk extends BlockFlower
 {
+    private static final String[] field_94373_a = new String[] {"netherStalk_0", "netherStalk_1", "netherStalk_2"};
+    private Icon[] iconArray;
+
     protected BlockNetherStalk(int par1)
     {
-        super(par1, 226);
+        super(par1);
         this.setTickRandomly(true);
         float var2 = 0.5F;
         this.setBlockBounds(0.5F - var2, 0.0F, 0.5F - var2, 0.5F + var2, 0.25F, 0.5F + var2);
@@ -40,7 +43,7 @@ public class BlockNetherStalk extends BlockFlower
         if (var6 < 3 && par5Random.nextInt(10) == 0)
         {
             ++var6;
-            par1World.setBlockMetadataWithNotify(par2, par3, par4, var6);
+            par1World.setBlockMetadataWithNotify(par2, par3, par4, var6, 2);
         }
 
         super.updateTick(par1World, par2, par3, par4, par5Random);
@@ -49,9 +52,9 @@ public class BlockNetherStalk extends BlockFlower
     /**
      * From the specified side and block metadata retrieves the blocks texture. Args: side, metadata
      */
-    public int getBlockTextureFromSideAndMetadata(int par1, int par2)
+    public Icon getIcon(int par1, int par2)
     {
-        return par2 >= 3 ? this.blockIndexInTexture + 2 : (par2 > 0 ? this.blockIndexInTexture + 1 : this.blockIndexInTexture);
+        return par2 >= 3 ? this.iconArray[2] : (par2 > 0 ? this.iconArray[1] : this.iconArray[0]);
     }
 
     /**
@@ -110,5 +113,19 @@ public class BlockNetherStalk extends BlockFlower
     public int idPicked(World par1World, int par2, int par3, int par4)
     {
         return Item.netherStalkSeeds.itemID;
+    }
+
+    /**
+     * When this method is called, your block should register all the icons it needs with the given IconRegister. This
+     * is the only chance you get to register icons.
+     */
+    public void registerIcons(IconRegister par1IconRegister)
+    {
+        this.iconArray = new Icon[field_94373_a.length];
+
+        for (int var2 = 0; var2 < this.iconArray.length; ++var2)
+        {
+            this.iconArray[var2] = par1IconRegister.registerIcon(field_94373_a[var2]);
+        }
     }
 }

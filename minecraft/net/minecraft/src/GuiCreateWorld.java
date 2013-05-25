@@ -61,7 +61,9 @@ public class GuiCreateWorld extends GuiScreen
     /** E.g. New World, Neue Welt, Nieuwe wereld, Neuvo Mundo */
     private String localizedNewWorldText;
     private int worldTypeId = 0;
-    public String field_82290_a = "";
+
+    /** Generator options to use when creating the world. */
+    public String generatorOptionsToUse = "";
 
     /**
      * If the world name is one of these, it'll be surrounded with underscores.
@@ -91,20 +93,20 @@ public class GuiCreateWorld extends GuiScreen
     {
         StringTranslate var1 = StringTranslate.getInstance();
         Keyboard.enableRepeatEvents(true);
-        this.controlList.clear();
-        this.controlList.add(new GuiButton(0, this.width / 2 - 155, this.height - 28, 150, 20, var1.translateKey("selectWorld.create")));
-        this.controlList.add(new GuiButton(1, this.width / 2 + 5, this.height - 28, 150, 20, var1.translateKey("gui.cancel")));
-        this.controlList.add(this.buttonGameMode = new GuiButton(2, this.width / 2 - 75, 115, 150, 20, var1.translateKey("selectWorld.gameMode")));
-        this.controlList.add(this.moreWorldOptions = new GuiButton(3, this.width / 2 - 75, 187, 150, 20, var1.translateKey("selectWorld.moreWorldOptions")));
-        this.controlList.add(this.buttonGenerateStructures = new GuiButton(4, this.width / 2 - 155, 100, 150, 20, var1.translateKey("selectWorld.mapFeatures")));
+        this.buttonList.clear();
+        this.buttonList.add(new GuiButton(0, this.width / 2 - 155, this.height - 28, 150, 20, var1.translateKey("selectWorld.create")));
+        this.buttonList.add(new GuiButton(1, this.width / 2 + 5, this.height - 28, 150, 20, var1.translateKey("gui.cancel")));
+        this.buttonList.add(this.buttonGameMode = new GuiButton(2, this.width / 2 - 75, 115, 150, 20, var1.translateKey("selectWorld.gameMode")));
+        this.buttonList.add(this.moreWorldOptions = new GuiButton(3, this.width / 2 - 75, 187, 150, 20, var1.translateKey("selectWorld.moreWorldOptions")));
+        this.buttonList.add(this.buttonGenerateStructures = new GuiButton(4, this.width / 2 - 155, 100, 150, 20, var1.translateKey("selectWorld.mapFeatures")));
         this.buttonGenerateStructures.drawButton = false;
-        this.controlList.add(this.buttonBonusItems = new GuiButton(7, this.width / 2 + 5, 151, 150, 20, var1.translateKey("selectWorld.bonusItems")));
+        this.buttonList.add(this.buttonBonusItems = new GuiButton(7, this.width / 2 + 5, 151, 150, 20, var1.translateKey("selectWorld.bonusItems")));
         this.buttonBonusItems.drawButton = false;
-        this.controlList.add(this.buttonWorldType = new GuiButton(5, this.width / 2 + 5, 100, 150, 20, var1.translateKey("selectWorld.mapType")));
+        this.buttonList.add(this.buttonWorldType = new GuiButton(5, this.width / 2 + 5, 100, 150, 20, var1.translateKey("selectWorld.mapType")));
         this.buttonWorldType.drawButton = false;
-        this.controlList.add(this.buttonAllowCommands = new GuiButton(6, this.width / 2 - 155, 151, 150, 20, var1.translateKey("selectWorld.allowCommands")));
+        this.buttonList.add(this.buttonAllowCommands = new GuiButton(6, this.width / 2 - 155, 151, 150, 20, var1.translateKey("selectWorld.allowCommands")));
         this.buttonAllowCommands.drawButton = false;
-        this.controlList.add(this.buttonCustomize = new GuiButton(8, this.width / 2 + 5, 120, 150, 20, var1.translateKey("selectWorld.customizeType")));
+        this.buttonList.add(this.buttonCustomize = new GuiButton(8, this.width / 2 + 5, 120, 150, 20, var1.translateKey("selectWorld.customizeType")));
         this.buttonCustomize.drawButton = false;
         this.textboxWorldName = new GuiTextField(this.fontRenderer, this.width / 2 - 100, 60, 200, 20);
         this.textboxWorldName.setFocused(true);
@@ -256,7 +258,7 @@ public class GuiCreateWorld extends GuiScreen
 
                 EnumGameType var8 = EnumGameType.getByName(this.gameMode);
                 WorldSettings var6 = new WorldSettings(var2, var8, this.generateStructures, this.isHardcore, WorldType.worldTypes[this.worldTypeId]);
-                var6.func_82750_a(this.field_82290_a);
+                var6.func_82750_a(this.generatorOptionsToUse);
 
                 if (this.bonusItems && !this.isHardcore)
                 {
@@ -349,7 +351,7 @@ public class GuiCreateWorld extends GuiScreen
                     }
                 }
 
-                this.field_82290_a = "";
+                this.generatorOptionsToUse = "";
                 this.updateButtonText();
                 this.func_82288_a(this.moreOptions);
             }
@@ -361,7 +363,7 @@ public class GuiCreateWorld extends GuiScreen
             }
             else if (par1GuiButton.id == 8)
             {
-                this.mc.displayGuiScreen(new GuiCreateFlatWorld(this, this.field_82290_a));
+                this.mc.displayGuiScreen(new GuiCreateFlatWorld(this, this.generatorOptionsToUse));
             }
         }
     }
@@ -412,10 +414,10 @@ public class GuiCreateWorld extends GuiScreen
 
         if (par1 == 13)
         {
-            this.actionPerformed((GuiButton)this.controlList.get(0));
+            this.actionPerformed((GuiButton)this.buttonList.get(0));
         }
 
-        ((GuiButton)this.controlList.get(0)).enabled = this.textboxWorldName.getText().length() > 0;
+        ((GuiButton)this.buttonList.get(0)).enabled = this.textboxWorldName.getText().length() > 0;
         this.makeUseableName();
     }
 
@@ -470,7 +472,7 @@ public class GuiCreateWorld extends GuiScreen
         this.localizedNewWorldText = StatCollector.translateToLocalFormatted("selectWorld.newWorld.copyOf", new Object[] {par1WorldInfo.getWorldName()});
         this.seed = par1WorldInfo.getSeed() + "";
         this.worldTypeId = par1WorldInfo.getTerrainType().getWorldTypeID();
-        this.field_82290_a = par1WorldInfo.getGeneratorOptions();
+        this.generatorOptionsToUse = par1WorldInfo.getGeneratorOptions();
         this.generateStructures = par1WorldInfo.isMapFeaturesEnabled();
         this.commandsAllowed = par1WorldInfo.areCommandsAllowed();
 

@@ -25,7 +25,7 @@ public class ItemEnderEye extends Item
             }
             else
             {
-                par3World.setBlockMetadataWithNotify(par4, par5, par6, var12 + 4);
+                par3World.setBlockMetadataWithNotify(par4, par5, par6, var12 + 4, 2);
                 --par1ItemStack.stackSize;
                 int var13;
 
@@ -45,7 +45,7 @@ public class ItemEnderEye extends Item
                 int var15 = 0;
                 boolean var27 = false;
                 boolean var17 = true;
-                int var28 = Direction.enderEyeMetaToDirection[var13];
+                int var28 = Direction.rotateRight[var13];
                 int var19;
                 int var21;
                 int var23;
@@ -125,7 +125,7 @@ public class ItemEnderEye extends Item
                                 var30 = par6 + Direction.offsetZ[var28] * var19;
                                 var21 += Direction.offsetX[var13] * var29;
                                 var30 += Direction.offsetZ[var13] * var29;
-                                par3World.setBlockWithNotify(var21, par5, var30, Block.endPortal.blockID);
+                                par3World.setBlock(var21, par5, var30, Block.endPortal.blockID, 0, 2);
                             }
                         }
                     }

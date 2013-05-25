@@ -9,7 +9,6 @@ public abstract class WorldGenerator
      * this is false, when saplings grow, this is true.
      */
     private final boolean doBlockNotify;
-    private int field_82631_b = 1;
 
     public WorldGenerator()
     {
@@ -43,11 +42,11 @@ public abstract class WorldGenerator
     {
         if (this.doBlockNotify)
         {
-            par1World.setBlockAndMetadataWithNotify(par2, par3, par4, par5, par6);
+            par1World.setBlock(par2, par3, par4, par5, par6, 3);
         }
         else
         {
-            par1World.setBlockAndMetadata(par2, par3, par4, par5, par6);
+            par1World.setBlock(par2, par3, par4, par5, par6, 2);
         }
     }
 }

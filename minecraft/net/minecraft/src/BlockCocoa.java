@@ -4,10 +4,31 @@ import java.util.Random;
 
 public class BlockCocoa extends BlockDirectional
 {
+    public static final String[] cocoaIcons = new String[] {"cocoa_0", "cocoa_1", "cocoa_2"};
+    private Icon[] iconArray;
+
     public BlockCocoa(int par1)
     {
-        super(par1, 168, Material.plants);
+        super(par1, Material.plants);
         this.setTickRandomly(true);
+    }
+
+    /**
+     * From the specified side and block metadata retrieves the blocks texture. Args: side, metadata
+     */
+    public Icon getIcon(int par1, int par2)
+    {
+        return this.iconArray[2];
+    }
+
+    public Icon func_94468_i_(int par1)
+    {
+        if (par1 < 0 || par1 >= this.iconArray.length)
+        {
+            par1 = this.iconArray.length - 1;
+        }
+
+        return this.iconArray[par1];
     }
 
     /**
@@ -18,7 +39,7 @@ public class BlockCocoa extends BlockDirectional
         if (!this.canBlockStay(par1World, par2, par3, par4))
         {
             this.dropBlockAsItem(par1World, par2, par3, par4, par1World.getBlockMetadata(par2, par3, par4), 0);
-            par1World.setBlockWithNotify(par2, par3, par4, 0);
+            par1World.setBlockToAir(par2, par3, par4);
         }
         else if (par1World.rand.nextInt(5) == 0)
         {
@@ -28,7 +49,7 @@ public class BlockCocoa extends BlockDirectional
             if (var7 < 2)
             {
                 ++var7;
-                par1World.setBlockMetadataWithNotify(par2, par3, par4, var7 << 2 | getDirection(var6));
+                par1World.setBlockMetadataWithNotify(par2, par3, par4, var7 << 2 | getDirection(var6), 2);
             }
         }
     }
@@ -123,10 +144,10 @@ public class BlockCocoa extends BlockDirectional
     /**
      * Called when the block is placed in the world.
      */
-    public void onBlockPlacedBy(World par1World, int par2, int par3, int par4, EntityLiving par5EntityLiving)
+    public void onBlockPlacedBy(World par1World, int par2, int par3, int par4, EntityLiving par5EntityLiving, ItemStack par6ItemStack)
     {
-        int var6 = ((MathHelper.floor_double((double)(par5EntityLiving.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3) + 0) % 4;
-        par1World.setBlockMetadataWithNotify(par2, par3, par4, var6);
+        int var7 = ((MathHelper.floor_double((double)(par5EntityLiving.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3) + 0) % 4;
+        par1World.setBlockMetadataWithNotify(par2, par3, par4, var7, 2);
     }
 
     /**
@@ -139,7 +160,7 @@ public class BlockCocoa extends BlockDirectional
             par5 = 2;
         }
 
-        return Direction.footInvisibleFaceRemap[Direction.vineGrowth[par5]];
+        return Direction.rotateOpposite[Direction.facingToDirection[par5]];
     }
 
     /**
@@ -151,7 +172,7 @@ public class BlockCocoa extends BlockDirectional
         if (!this.canBlockStay(par1World, par2, par3, par4))
         {
             this.dropBlockAsItem(par1World, par2, par3, par4, par1World.getBlockMetadata(par2, par3, par4), 0);
-            par1World.setBlockWithNotify(par2, par3, par4, 0);
+            par1World.setBlockToAir(par2, par3, par4);
         }
     }
 
@@ -193,5 +214,19 @@ public class BlockCocoa extends BlockDirectional
     public int getDamageValue(World par1World, int par2, int par3, int par4)
     {
         return 3;
+    }
+
+    /**
+     * When this method is called, your block should register all the icons it needs with the given IconRegister. This
+     * is the only chance you get to register icons.
+     */
+    public void registerIcons(IconRegister par1IconRegister)
+    {
+        this.iconArray = new Icon[cocoaIcons.length];
+
+        for (int var2 = 0; var2 < this.iconArray.length; ++var2)
+        {
+            this.iconArray[var2] = par1IconRegister.registerIcon(cocoaIcons[var2]);
+        }
     }
 }

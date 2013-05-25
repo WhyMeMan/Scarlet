@@ -8,12 +8,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class ServerListenThread extends Thread
 {
-    private static Logger logger = Logger.getLogger("Minecraft");
     private final List pendingConnections = Collections.synchronizedList(new ArrayList());
 
     /**
@@ -53,7 +50,7 @@ public class ServerListenThread extends Thread
                 catch (Exception var6)
                 {
                     var3.raiseErrorAndDisconnect("Internal server error");
-                    logger.log(Level.WARNING, "Failed to handle packet for " + var3.getUsernameAndAddress() + ": " + var6, var6);
+                    this.myNetworkListenThread.getServer().getLogAgent().logWarningException("Failed to handle packet for " + var3.getUsernameAndAddress() + ": " + var6, var6);
                 }
 
                 if (var3.connectionComplete)
@@ -73,32 +70,16 @@ public class ServerListenThread extends Thread
             try
             {
                 Socket var1 = this.myServerSocket.accept();
-                InetAddress var2 = var1.getInetAddress();
-                long var3 = System.currentTimeMillis();
-                HashMap var5 = this.recentConnections;
-
-                synchronized (this.recentConnections)
-                {
-                    if (this.recentConnections.containsKey(var2) && !isLocalHost(var2) && var3 - ((Long)this.recentConnections.get(var2)).longValue() < 4000L)
-                    {
-                        this.recentConnections.put(var2, Long.valueOf(var3));
-                        var1.close();
-                        continue;
-                    }
-
-                    this.recentConnections.put(var2, Long.valueOf(var3));
-                }
-
-                NetLoginHandler var9 = new NetLoginHandler(this.myNetworkListenThread.getServer(), var1, "Connection #" + this.connectionCounter++);
-                this.addPendingConnection(var9);
+                NetLoginHandler var2 = new NetLoginHandler(this.myNetworkListenThread.getServer(), var1, "Connection #" + this.connectionCounter++);
+                this.addPendingConnection(var2);
             }
-            catch (IOException var8)
+            catch (IOException var3)
             {
-                var8.printStackTrace();
+                var3.printStackTrace();
             }
         }
 
-        System.out.println("Closing listening thread");
+        this.myNetworkListenThread.getServer().getLogAgent().logInfo("Closing listening thread");
     }
 
     private void addPendingConnection(NetLoginHandler par1NetLoginHandler)
@@ -116,11 +97,6 @@ public class ServerListenThread extends Thread
                 this.pendingConnections.add(par1NetLoginHandler);
             }
         }
-    }
-
-    private static boolean isLocalHost(InetAddress par0InetAddress)
-    {
-        return "127.0.0.1".equals(par0InetAddress.getHostAddress());
     }
 
     public void func_71769_a(InetAddress par1InetAddress)

@@ -3,18 +3,18 @@ package net.minecraft.src;
 import java.awt.Dimension;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
+import java.io.PrintStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Properties;
 import java.util.StringTokenizer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.src.Config$1;
@@ -30,23 +30,20 @@ import org.lwjgl.util.glu.GLU;
 public class Config
 {
     public static final String OF_NAME = "OptiFine";
-    public static final String MC_VERSION = "1.4.6";
+    public static final String MC_VERSION = "1.5.2";
     public static final String OF_EDITION = "HD_U";
-    public static final String OF_RELEASE = "C3";
-    public static final String VERSION = "OptiFine_1.4.6_HD_U_C3";
+    public static final String OF_RELEASE = "D2";
+    public static final String VERSION = "OptiFine_1.5.2_HD_U_D2";
     private static String newRelease = null;
     private static GameSettings gameSettings = null;
     private static Minecraft minecraft = null;
     private static Thread minecraftThread = null;
-    private static int iconWidthTerrain = 16;
-    private static int iconWidthItems = 16;
-    private static Map foundClassesMap = new HashMap();
-    private static long textureUpdateTime = 0L;
     private static DisplayMode desktopDisplayMode = null;
     private static int antialiasingLevel = 0;
     private static int availableProcessors = 0;
     public static boolean zoomMode = false;
-    private static File logFile = null;
+    private static int texturePackClouds = 0;
+    private static PrintStream systemOut = new PrintStream(new FileOutputStream(FileDescriptor.out));
     public static final Boolean DEF_FOG_FANCY = Boolean.valueOf(true);
     public static final Float DEF_FOG_START = Float.valueOf(0.2F);
     public static final Boolean DEF_OPTIMIZE_RENDER_DISTANCE = Boolean.valueOf(false);
@@ -62,7 +59,7 @@ public class Config
 
     public static String getVersion()
     {
-        return "OptiFine_1.4.6_HD_U_C3";
+        return "OptiFine_1.5.2_HD_U_D2";
     }
 
     private static void checkOpenGlCaps()
@@ -93,6 +90,9 @@ public class Config
         {
             log("OpenGL Occlussion culling: Not available (GL_ARB_occlusion_query)");
         }
+
+        int var2 = Minecraft.getGLMaximumTextureSize();
+        dbg("Maximum texture size: " + var2 + "x" + var2);
     }
 
     public static boolean isFancyFogAvailable()
@@ -199,7 +199,40 @@ public class Config
 
     public static int getMipmapType()
     {
-        return gameSettings == null ? DEF_MIPMAP_TYPE.intValue() : (gameSettings.ofMipmapLinear ? 9986 : 9984);
+        if (gameSettings == null)
+        {
+            return DEF_MIPMAP_TYPE.intValue();
+        }
+        else
+        {
+            switch (gameSettings.ofMipmapType)
+            {
+                case 0:
+                    return 9984;
+
+                case 1:
+                    return 9986;
+
+                case 2:
+                    if (isMultiTexture())
+                    {
+                        return 9985;
+                    }
+
+                    return 9986;
+
+                case 3:
+                    if (isMultiTexture())
+                    {
+                        return 9987;
+                    }
+
+                    return 9986;
+
+                default:
+                    return 9984;
+            }
+        }
     }
 
     public static boolean isUseAlphaFunc()
@@ -255,40 +288,13 @@ public class Config
 
     public static void dbg(String var0)
     {
-        System.out.println(var0);
+        systemOut.print("[OptiFine] ");
+        systemOut.println(var0);
     }
 
     public static void log(String var0)
     {
         dbg(var0);
-
-        try
-        {
-            if (logFile == null)
-            {
-                logFile = new File(Minecraft.getMinecraftDir(), "optifog.log");
-                logFile.delete();
-                logFile.createNewFile();
-            }
-
-            FileOutputStream var1 = new FileOutputStream(logFile, true);
-            OutputStreamWriter var2 = new OutputStreamWriter(var1, "ASCII");
-
-            try
-            {
-                var2.write(var0);
-                var2.write("\n");
-                var2.flush();
-            }
-            finally
-            {
-                var2.close();
-            }
-        }
-        catch (IOException var7)
-        {
-            var7.printStackTrace();
-        }
     }
 
     public static int getUpdatesPerFrame()
@@ -318,12 +324,63 @@ public class Config
 
     public static boolean isCloudsFancy()
     {
-        return gameSettings.ofClouds == 0 ? gameSettings.fancyGraphics : gameSettings.ofClouds == 2;
+        return gameSettings.ofClouds != 0 ? gameSettings.ofClouds == 2 : (texturePackClouds != 0 ? texturePackClouds == 2 : gameSettings.fancyGraphics);
     }
 
     public static boolean isCloudsOff()
     {
         return gameSettings.ofClouds == 3;
+    }
+
+    public static void updateTexturePackClouds()
+    {
+        texturePackClouds = 0;
+        RenderEngine var0 = getRenderEngine();
+
+        if (var0 != null)
+        {
+            ITexturePack var1 = var0.getTexturePack().getSelectedTexturePack();
+
+            if (var1 != null)
+            {
+                try
+                {
+                    InputStream var2 = var1.getResourceAsStream("/color.properties");
+
+                    if (var2 == null)
+                    {
+                        return;
+                    }
+
+                    Properties var3 = new Properties();
+                    var3.load(var2);
+                    var2.close();
+                    String var4 = var3.getProperty("clouds");
+
+                    if (var4 == null)
+                    {
+                        return;
+                    }
+
+                    dbg("Texture pack clouds: " + var4);
+                    var4 = var4.toLowerCase();
+
+                    if (var4.equals("fast"))
+                    {
+                        texturePackClouds = 1;
+                    }
+
+                    if (var4.equals("fancy"))
+                    {
+                        texturePackClouds = 2;
+                    }
+                }
+                catch (Exception var5)
+                {
+                    ;
+                }
+            }
+        }
     }
 
     public static boolean isTreesFancy()
@@ -426,6 +483,11 @@ public class Config
         return gameSettings != null ? gameSettings.ofPortalParticles : true;
     }
 
+    public static boolean isPotionParticles()
+    {
+        return gameSettings != null ? gameSettings.ofPotionParticles : true;
+    }
+
     public static boolean isDepthFog()
     {
         return gameSettings != null ? gameSettings.ofDepthFog : true;
@@ -456,21 +518,54 @@ public class Config
 
     public static String arrayToString(Object[] var0)
     {
-        StringBuffer var1 = new StringBuffer(var0.length * 5);
-
-        for (int var2 = 0; var2 < var0.length; ++var2)
+        if (var0 == null)
         {
-            Object var3 = var0[var2];
+            return "";
+        }
+        else
+        {
+            StringBuffer var1 = new StringBuffer(var0.length * 5);
 
-            if (var2 > 0)
+            for (int var2 = 0; var2 < var0.length; ++var2)
             {
-                var1.append(", ");
+                Object var3 = var0[var2];
+
+                if (var2 > 0)
+                {
+                    var1.append(", ");
+                }
+
+                var1.append(String.valueOf(var3));
             }
 
-            var1.append(String.valueOf(var3));
+            return var1.toString();
         }
+    }
 
-        return var1.toString();
+    public static String arrayToString(int[] var0)
+    {
+        if (var0 == null)
+        {
+            return "";
+        }
+        else
+        {
+            StringBuffer var1 = new StringBuffer(var0.length * 5);
+
+            for (int var2 = 0; var2 < var0.length; ++var2)
+            {
+                int var3 = var0[var2];
+
+                if (var2 > 0)
+                {
+                    var1.append(", ");
+                }
+
+                var1.append(String.valueOf(var3));
+            }
+
+            return var1.toString();
+        }
     }
 
     public static Minecraft getMinecraft()
@@ -478,24 +573,14 @@ public class Config
         return minecraft;
     }
 
-    public static int getIconWidthTerrain()
+    public static RenderEngine getRenderEngine()
     {
-        return iconWidthTerrain;
+        return minecraft.renderEngine;
     }
 
-    public static int getIconWidthItems()
+    public static RenderGlobal getRenderGlobal()
     {
-        return iconWidthItems;
-    }
-
-    public static void setIconWidthItems(int var0)
-    {
-        iconWidthItems = var0;
-    }
-
-    public static void setIconWidthTerrain(int var0)
-    {
-        iconWidthTerrain = var0;
+        return minecraft == null ? null : minecraft.renderGlobal;
     }
 
     public static int getMaxDynamicTileWidth()
@@ -503,7 +588,7 @@ public class Config
         return 64;
     }
 
-    public static int getSideGrassTexture(IBlockAccess var0, int var1, int var2, int var3, int var4, int var5)
+    public static Icon getSideGrassTexture(IBlockAccess var0, int var1, int var2, int var3, int var4, Icon var5)
     {
         if (!isBetterGrass())
         {
@@ -511,12 +596,12 @@ public class Config
         }
         else
         {
-            byte var6 = 0;
+            Icon var6 = TextureUtils.iconGrassTop;
             byte var7 = 2;
 
-            if (var5 == 77)
+            if (var5 == TextureUtils.iconMycelSide)
             {
-                var6 = 78;
+                var6 = TextureUtils.iconMycelTop;
                 var7 = 110;
             }
 
@@ -554,11 +639,11 @@ public class Config
         }
     }
 
-    public static int getSideSnowGrassTexture(IBlockAccess var0, int var1, int var2, int var3, int var4)
+    public static Icon getSideSnowGrassTexture(IBlockAccess var0, int var1, int var2, int var3, int var4)
     {
         if (!isBetterGrass())
         {
-            return 68;
+            return TextureUtils.iconSnowSide;
         }
         else
         {
@@ -586,11 +671,11 @@ public class Config
 
                 if (var5 != 78 && var5 != 80)
                 {
-                    return 68;
+                    return TextureUtils.iconSnowSide;
                 }
             }
 
-            return 66;
+            return TextureUtils.iconSnow;
         }
     }
 
@@ -602,16 +687,6 @@ public class Config
     public static boolean isBetterGrassFancy()
     {
         return gameSettings == null ? false : gameSettings.ofBetterGrass == 2;
-    }
-
-    public static long getTextureUpdateTime()
-    {
-        return textureUpdateTime;
-    }
-
-    public static void setTextureUpdateTime(long var0)
-    {
-        textureUpdateTime = var0;
     }
 
     public static boolean isWeatherEnabled()
@@ -843,6 +918,11 @@ public class Config
         return gameSettings != null ? gameSettings.ofAnimatedItems : true;
     }
 
+    public static boolean isAnimatedTextures()
+    {
+        return gameSettings != null ? gameSettings.ofAnimatedTextures : true;
+    }
+
     public static boolean isSwampColors()
     {
         return gameSettings != null ? gameSettings.ofSwampColors : true;
@@ -860,7 +940,7 @@ public class Config
         if (var1 != 0)
         {
             String var2 = GLU.gluErrorString(var1);
-            System.out.println("OpenGlError: " + var1 + " (" + var2 + "), at: " + var0);
+            dbg("OpenGlError: " + var1 + " (" + var2 + "), at: " + var0);
         }
     }
 
@@ -872,6 +952,16 @@ public class Config
     public static boolean isCustomColors()
     {
         return gameSettings != null ? gameSettings.ofCustomColors : true;
+    }
+
+    public static boolean isCustomSky()
+    {
+        return gameSettings != null ? gameSettings.ofCustomSky : true;
+    }
+
+    public static boolean isCustomFonts()
+    {
+        return gameSettings != null ? gameSettings.ofCustomFonts : true;
     }
 
     public static boolean isShowCapes()
@@ -1045,71 +1135,6 @@ public class Config
         var4 = intHash(var4 + var2);
         var4 = intHash(var4 + var1);
         return var4;
-    }
-
-    public static void fixWorldTime(Minecraft var0)
-    {
-        WorldClient var1 = var0.theWorld;
-
-        if (var1 != null)
-        {
-            IntegratedServer var2 = var0.getIntegratedServer();
-
-            if (var2 != null)
-            {
-                WorldInfo var3 = var1.worldInfo;
-
-                if (var3 != null)
-                {
-                    if (var3.getGameType().getID() == 1)
-                    {
-                        WorldProvider var4 = var1.provider;
-
-                        if (var4 != null)
-                        {
-                            int var5 = var4.dimensionId;
-
-                            if (var5 == 0)
-                            {
-                                WorldServer var6 = var2.worldServerForDimension(var5);
-
-                                if (var6 != null)
-                                {
-                                    long var7 = var6.getWorldTime();
-                                    long var9 = var7 % 24000L;
-
-                                    if (isTimeDayOnly())
-                                    {
-                                        if (var9 <= 1000L)
-                                        {
-                                            var6.setWorldTime(var7 - var9 + 1001L);
-                                        }
-
-                                        if (var9 >= 11000L)
-                                        {
-                                            var6.setWorldTime(var7 - var9 + 24001L);
-                                        }
-                                    }
-
-                                    if (isTimeNightOnly())
-                                    {
-                                        if (var9 <= 14000L)
-                                        {
-                                            var6.setWorldTime(var7 - var9 + 14001L);
-                                        }
-
-                                        if (var9 >= 22000L)
-                                        {
-                                            var6.setWorldTime(var7 - var9 + 24000L + 14001L);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
     }
 
     public static WorldServer getWorldServer()

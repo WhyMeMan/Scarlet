@@ -4,12 +4,11 @@ import java.util.Random;
 
 public class BlockReed extends Block
 {
-    protected BlockReed(int par1, int par2)
+    protected BlockReed(int par1)
     {
         super(par1, Material.plants);
-        this.blockIndexInTexture = par2;
-        float var3 = 0.375F;
-        this.setBlockBounds(0.5F - var3, 0.0F, 0.5F - var3, 0.5F + var3, 1.0F, 0.5F + var3);
+        float var2 = 0.375F;
+        this.setBlockBounds(0.5F - var2, 0.0F, 0.5F - var2, 0.5F + var2, 1.0F, 0.5F + var2);
         this.setTickRandomly(true);
     }
 
@@ -33,12 +32,12 @@ public class BlockReed extends Block
 
                 if (var7 == 15)
                 {
-                    par1World.setBlockWithNotify(par2, par3 + 1, par4, this.blockID);
-                    par1World.setBlockMetadataWithNotify(par2, par3, par4, 0);
+                    par1World.setBlock(par2, par3 + 1, par4, this.blockID);
+                    par1World.setBlockMetadataWithNotify(par2, par3, par4, 0, 4);
                 }
                 else
                 {
-                    par1World.setBlockMetadataWithNotify(par2, par3, par4, var7 + 1);
+                    par1World.setBlockMetadataWithNotify(par2, par3, par4, var7 + 1, 4);
                 }
             }
         }
@@ -70,7 +69,7 @@ public class BlockReed extends Block
         if (!this.canBlockStay(par1World, par2, par3, par4))
         {
             this.dropBlockAsItem(par1World, par2, par3, par4, par1World.getBlockMetadata(par2, par3, par4), 0);
-            par1World.setBlockWithNotify(par2, par3, par4, 0);
+            par1World.setBlockToAir(par2, par3, par4);
         }
     }
 

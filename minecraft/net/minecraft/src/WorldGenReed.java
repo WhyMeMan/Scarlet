@@ -20,7 +20,7 @@ public class WorldGenReed extends WorldGenerator
                 {
                     if (Block.reed.canBlockStay(par1World, var7, var8 + var11, var9))
                     {
-                        par1World.setBlock(var7, var8 + var11, var9, Block.reed.blockID);
+                        par1World.setBlock(var7, var8 + var11, var9, Block.reed.blockID, 0, 2);
                     }
                 }
             }

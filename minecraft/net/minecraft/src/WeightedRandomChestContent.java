@@ -32,7 +32,7 @@ public class WeightedRandomChestContent extends WeightedRandomItem
     /**
      * Generates the Chest contents.
      */
-    public static void generateChestContents(Random par0Random, WeightedRandomChestContent[] par1ArrayOfWeightedRandomChestContent, TileEntityChest par2TileEntityChest, int par3)
+    public static void generateChestContents(Random par0Random, WeightedRandomChestContent[] par1ArrayOfWeightedRandomChestContent, IInventory par2IInventory, int par3)
     {
         for (int var4 = 0; var4 < par3; ++var4)
         {
@@ -43,7 +43,7 @@ public class WeightedRandomChestContent extends WeightedRandomItem
             {
                 ItemStack var7 = var5.theItemId.copy();
                 var7.stackSize = var6;
-                par2TileEntityChest.setInventorySlotContents(par0Random.nextInt(par2TileEntityChest.getSizeInventory()), var7);
+                par2IInventory.setInventorySlotContents(par0Random.nextInt(par2IInventory.getSizeInventory()), var7);
             }
             else
             {
@@ -51,7 +51,7 @@ public class WeightedRandomChestContent extends WeightedRandomItem
                 {
                     ItemStack var8 = var5.theItemId.copy();
                     var8.stackSize = 1;
-                    par2TileEntityChest.setInventorySlotContents(par0Random.nextInt(par2TileEntityChest.getSizeInventory()), var8);
+                    par2IInventory.setInventorySlotContents(par0Random.nextInt(par2IInventory.getSizeInventory()), var8);
                 }
             }
         }

@@ -26,11 +26,6 @@ public class RenderVillager extends RenderLiving
         super.doRenderLiving(par1EntityVillager, par2, par4, par6, par8, par9);
     }
 
-    /**
-     * Passes the Villager special render.
-     */
-    protected void passVillagerSpecialRender(EntityVillager par1EntityVillager, double par2, double par4, double par6) {}
-
     protected void renderVillagerEquipedItems(EntityVillager par1EntityVillager, float par2)
     {
         super.renderEquippedItems(par1EntityVillager, par2);
@@ -51,14 +46,6 @@ public class RenderVillager extends RenderLiving
         }
 
         GL11.glScalef(var3, var3, var3);
-    }
-
-    /**
-     * Passes the specialRender and renders it
-     */
-    protected void passSpecialRender(EntityLiving par1EntityLiving, double par2, double par4, double par6)
-    {
-        this.passVillagerSpecialRender((EntityVillager)par1EntityLiving, par2, par4, par6);
     }
 
     /**

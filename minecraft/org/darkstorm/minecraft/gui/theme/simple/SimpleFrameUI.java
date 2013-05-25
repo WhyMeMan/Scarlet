@@ -9,14 +9,17 @@ import org.darkstorm.minecraft.gui.component.Frame;
 import org.darkstorm.minecraft.gui.layout.Constraint;
 import org.darkstorm.minecraft.gui.theme.AbstractComponentUI;
 import org.darkstorm.minecraft.gui.util.RenderUtil;
+import org.darkstorm.minecraft.gui.util.UtilDrawer;
 
-public class SimpleFrameUI extends AbstractComponentUI<Frame> {
+public class SimpleFrameUI extends AbstractComponentUI<Frame> 
+{
 	private final SimpleTheme theme;
-
+	private UtilDrawer graphicsRenderer;
+	
 	SimpleFrameUI(SimpleTheme theme) {
 		super(Frame.class);
 		this.theme = theme;
-
+		graphicsRenderer = new UtilDrawer();
 		foreground = Color.WHITE;
 		background = new Color(128, 128, 128, 128);
 	}
@@ -35,14 +38,16 @@ public class SimpleFrameUI extends AbstractComponentUI<Frame> {
 		if(component.isMinimized())
 			area.height = fontHeight + 4;
 		RenderUtil.setColor(component.getBackgroundColor());
-		glBegin(GL_QUADS);
-		{
-			glVertex2d(0, 0);
-			glVertex2d(area.width, 0);
-			glVertex2d(area.width, area.height);
-			glVertex2d(0, area.height);
-		}
-		glEnd();
+		
+//		glBegin(GL_QUADS);
+//		{
+//			glVertex2d(0, 0);
+//			glVertex2d(area.width, 0);
+//			glVertex2d(area.width, area.height);
+//			glVertex2d(0, area.height);
+//		}
+//		glEnd();
+		this.graphicsRenderer.drawGradientBorderedRect(0, 0, area.width, area.height, 0xFF7c7971, 0xff5d5c5b, 0xFF777777);
 
 		// Draw controls
 		int offset = component.getWidth() - 2;
@@ -61,24 +66,27 @@ public class SimpleFrameUI extends AbstractComponentUI<Frame> {
 			if(!checks[i])
 				continue;
 			RenderUtil.setColor(component.getBackgroundColor());
-			glBegin(GL_QUADS);
-			{
-				glVertex2d(offset - fontHeight, 2);
-				glVertex2d(offset, 2);
-				glVertex2d(offset, fontHeight + 2);
-				glVertex2d(offset - fontHeight, fontHeight + 2);
-			}
-			glEnd();
+//			glBegin(GL_QUADS);
+//			{
+//				glVertex2d(offset - fontHeight, 2);
+//				glVertex2d(offset, 2);
+//				glVertex2d(offset, fontHeight + 2);
+//				glVertex2d(offset - fontHeight, fontHeight + 2);
+//			}
+//			glEnd();
+			this.graphicsRenderer.drawGradientBorderedRect(offset - fontHeight, 2, offset, fontHeight+1, 0xFF7c7971, 0xff5d5c5b, 0x44000000);
 			if(overlays[i]) {
 				glColor4f(0.0f, 0.0f, 0.0f, 0.5f);
-				glBegin(GL_QUADS);
-				{
-					glVertex2d(offset - fontHeight, 2);
-					glVertex2d(offset, 2);
-					glVertex2d(offset, fontHeight + 2);
-					glVertex2d(offset - fontHeight, fontHeight + 2);
-				}
-				glEnd();
+//				glBegin(GL_QUADS);
+//				{
+//					glVertex2d(offset - fontHeight, 2);
+//					glVertex2d(offset, 2);
+//					glVertex2d(offset, fontHeight + 2);
+//					glVertex2d(offset - fontHeight, fontHeight + 2);
+//				}
+//				glEnd();
+				this.graphicsRenderer.drawGradientBorderedRect(offset - fontHeight, 2, offset, fontHeight+1, 0xFF8d8A82, 0xff5d5c5b, 0x44000000);
+				
 			}
 			if(mouse.x >= offset - fontHeight && mouse.x <= offset
 					&& mouse.y >= 2 && mouse.y <= fontHeight + 2) {

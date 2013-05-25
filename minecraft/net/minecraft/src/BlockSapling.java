@@ -6,12 +6,14 @@ import java.util.Random;
 public class BlockSapling extends BlockFlower
 {
     public static final String[] WOOD_TYPES = new String[] {"oak", "spruce", "birch", "jungle"};
+    private static final String[] field_94370_b = new String[] {"sapling", "sapling_spruce", "sapling_birch", "sapling_jungle"};
+    private Icon[] saplingIcon;
 
-    protected BlockSapling(int par1, int par2)
+    protected BlockSapling(int par1)
     {
-        super(par1, par2);
-        float var3 = 0.4F;
-        this.setBlockBounds(0.5F - var3, 0.0F, 0.5F - var3, 0.5F + var3, var3 * 2.0F, 0.5F + var3);
+        super(par1);
+        float var2 = 0.4F;
+        this.setBlockBounds(0.5F - var2, 0.0F, 0.5F - var2, 0.5F + var2, var2 * 2.0F, 0.5F + var2);
         this.setCreativeTab(CreativeTabs.tabDecorations);
     }
 
@@ -26,16 +28,7 @@ public class BlockSapling extends BlockFlower
 
             if (par1World.getBlockLightValue(par2, par3 + 1, par4) >= 9 && par5Random.nextInt(7) == 0)
             {
-                int var6 = par1World.getBlockMetadata(par2, par3, par4);
-
-                if ((var6 & 8) == 0)
-                {
-                    par1World.setBlockMetadataWithNotify(par2, par3, par4, var6 | 8);
-                }
-                else
-                {
-                    this.growTree(par1World, par2, par3, par4, par5Random);
-                }
+                this.markOrGrowMarked(par1World, par2, par3, par4, par5Random);
             }
         }
     }
@@ -43,10 +36,24 @@ public class BlockSapling extends BlockFlower
     /**
      * From the specified side and block metadata retrieves the blocks texture. Args: side, metadata
      */
-    public int getBlockTextureFromSideAndMetadata(int par1, int par2)
+    public Icon getIcon(int par1, int par2)
     {
         par2 &= 3;
-        return par2 == 1 ? 63 : (par2 == 2 ? 79 : (par2 == 3 ? 30 : super.getBlockTextureFromSideAndMetadata(par1, par2)));
+        return this.saplingIcon[par2];
+    }
+
+    public void markOrGrowMarked(World par1World, int par2, int par3, int par4, Random par5Random)
+    {
+        int var6 = par1World.getBlockMetadata(par2, par3, par4);
+
+        if ((var6 & 8) == 0)
+        {
+            par1World.setBlockMetadataWithNotify(par2, par3, par4, var6 | 8, 4);
+        }
+        else
+        {
+            this.growTree(par1World, par2, par3, par4, par5Random);
+        }
     }
 
     /**
@@ -107,28 +114,28 @@ public class BlockSapling extends BlockFlower
 
         if (var10)
         {
-            par1World.setBlock(par2 + var8, par3, par4 + var9, 0);
-            par1World.setBlock(par2 + var8 + 1, par3, par4 + var9, 0);
-            par1World.setBlock(par2 + var8, par3, par4 + var9 + 1, 0);
-            par1World.setBlock(par2 + var8 + 1, par3, par4 + var9 + 1, 0);
+            par1World.setBlock(par2 + var8, par3, par4 + var9, 0, 0, 4);
+            par1World.setBlock(par2 + var8 + 1, par3, par4 + var9, 0, 0, 4);
+            par1World.setBlock(par2 + var8, par3, par4 + var9 + 1, 0, 0, 4);
+            par1World.setBlock(par2 + var8 + 1, par3, par4 + var9 + 1, 0, 0, 4);
         }
         else
         {
-            par1World.setBlock(par2, par3, par4, 0);
+            par1World.setBlock(par2, par3, par4, 0, 0, 4);
         }
 
         if (!((WorldGenerator)var7).generate(par1World, par5Random, par2 + var8, par3, par4 + var9))
         {
             if (var10)
             {
-                par1World.setBlockAndMetadata(par2 + var8, par3, par4 + var9, this.blockID, var6);
-                par1World.setBlockAndMetadata(par2 + var8 + 1, par3, par4 + var9, this.blockID, var6);
-                par1World.setBlockAndMetadata(par2 + var8, par3, par4 + var9 + 1, this.blockID, var6);
-                par1World.setBlockAndMetadata(par2 + var8 + 1, par3, par4 + var9 + 1, this.blockID, var6);
+                par1World.setBlock(par2 + var8, par3, par4 + var9, this.blockID, var6, 4);
+                par1World.setBlock(par2 + var8 + 1, par3, par4 + var9, this.blockID, var6, 4);
+                par1World.setBlock(par2 + var8, par3, par4 + var9 + 1, this.blockID, var6, 4);
+                par1World.setBlock(par2 + var8 + 1, par3, par4 + var9 + 1, this.blockID, var6, 4);
             }
             else
             {
-                par1World.setBlockAndMetadata(par2, par3, par4, this.blockID, var6);
+                par1World.setBlock(par2, par3, par4, this.blockID, var6, 4);
             }
         }
     }
@@ -158,5 +165,19 @@ public class BlockSapling extends BlockFlower
         par3List.add(new ItemStack(par1, 1, 1));
         par3List.add(new ItemStack(par1, 1, 2));
         par3List.add(new ItemStack(par1, 1, 3));
+    }
+
+    /**
+     * When this method is called, your block should register all the icons it needs with the given IconRegister. This
+     * is the only chance you get to register icons.
+     */
+    public void registerIcons(IconRegister par1IconRegister)
+    {
+        this.saplingIcon = new Icon[field_94370_b.length];
+
+        for (int var2 = 0; var2 < this.saplingIcon.length; ++var2)
+        {
+            this.saplingIcon[var2] = par1IconRegister.registerIcon(field_94370_b[var2]);
+        }
     }
 }

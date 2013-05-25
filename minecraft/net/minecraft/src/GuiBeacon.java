@@ -25,8 +25,8 @@ public class GuiBeacon extends GuiContainer
     public void initGui()
     {
         super.initGui();
-        this.controlList.add(this.beaconConfirmButton = new GuiBeaconButtonConfirm(this, -1, this.guiLeft + 164, this.guiTop + 107));
-        this.controlList.add(new GuiBeaconButtonCancel(this, -2, this.guiLeft + 190, this.guiTop + 107));
+        this.buttonList.add(this.beaconConfirmButton = new GuiBeaconButtonConfirm(this, -1, this.guiLeft + 164, this.guiTop + 107));
+        this.buttonList.add(new GuiBeaconButtonCancel(this, -2, this.guiLeft + 190, this.guiTop + 107));
         this.buttonsNotDrawn = true;
         this.beaconConfirmButton.enabled = false;
     }
@@ -56,7 +56,7 @@ public class GuiBeacon extends GuiContainer
                 {
                     var5 = TileEntityBeacon.effectsList[var1][var4].id;
                     var6 = new GuiBeaconButtonPower(this, var1 << 8 | var5, this.guiLeft + 76 + var4 * 24 - var3 / 2, this.guiTop + 22 + var1 * 25, var5, var1);
-                    this.controlList.add(var6);
+                    this.buttonList.add(var6);
 
                     if (var1 >= this.beacon.getLevels())
                     {
@@ -77,7 +77,7 @@ public class GuiBeacon extends GuiContainer
             {
                 var5 = TileEntityBeacon.effectsList[var7][var4].id;
                 var6 = new GuiBeaconButtonPower(this, var7 << 8 | var5, this.guiLeft + 167 + var4 * 24 - var3 / 2, this.guiTop + 47, var5, var7);
-                this.controlList.add(var6);
+                this.buttonList.add(var6);
 
                 if (var7 >= this.beacon.getLevels())
                 {
@@ -92,7 +92,7 @@ public class GuiBeacon extends GuiContainer
             if (this.beacon.getPrimaryEffect() > 0)
             {
                 GuiBeaconButtonPower var8 = new GuiBeaconButtonPower(this, var7 << 8 | this.beacon.getPrimaryEffect(), this.guiLeft + 167 + (var2 - 1) * 24 - var3 / 2, this.guiTop + 47, this.beacon.getPrimaryEffect(), var7);
-                this.controlList.add(var8);
+                this.buttonList.add(var8);
 
                 if (var7 >= this.beacon.getLevels())
                 {
@@ -127,7 +127,7 @@ public class GuiBeacon extends GuiContainer
             {
                 var4.writeInt(this.beacon.getPrimaryEffect());
                 var4.writeInt(this.beacon.getSecondaryEffect());
-                this.mc.getSendQueue().addToSendQueue(new Packet250CustomPayload(var2, var3.toByteArray()));
+                this.mc.getNetHandler().addToSendQueue(new Packet250CustomPayload(var2, var3.toByteArray()));
             }
             catch (Exception var6)
             {
@@ -149,14 +149,14 @@ public class GuiBeacon extends GuiContainer
 
             if (var9 < 3)
             {
-                this.beacon.func_82128_d(var8);
+                this.beacon.setPrimaryEffect(var8);
             }
             else
             {
-                this.beacon.func_82127_e(var8);
+                this.beacon.setSecondaryEffect(var8);
             }
 
-            this.controlList.clear();
+            this.buttonList.clear();
             this.initGui();
             this.updateScreen();
         }
@@ -170,7 +170,7 @@ public class GuiBeacon extends GuiContainer
         RenderHelper.disableStandardItemLighting();
         this.drawCenteredString(this.fontRenderer, StatCollector.translateToLocal("tile.beacon.primary"), 62, 10, 14737632);
         this.drawCenteredString(this.fontRenderer, StatCollector.translateToLocal("tile.beacon.secondary"), 169, 10, 14737632);
-        Iterator var3 = this.controlList.iterator();
+        Iterator var3 = this.buttonList.iterator();
 
         while (var3.hasNext())
         {
@@ -191,17 +191,16 @@ public class GuiBeacon extends GuiContainer
      */
     protected void drawGuiContainerBackgroundLayer(float par1, int par2, int par3)
     {
-        int var4 = this.mc.renderEngine.getTexture("/gui/beacon.png");
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        this.mc.renderEngine.bindTexture(var4);
-        int var5 = (this.width - this.xSize) / 2;
-        int var6 = (this.height - this.ySize) / 2;
-        this.drawTexturedModalRect(var5, var6, 0, 0, this.xSize, this.ySize);
+        this.mc.renderEngine.bindTexture("/gui/beacon.png");
+        int var4 = (this.width - this.xSize) / 2;
+        int var5 = (this.height - this.ySize) / 2;
+        this.drawTexturedModalRect(var4, var5, 0, 0, this.xSize, this.ySize);
         itemRenderer.zLevel = 100.0F;
-        itemRenderer.renderItemAndEffectIntoGUI(this.fontRenderer, this.mc.renderEngine, new ItemStack(Item.emerald), var5 + 42, var6 + 109);
-        itemRenderer.renderItemAndEffectIntoGUI(this.fontRenderer, this.mc.renderEngine, new ItemStack(Item.diamond), var5 + 42 + 22, var6 + 109);
-        itemRenderer.renderItemAndEffectIntoGUI(this.fontRenderer, this.mc.renderEngine, new ItemStack(Item.ingotGold), var5 + 42 + 44, var6 + 109);
-        itemRenderer.renderItemAndEffectIntoGUI(this.fontRenderer, this.mc.renderEngine, new ItemStack(Item.ingotIron), var5 + 42 + 66, var6 + 109);
+        itemRenderer.renderItemAndEffectIntoGUI(this.fontRenderer, this.mc.renderEngine, new ItemStack(Item.emerald), var4 + 42, var5 + 109);
+        itemRenderer.renderItemAndEffectIntoGUI(this.fontRenderer, this.mc.renderEngine, new ItemStack(Item.diamond), var4 + 42 + 22, var5 + 109);
+        itemRenderer.renderItemAndEffectIntoGUI(this.fontRenderer, this.mc.renderEngine, new ItemStack(Item.ingotGold), var4 + 42 + 44, var5 + 109);
+        itemRenderer.renderItemAndEffectIntoGUI(this.fontRenderer, this.mc.renderEngine, new ItemStack(Item.ingotIron), var4 + 42 + 66, var5 + 109);
         itemRenderer.zLevel = 0.0F;
     }
 }

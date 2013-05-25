@@ -10,7 +10,7 @@ public interface IPlayerFileData
     /**
      * Reads the player data from disk into the specified PlayerEntityMP.
      */
-    void readPlayerData(EntityPlayer var1);
+    NBTTagCompound readPlayerData(EntityPlayer var1);
 
     /**
      * Returns an array of usernames for which player.dat exists for.

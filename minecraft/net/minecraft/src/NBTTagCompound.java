@@ -368,7 +368,15 @@ public class NBTTagCompound extends NBTBase
 
     public String toString()
     {
-        return "" + this.tagMap.size() + " entries";
+        String var1 = this.getName() + ":[";
+        String var3;
+
+        for (Iterator var2 = this.tagMap.keySet().iterator(); var2.hasNext(); var1 = var1 + var3 + ":" + this.tagMap.get(var3) + ",")
+        {
+            var3 = (String)var2.next();
+        }
+
+        return var1 + "]";
     }
 
     /**

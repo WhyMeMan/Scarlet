@@ -11,14 +11,21 @@ public class Packet100OpenWindow extends Packet
     public String windowTitle;
     public int slotsCount;
 
+    /**
+     * If false, the client will look up a string like "window.minecart". If true, the client uses what the server
+     * provides.
+     */
+    public boolean useProvidedWindowTitle;
+
     public Packet100OpenWindow() {}
 
-    public Packet100OpenWindow(int par1, int par2, String par3Str, int par4)
+    public Packet100OpenWindow(int par1, int par2, String par3Str, int par4, boolean par5)
     {
         this.windowId = par1;
         this.inventoryType = par2;
         this.windowTitle = par3Str;
         this.slotsCount = par4;
+        this.useProvidedWindowTitle = par5;
     }
 
     /**
@@ -38,6 +45,7 @@ public class Packet100OpenWindow extends Packet
         this.inventoryType = par1DataInputStream.readByte() & 255;
         this.windowTitle = readString(par1DataInputStream, 32);
         this.slotsCount = par1DataInputStream.readByte() & 255;
+        this.useProvidedWindowTitle = par1DataInputStream.readBoolean();
     }
 
     /**
@@ -49,6 +57,7 @@ public class Packet100OpenWindow extends Packet
         par1DataOutputStream.writeByte(this.inventoryType & 255);
         writeString(this.windowTitle, par1DataOutputStream);
         par1DataOutputStream.writeByte(this.slotsCount & 255);
+        par1DataOutputStream.writeBoolean(this.useProvidedWindowTitle);
     }
 
     /**
@@ -56,6 +65,6 @@ public class Packet100OpenWindow extends Packet
      */
     public int getPacketSize()
     {
-        return 3 + this.windowTitle.length();
+        return 4 + this.windowTitle.length();
     }
 }

@@ -54,11 +54,11 @@ public class ItemBed extends Item
             {
                 if (par3World.isAirBlock(par4, par5, par6) && par3World.isAirBlock(par4 + var13, par5, par6 + var14) && par3World.doesBlockHaveSolidTopSurface(par4, par5 - 1, par6) && par3World.doesBlockHaveSolidTopSurface(par4 + var13, par5 - 1, par6 + var14))
                 {
-                    par3World.setBlockAndMetadataWithNotify(par4, par5, par6, var11.blockID, var12);
+                    par3World.setBlock(par4, par5, par6, var11.blockID, var12, 3);
 
                     if (par3World.getBlockId(par4, par5, par6) == var11.blockID)
                     {
-                        par3World.setBlockAndMetadataWithNotify(par4 + var13, par5, par6 + var14, var11.blockID, var12 + 8);
+                        par3World.setBlock(par4 + var13, par5, par6 + var14, var11.blockID, var12 + 8, 3);
                     }
 
                     --par1ItemStack.stackSize;

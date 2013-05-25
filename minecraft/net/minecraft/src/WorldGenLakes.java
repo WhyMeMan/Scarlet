@@ -98,7 +98,7 @@ public class WorldGenLakes extends WorldGenerator
                     {
                         if (var6[(var8 * 16 + var32) * 8 + var10])
                         {
-                            par1World.setBlock(par3 + var8, par4 + var10, par5 + var32, var10 >= 4 ? 0 : this.blockIndex);
+                            par1World.setBlock(par3 + var8, par4 + var10, par5 + var32, var10 >= 4 ? 0 : this.blockIndex, 0, 2);
                         }
                     }
                 }
@@ -116,11 +116,11 @@ public class WorldGenLakes extends WorldGenerator
 
                             if (var35.topBlock == Block.mycelium.blockID)
                             {
-                                par1World.setBlock(par3 + var8, par4 + var10 - 1, par5 + var32, Block.mycelium.blockID);
+                                par1World.setBlock(par3 + var8, par4 + var10 - 1, par5 + var32, Block.mycelium.blockID, 0, 2);
                             }
                             else
                             {
-                                par1World.setBlock(par3 + var8, par4 + var10 - 1, par5 + var32, Block.grass.blockID);
+                                par1World.setBlock(par3 + var8, par4 + var10 - 1, par5 + var32, Block.grass.blockID, 0, 2);
                             }
                         }
                     }
@@ -139,7 +139,7 @@ public class WorldGenLakes extends WorldGenerator
 
                             if (var33 && (var10 < 4 || par2Random.nextInt(2) != 0) && par1World.getBlockMaterial(par3 + var8, par4 + var10, par5 + var32).isSolid())
                             {
-                                par1World.setBlock(par3 + var8, par4 + var10, par5 + var32, Block.stone.blockID);
+                                par1World.setBlock(par3 + var8, par4 + var10, par5 + var32, Block.stone.blockID, 0, 2);
                             }
                         }
                     }
@@ -156,7 +156,7 @@ public class WorldGenLakes extends WorldGenerator
 
                         if (par1World.isBlockFreezable(par3 + var8, par4 + var34, par5 + var32))
                         {
-                            par1World.setBlock(par3 + var8, par4 + var34, par5 + var32, Block.ice.blockID);
+                            par1World.setBlock(par3 + var8, par4 + var34, par5 + var32, Block.ice.blockID, 0, 2);
                         }
                     }
                 }

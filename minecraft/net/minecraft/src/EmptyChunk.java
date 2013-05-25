@@ -58,14 +58,6 @@ public class EmptyChunk extends Chunk
     }
 
     /**
-     * Sets a blockID for a position in the chunk. Args: x, y, z, blockID
-     */
-    public boolean setBlockID(int par1, int par2, int par3, int par4)
-    {
-        return true;
-    }
-
-    /**
      * Return the metadata corresponding to the given coordinates inside a chunk.
      */
     public int getBlockMetadata(int par1, int par2, int par3)
@@ -168,7 +160,7 @@ public class EmptyChunk extends Chunk
      * Fills the given list of all entities that intersect within the given bounding box that aren't the passed entity
      * Args: entity, aabb, listToFill
      */
-    public void getEntitiesWithinAABBForEntity(Entity par1Entity, AxisAlignedBB par2AxisAlignedBB, List par3List) {}
+    public void getEntitiesWithinAABBForEntity(Entity par1Entity, AxisAlignedBB par2AxisAlignedBB, List par3List, IEntitySelector par4IEntitySelector) {}
 
     /**
      * Gets all entities that can be assigned to the specified class. Args: entityClass, aabb, listToFill

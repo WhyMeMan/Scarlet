@@ -45,7 +45,7 @@ public class ShapelessRecipes implements IRecipe
                     {
                         ItemStack var9 = (ItemStack)var8.next();
 
-                        if (var6.itemID == var9.itemID && (var9.getItemDamage() == -1 || var6.getItemDamage() == var9.getItemDamage()))
+                        if (var6.itemID == var9.itemID && (var9.getItemDamage() == 32767 || var6.getItemDamage() == var9.getItemDamage()))
                         {
                             var7 = true;
                             var3.remove(var9);

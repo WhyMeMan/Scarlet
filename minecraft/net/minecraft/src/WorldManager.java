@@ -23,17 +23,19 @@ public class WorldManager implements IWorldAccess
     public void spawnParticle(String par1Str, double par2, double par4, double par6, double par8, double par10, double par12) {}
 
     /**
-     * Start the skin for this entity downloading, if necessary, and increment its reference counter
+     * Called on all IWorldAccesses when an entity is created or loaded. On client worlds, starts downloading any
+     * necessary textures. On server worlds, adds the entity to the entity tracker.
      */
-    public void obtainEntitySkin(Entity par1Entity)
+    public void onEntityCreate(Entity par1Entity)
     {
         this.theWorldServer.getEntityTracker().addEntityToTracker(par1Entity);
     }
 
     /**
-     * Decrement the reference counter for this entity's skin image data
+     * Called on all IWorldAccesses when an entity is unloaded or destroyed. On client worlds, releases any downloaded
+     * textures. On server worlds, removes the entity from the entity tracker.
      */
-    public void releaseEntitySkin(Entity par1Entity)
+    public void onEntityDestroy(Entity par1Entity)
     {
         this.theWorldServer.getEntityTracker().removeEntityFromAllTrackingPlayers(par1Entity);
     }

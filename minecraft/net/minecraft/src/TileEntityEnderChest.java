@@ -75,11 +75,16 @@ public class TileEntityEnderChest extends TileEntity
     /**
      * Called when a client event is received with the event number and argument, see World.sendClientEvent
      */
-    public void receiveClientEvent(int par1, int par2)
+    public boolean receiveClientEvent(int par1, int par2)
     {
         if (par1 == 1)
         {
             this.numUsingPlayers = par2;
+            return true;
+        }
+        else
+        {
+            return super.receiveClientEvent(par1, par2);
         }
     }
 

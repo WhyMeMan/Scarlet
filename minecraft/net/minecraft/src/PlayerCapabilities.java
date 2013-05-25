@@ -72,7 +72,7 @@ public class PlayerCapabilities
         return this.walkSpeed;
     }
 
-    public void func_82877_b(float par1)
+    public void setPlayerWalkSpeed(float par1)
     {
         this.walkSpeed = par1;
     }

@@ -1,10 +1,6 @@
 package net.minecraft.src;
 
-import net.minecraft.client.Minecraft;
 import org.lwjgl.opengl.GL11;
-
-import com.whymeman.scarlet.manager.ModManager;
-import com.whymeman.scarlet.mods.Tracers;
 
 public class RenderPlayer extends RenderLiving
 {
@@ -19,6 +15,11 @@ public class RenderPlayer extends RenderLiving
         this.modelBipedMain = (ModelBiped)this.mainModel;
         this.modelArmorChestplate = new ModelBiped(1.0F);
         this.modelArmor = new ModelBiped(0.5F);
+    }
+
+    protected void func_98191_a(EntityPlayer par1EntityPlayer)
+    {
+        this.loadDownloadableImageTexture(par1EntityPlayer.skinUrl, par1EntityPlayer.getTexture());
     }
 
     /**
@@ -147,69 +148,6 @@ public class RenderPlayer extends RenderLiving
     }
 
     /**
-     * Used to render a player's name above their head
-     */
-    protected void renderName(EntityPlayer par1EntityPlayer, double par2, double par4, double par6)
-    {
-    	Tracers tracers = (Tracers)ModManager.getModByName("Tracers");
-    	if (tracers.getActive())
-    		tracers.esp(par1EntityPlayer, par2, par4, par6);
-        if (Minecraft.isGuiEnabled() && par1EntityPlayer != this.renderManager.livingPlayer && !par1EntityPlayer.getHasActivePotion())
-        {
-            float var8 = 1.6F;
-            float var9 = 0.016666668F * var8;
-            double var10 = par1EntityPlayer.getDistanceSqToEntity(this.renderManager.livingPlayer);
-            float var12 = par1EntityPlayer.isSneaking() ? 32.0F : 64.0F;
-
-            if (var10 < (double)(var12 * var12))
-            {
-                String var13 = par1EntityPlayer.username;
-
-                if (par1EntityPlayer.isSneaking())
-                {
-                    FontRenderer var14 = this.getFontRendererFromRenderManager();
-                    GL11.glPushMatrix();
-                    GL11.glTranslatef((float)par2 + 0.0F, (float)par4 + 2.3F, (float)par6);
-                    GL11.glNormal3f(0.0F, 1.0F, 0.0F);
-                    GL11.glRotatef(-this.renderManager.playerViewY, 0.0F, 1.0F, 0.0F);
-                    GL11.glRotatef(this.renderManager.playerViewX, 1.0F, 0.0F, 0.0F);
-                    GL11.glScalef(-var9, -var9, var9);
-                    GL11.glDisable(GL11.GL_LIGHTING);
-                    GL11.glTranslatef(0.0F, 0.25F / var9, 0.0F);
-                    GL11.glDepthMask(false);
-                    GL11.glEnable(GL11.GL_BLEND);
-                    GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-                    Tessellator var15 = Tessellator.instance;
-                    GL11.glDisable(GL11.GL_TEXTURE_2D);
-                    var15.startDrawingQuads();
-                    int var16 = var14.getStringWidth(var13) / 2;
-                    var15.setColorRGBA_F(0.0F, 0.0F, 0.0F, 0.25F);
-                    var15.addVertex((double)(-var16 - 1), -1.0D, 0.0D);
-                    var15.addVertex((double)(-var16 - 1), 8.0D, 0.0D);
-                    var15.addVertex((double)(var16 + 1), 8.0D, 0.0D);
-                    var15.addVertex((double)(var16 + 1), -1.0D, 0.0D);
-                    var15.draw();
-                    GL11.glEnable(GL11.GL_TEXTURE_2D);
-                    GL11.glDepthMask(true);
-                    var14.drawString(var13, -var14.getStringWidth(var13) / 2, 0, 553648127);
-                    GL11.glEnable(GL11.GL_LIGHTING);
-                    GL11.glDisable(GL11.GL_BLEND);
-                    GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-                    GL11.glPopMatrix();
-                }
-                else if (par1EntityPlayer.isPlayerSleeping())
-                {
-                    this.renderLivingLabel(par1EntityPlayer, var13, par2, par4 - 1.5D, par6, 64);
-                }
-               
-                {
-                    this.renderLivingLabel(par1EntityPlayer, var13, par2, par4, par6, 64);
-                }
-            }
-        }
-    }
-
-    /**
      * Method for adding special render rules
      */
     protected void renderSpecials(EntityPlayer par1EntityPlayer, float par2)
@@ -280,7 +218,7 @@ public class RenderPlayer extends RenderLiving
 
         float var11;
 
-        if (this.loadDownloadableImageTexture(par1EntityPlayer.playerCloakUrl, (String)null) && !par1EntityPlayer.getHasActivePotion() && !par1EntityPlayer.getHideCape())
+        if (this.loadDownloadableImageTexture(par1EntityPlayer.cloakUrl, (String)null) && !par1EntityPlayer.isInvisible() && !par1EntityPlayer.getHideCape())
         {
             GL11.glPushMatrix();
             GL11.glTranslatef(0.0F, 0.0F, 0.125F);
@@ -433,7 +371,34 @@ public class RenderPlayer extends RenderLiving
         GL11.glScalef(var3, var3, var3);
     }
 
-    public void func_82441_a(EntityPlayer par1EntityPlayer)
+    protected void func_96450_a(EntityPlayer par1EntityPlayer, double par2, double par4, double par6, String par8Str, float par9, double par10)
+    {
+        if (par10 < 100.0D)
+        {
+            Scoreboard var12 = par1EntityPlayer.getWorldScoreboard();
+            ScoreObjective var13 = var12.func_96539_a(2);
+
+            if (var13 != null)
+            {
+                Score var14 = var12.func_96529_a(par1EntityPlayer.getEntityName(), var13);
+
+                if (par1EntityPlayer.isPlayerSleeping())
+                {
+                    this.renderLivingLabel(par1EntityPlayer, var14.func_96652_c() + " " + var13.getDisplayName(), par2, par4 - 1.5D, par6, 64);
+                }
+                else
+                {
+                    this.renderLivingLabel(par1EntityPlayer, var14.func_96652_c() + " " + var13.getDisplayName(), par2, par4, par6, 64);
+                }
+
+                par4 += (double)((float)this.getFontRendererFromRenderManager().FONT_HEIGHT * 1.15F * par9);
+            }
+        }
+
+        super.func_96449_a(par1EntityPlayer, par2, par4, par6, par8Str, par9, par10);
+    }
+
+    public void renderFirstPersonArm(EntityPlayer par1EntityPlayer)
     {
         float var2 = 1.0F;
         GL11.glColor3f(var2, var2, var2);
@@ -474,12 +439,9 @@ public class RenderPlayer extends RenderLiving
         }
     }
 
-    /**
-     * Passes the specialRender and renders it
-     */
-    protected void passSpecialRender(EntityLiving par1EntityLiving, double par2, double par4, double par6)
+    protected void func_96449_a(EntityLiving par1EntityLiving, double par2, double par4, double par6, String par8Str, float par9, double par10)
     {
-        this.renderName((EntityPlayer)par1EntityLiving, par2, par4, par6);
+        this.func_96450_a((EntityPlayer)par1EntityLiving, par2, par4, par6, par8Str, par9, par10);
     }
 
     /**
@@ -520,6 +482,11 @@ public class RenderPlayer extends RenderLiving
     protected void renderLivingAt(EntityLiving par1EntityLiving, double par2, double par4, double par6)
     {
         this.renderPlayerSleep((EntityPlayer)par1EntityLiving, par2, par4, par6);
+    }
+
+    protected void func_98190_a(EntityLiving par1EntityLiving)
+    {
+        this.func_98191_a((EntityPlayer)par1EntityLiving);
     }
 
     public void doRenderLiving(EntityLiving par1EntityLiving, double par2, double par4, double par6, float par8, float par9)

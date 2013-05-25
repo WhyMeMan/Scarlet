@@ -240,7 +240,7 @@ public class EntityWither extends EntityMob implements IBossDisplayData, IRanged
         else
         {
             super.updateAITasks();
-            int var13;
+            int var12;
 
             for (var1 = 1; var1 < 3; ++var1)
             {
@@ -266,15 +266,15 @@ public class EntityWither extends EntityMob implements IBossDisplayData, IRanged
                         }
                     }
 
-                    var13 = this.getWatchedTargetId(var1);
+                    var12 = this.getWatchedTargetId(var1);
 
-                    if (var13 > 0)
+                    if (var12 > 0)
                     {
-                        Entity var15 = this.worldObj.getEntityByID(var13);
+                        Entity var14 = this.worldObj.getEntityByID(var12);
 
-                        if (var15 != null && var15.isEntityAlive() && this.getDistanceSqToEntity(var15) <= 900.0D && this.canEntityBeSeen(var15))
+                        if (var14 != null && var14.isEntityAlive() && this.getDistanceSqToEntity(var14) <= 900.0D && this.canEntityBeSeen(var14))
                         {
-                            this.func_82216_a(var1 + 1, (EntityLiving)var15);
+                            this.func_82216_a(var1 + 1, (EntityLiving)var14);
                             this.field_82223_h[var1 - 1] = this.ticksExisted + 40 + this.rand.nextInt(20);
                             this.field_82224_i[var1 - 1] = 0;
                         }
@@ -285,11 +285,11 @@ public class EntityWither extends EntityMob implements IBossDisplayData, IRanged
                     }
                     else
                     {
-                        List var14 = this.worldObj.selectEntitiesWithinAABB(EntityLiving.class, this.boundingBox.expand(20.0D, 8.0D, 20.0D), attackEntitySelector);
+                        List var13 = this.worldObj.selectEntitiesWithinAABB(EntityLiving.class, this.boundingBox.expand(20.0D, 8.0D, 20.0D), attackEntitySelector);
 
-                        for (int var17 = 0; var17 < 10 && !var14.isEmpty(); ++var17)
+                        for (int var16 = 0; var16 < 10 && !var13.isEmpty(); ++var16)
                         {
-                            EntityLiving var5 = (EntityLiving)var14.get(this.rand.nextInt(var14.size()));
+                            EntityLiving var5 = (EntityLiving)var13.get(this.rand.nextInt(var13.size()));
 
                             if (var5 != this && var5.isEntityAlive() && this.canEntityBeSeen(var5))
                             {
@@ -308,7 +308,7 @@ public class EntityWither extends EntityMob implements IBossDisplayData, IRanged
                                 break;
                             }
 
-                            var14.remove(var5);
+                            var13.remove(var5);
                         }
                     }
                 }
@@ -330,34 +330,30 @@ public class EntityWither extends EntityMob implements IBossDisplayData, IRanged
                 if (this.field_82222_j == 0 && this.worldObj.getGameRules().getGameRuleBooleanValue("mobGriefing"))
                 {
                     var1 = MathHelper.floor_double(this.posY);
-                    var13 = MathHelper.floor_double(this.posX);
-                    int var16 = MathHelper.floor_double(this.posZ);
-                    boolean var19 = false;
+                    var12 = MathHelper.floor_double(this.posX);
+                    int var15 = MathHelper.floor_double(this.posZ);
+                    boolean var18 = false;
 
-                    for (int var18 = -1; var18 <= 1; ++var18)
+                    for (int var17 = -1; var17 <= 1; ++var17)
                     {
-                        for (int var20 = -1; var20 <= 1; ++var20)
+                        for (int var19 = -1; var19 <= 1; ++var19)
                         {
                             for (int var7 = 0; var7 <= 3; ++var7)
                             {
-                                int var21 = var13 + var18;
+                                int var20 = var12 + var17;
                                 int var9 = var1 + var7;
-                                int var10 = var16 + var20;
-                                int var11 = this.worldObj.getBlockId(var21, var9, var10);
+                                int var10 = var15 + var19;
+                                int var11 = this.worldObj.getBlockId(var20, var9, var10);
 
                                 if (var11 > 0 && var11 != Block.bedrock.blockID && var11 != Block.endPortal.blockID && var11 != Block.endPortalFrame.blockID)
                                 {
-                                    int var12 = this.worldObj.getBlockMetadata(var21, var9, var10);
-                                    this.worldObj.playAuxSFX(2001, var21, var9, var10, var11 + (var12 << 12));
-                                    Block.blocksList[var11].dropBlockAsItem(this.worldObj, var21, var9, var10, var12, 0);
-                                    this.worldObj.setBlockWithNotify(var21, var9, var10, 0);
-                                    var19 = true;
+                                    var18 = this.worldObj.destroyBlock(var20, var9, var10, true) || var18;
                                 }
                             }
                         }
                     }
 
-                    if (var19)
+                    if (var18)
                     {
                         this.worldObj.playAuxSFXAtEntity((EntityPlayer)null, 1012, (int)this.posX, (int)this.posY, (int)this.posZ, 0);
                     }
@@ -470,7 +466,7 @@ public class EntityWither extends EntityMob implements IBossDisplayData, IRanged
     /**
      * Attack the specified entity using a ranged attack.
      */
-    public void attackEntityWithRangedAttack(EntityLiving par1EntityLiving)
+    public void attackEntityWithRangedAttack(EntityLiving par1EntityLiving, float par2)
     {
         this.func_82216_a(0, par1EntityLiving);
     }
@@ -562,7 +558,7 @@ public class EntityWither extends EntityMob implements IBossDisplayData, IRanged
     /**
      * Returns the health points of the dragon.
      */
-    public int getDragonHealth()
+    public int getBossHealth()
     {
         return this.dataWatcher.getWatchableObjectInt(16);
     }
@@ -629,7 +625,7 @@ public class EntityWither extends EntityMob implements IBossDisplayData, IRanged
      */
     public boolean isArmored()
     {
-        return this.getDragonHealth() <= this.getMaxHealth() / 2;
+        return this.getBossHealth() <= this.getMaxHealth() / 2;
     }
 
     /**
@@ -638,5 +634,13 @@ public class EntityWither extends EntityMob implements IBossDisplayData, IRanged
     public EnumCreatureAttribute getCreatureAttribute()
     {
         return EnumCreatureAttribute.UNDEAD;
+    }
+
+    /**
+     * Called when a player mounts an entity. e.g. mounts a pig, mounts a boat.
+     */
+    public void mountEntity(Entity par1Entity)
+    {
+        this.ridingEntity = null;
     }
 }

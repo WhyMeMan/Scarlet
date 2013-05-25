@@ -6,7 +6,7 @@ public class BlockVine extends Block
 {
     public BlockVine(int par1)
     {
-        super(par1, 143, Material.vine);
+        super(par1, Material.vine);
         this.setTickRandomly(true);
         this.setCreativeTab(CreativeTabs.tabDecorations);
     }
@@ -196,7 +196,7 @@ public class BlockVine extends Block
         {
             if (var6 != var5)
             {
-                par1World.setBlockMetadataWithNotify(par2, par3, par4, var6);
+                par1World.setBlockMetadataWithNotify(par2, par3, par4, var6, 2);
             }
 
             return true;
@@ -234,7 +234,7 @@ public class BlockVine extends Block
         if (!par1World.isRemote && !this.canVineStay(par1World, par2, par3, par4))
         {
             this.dropBlockAsItem(par1World, par2, par3, par4, par1World.getBlockMetadata(par2, par3, par4), 0);
-            par1World.setBlockWithNotify(par2, par3, par4, 0);
+            par1World.setBlockToAir(par2, par3, par4);
         }
     }
 
@@ -275,7 +275,7 @@ public class BlockVine extends Block
 
             var9 = par1World.getBlockMetadata(par2, par3, par4);
             var10 = par1World.rand.nextInt(6);
-            var11 = Direction.vineGrowth[var10];
+            var11 = Direction.facingToDirection[var10];
             int var12;
             int var13;
 
@@ -300,7 +300,7 @@ public class BlockVine extends Block
 
                     if (var12 > 0)
                     {
-                        par1World.setBlockAndMetadataWithNotify(par2, par3 + 1, par4, this.blockID, var12);
+                        par1World.setBlock(par2, par3 + 1, par4, this.blockID, var12, 2);
                     }
                 }
             }
@@ -321,7 +321,7 @@ public class BlockVine extends Block
                     {
                         if (Block.blocksList[var12].blockMaterial.isOpaque() && Block.blocksList[var12].renderAsNormalBlock())
                         {
-                            par1World.setBlockMetadataWithNotify(par2, par3, par4, var9 | 1 << var11);
+                            par1World.setBlockMetadataWithNotify(par2, par3, par4, var9 | 1 << var11, 2);
                         }
                     }
                     else
@@ -331,23 +331,23 @@ public class BlockVine extends Block
 
                         if ((var9 & 1 << var13) != 0 && this.canBePlacedOn(par1World.getBlockId(par2 + Direction.offsetX[var11] + Direction.offsetX[var13], par3, par4 + Direction.offsetZ[var11] + Direction.offsetZ[var13])))
                         {
-                            par1World.setBlockAndMetadataWithNotify(par2 + Direction.offsetX[var11], par3, par4 + Direction.offsetZ[var11], this.blockID, 1 << var13);
+                            par1World.setBlock(par2 + Direction.offsetX[var11], par3, par4 + Direction.offsetZ[var11], this.blockID, 1 << var13, 2);
                         }
                         else if ((var9 & 1 << var14) != 0 && this.canBePlacedOn(par1World.getBlockId(par2 + Direction.offsetX[var11] + Direction.offsetX[var14], par3, par4 + Direction.offsetZ[var11] + Direction.offsetZ[var14])))
                         {
-                            par1World.setBlockAndMetadataWithNotify(par2 + Direction.offsetX[var11], par3, par4 + Direction.offsetZ[var11], this.blockID, 1 << var14);
+                            par1World.setBlock(par2 + Direction.offsetX[var11], par3, par4 + Direction.offsetZ[var11], this.blockID, 1 << var14, 2);
                         }
                         else if ((var9 & 1 << var13) != 0 && par1World.isAirBlock(par2 + Direction.offsetX[var11] + Direction.offsetX[var13], par3, par4 + Direction.offsetZ[var11] + Direction.offsetZ[var13]) && this.canBePlacedOn(par1World.getBlockId(par2 + Direction.offsetX[var13], par3, par4 + Direction.offsetZ[var13])))
                         {
-                            par1World.setBlockAndMetadataWithNotify(par2 + Direction.offsetX[var11] + Direction.offsetX[var13], par3, par4 + Direction.offsetZ[var11] + Direction.offsetZ[var13], this.blockID, 1 << (var11 + 2 & 3));
+                            par1World.setBlock(par2 + Direction.offsetX[var11] + Direction.offsetX[var13], par3, par4 + Direction.offsetZ[var11] + Direction.offsetZ[var13], this.blockID, 1 << (var11 + 2 & 3), 2);
                         }
                         else if ((var9 & 1 << var14) != 0 && par1World.isAirBlock(par2 + Direction.offsetX[var11] + Direction.offsetX[var14], par3, par4 + Direction.offsetZ[var11] + Direction.offsetZ[var14]) && this.canBePlacedOn(par1World.getBlockId(par2 + Direction.offsetX[var14], par3, par4 + Direction.offsetZ[var14])))
                         {
-                            par1World.setBlockAndMetadataWithNotify(par2 + Direction.offsetX[var11] + Direction.offsetX[var14], par3, par4 + Direction.offsetZ[var11] + Direction.offsetZ[var14], this.blockID, 1 << (var11 + 2 & 3));
+                            par1World.setBlock(par2 + Direction.offsetX[var11] + Direction.offsetX[var14], par3, par4 + Direction.offsetZ[var11] + Direction.offsetZ[var14], this.blockID, 1 << (var11 + 2 & 3), 2);
                         }
                         else if (this.canBePlacedOn(par1World.getBlockId(par2 + Direction.offsetX[var11], par3 + 1, par4 + Direction.offsetZ[var11])))
                         {
-                            par1World.setBlockAndMetadataWithNotify(par2 + Direction.offsetX[var11], par3, par4 + Direction.offsetZ[var11], this.blockID, 0);
+                            par1World.setBlock(par2 + Direction.offsetX[var11], par3, par4 + Direction.offsetZ[var11], this.blockID, 0, 2);
                         }
                     }
                 }
@@ -361,7 +361,7 @@ public class BlockVine extends Block
 
                         if (var13 > 0)
                         {
-                            par1World.setBlockAndMetadataWithNotify(par2, par3 - 1, par4, this.blockID, var13);
+                            par1World.setBlock(par2, par3 - 1, par4, this.blockID, var13, 2);
                         }
                     }
                     else if (var12 == this.blockID)
@@ -371,7 +371,7 @@ public class BlockVine extends Block
 
                         if (var14 != (var14 | var13))
                         {
-                            par1World.setBlockMetadataWithNotify(par2, par3 - 1, par4, var14 | var13);
+                            par1World.setBlockMetadataWithNotify(par2, par3 - 1, par4, var14 | var13, 2);
                         }
                     }
                 }

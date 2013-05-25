@@ -18,10 +18,12 @@ public class GuiTexturePacks extends GuiScreen
      * the GuiTexturePackSlot that contains all the texture packs and their descriptions
      */
     private GuiTexturePackSlot guiTexturePackSlot;
+    private GameSettings field_96146_n;
 
-    public GuiTexturePacks(GuiScreen par1GuiScreen)
+    public GuiTexturePacks(GuiScreen par1, GameSettings par2)
     {
-        this.guiScreen = par1GuiScreen;
+        this.guiScreen = par1;
+        this.field_96146_n = par2;
     }
 
     /**
@@ -30,12 +32,12 @@ public class GuiTexturePacks extends GuiScreen
     public void initGui()
     {
         StringTranslate var1 = StringTranslate.getInstance();
-        this.controlList.add(new GuiSmallButton(5, this.width / 2 - 154, this.height - 48, var1.translateKey("texturePack.openFolder")));
-        this.controlList.add(new GuiSmallButton(6, this.width / 2 + 4, this.height - 48, var1.translateKey("gui.done")));
+        this.buttonList.add(new GuiSmallButton(5, this.width / 2 - 154, this.height - 48, var1.translateKey("texturePack.openFolder")));
+        this.buttonList.add(new GuiSmallButton(6, this.width / 2 + 4, this.height - 48, var1.translateKey("gui.done")));
         this.mc.texturePackList.updateAvaliableTexturePacks();
         this.fileLocation = (new File(Minecraft.getMinecraftDir(), "texturepacks")).getAbsolutePath();
         this.guiTexturePackSlot = new GuiTexturePackSlot(this);
-        this.guiTexturePackSlot.registerScrollButtons(this.controlList, 7, 8);
+        this.guiTexturePackSlot.registerScrollButtons(this.buttonList, 7, 8);
     }
 
     /**
@@ -51,7 +53,7 @@ public class GuiTexturePacks extends GuiScreen
                 {
                     try
                     {
-                        System.out.println(this.fileLocation);
+                        this.mc.getLogAgent().logInfo(this.fileLocation);
                         Runtime.getRuntime().exec(new String[] {"/usr/bin/open", this.fileLocation});
                         return;
                     }
@@ -91,13 +93,12 @@ public class GuiTexturePacks extends GuiScreen
 
                 if (var8)
                 {
-                    System.out.println("Opening via system class!");
+                    this.mc.getLogAgent().logInfo("Opening via system class!");
                     Sys.openURL("file://" + this.fileLocation);
                 }
             }
             else if (par1GuiButton.id == 6)
             {
-                this.mc.renderEngine.refreshTextures();
                 this.mc.displayGuiScreen(this.guiScreen);
             }
             else
@@ -207,17 +208,27 @@ public class GuiTexturePacks extends GuiScreen
         return par0GuiTexturePacks.mc;
     }
 
-    static FontRenderer func_73960_l(GuiTexturePacks par0GuiTexturePacks)
+    static Minecraft func_96143_l(GuiTexturePacks par0GuiTexturePacks)
     {
-        return par0GuiTexturePacks.fontRenderer;
+        return par0GuiTexturePacks.mc;
     }
 
-    static FontRenderer func_73963_m(GuiTexturePacks par0GuiTexturePacks)
+    static Minecraft func_96142_m(GuiTexturePacks par0GuiTexturePacks)
     {
-        return par0GuiTexturePacks.fontRenderer;
+        return par0GuiTexturePacks.mc;
     }
 
     static FontRenderer func_73954_n(GuiTexturePacks par0GuiTexturePacks)
+    {
+        return par0GuiTexturePacks.fontRenderer;
+    }
+
+    static FontRenderer func_96145_o(GuiTexturePacks par0GuiTexturePacks)
+    {
+        return par0GuiTexturePacks.fontRenderer;
+    }
+
+    static FontRenderer func_96144_p(GuiTexturePacks par0GuiTexturePacks)
     {
         return par0GuiTexturePacks.fontRenderer;
     }

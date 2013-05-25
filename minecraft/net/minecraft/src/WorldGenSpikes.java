@@ -50,7 +50,7 @@ public class WorldGenSpikes extends WorldGenerator
 
                         if (var11 * var11 + var12 * var12 <= var7 * var7 + 1)
                         {
-                            par1World.setBlockWithNotify(var9, var8, var10, Block.obsidian.blockID);
+                            par1World.setBlock(var9, var8, var10, Block.obsidian.blockID, 0, 2);
                         }
                     }
                 }
@@ -59,7 +59,7 @@ public class WorldGenSpikes extends WorldGenerator
             EntityEnderCrystal var13 = new EntityEnderCrystal(par1World);
             var13.setLocationAndAngles((double)((float)par3 + 0.5F), (double)(par4 + var6), (double)((float)par5 + 0.5F), par2Random.nextFloat() * 360.0F, 0.0F);
             par1World.spawnEntityInWorld(var13);
-            par1World.setBlockWithNotify(par3, par4 + var6, par5, Block.bedrock.blockID);
+            par1World.setBlock(par3, par4 + var6, par5, Block.bedrock.blockID, 0, 2);
             return true;
         }
         else

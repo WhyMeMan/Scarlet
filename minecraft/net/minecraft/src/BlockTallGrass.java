@@ -5,19 +5,27 @@ import java.util.Random;
 
 public class BlockTallGrass extends BlockFlower
 {
-    protected BlockTallGrass(int par1, int par2)
+    private static final String[] grassTypes = new String[] {"deadbush", "tallgrass", "fern"};
+    private Icon[] iconArray;
+
+    protected BlockTallGrass(int par1)
     {
-        super(par1, par2, Material.vine);
-        float var3 = 0.4F;
-        this.setBlockBounds(0.5F - var3, 0.0F, 0.5F - var3, 0.5F + var3, 0.8F, 0.5F + var3);
+        super(par1, Material.vine);
+        float var2 = 0.4F;
+        this.setBlockBounds(0.5F - var2, 0.0F, 0.5F - var2, 0.5F + var2, 0.8F, 0.5F + var2);
     }
 
     /**
      * From the specified side and block metadata retrieves the blocks texture. Args: side, metadata
      */
-    public int getBlockTextureFromSideAndMetadata(int par1, int par2)
+    public Icon getIcon(int par1, int par2)
     {
-        return par2 == 1 ? this.blockIndexInTexture : (par2 == 2 ? this.blockIndexInTexture + 16 + 1 : (par2 == 0 ? this.blockIndexInTexture + 16 : this.blockIndexInTexture));
+        if (par2 >= this.iconArray.length)
+        {
+            par2 = 0;
+        }
+
+        return this.iconArray[par2];
     }
 
     public int getBlockColor()
@@ -94,6 +102,20 @@ public class BlockTallGrass extends BlockFlower
         for (int var4 = 1; var4 < 3; ++var4)
         {
             par3List.add(new ItemStack(par1, 1, var4));
+        }
+    }
+
+    /**
+     * When this method is called, your block should register all the icons it needs with the given IconRegister. This
+     * is the only chance you get to register icons.
+     */
+    public void registerIcons(IconRegister par1IconRegister)
+    {
+        this.iconArray = new Icon[grassTypes.length];
+
+        for (int var2 = 0; var2 < this.iconArray.length; ++var2)
+        {
+            this.iconArray[var2] = par1IconRegister.registerIcon(grassTypes[var2]);
         }
     }
 }

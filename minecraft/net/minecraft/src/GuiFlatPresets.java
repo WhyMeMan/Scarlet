@@ -32,7 +32,7 @@ public class GuiFlatPresets extends GuiScreen
      */
     public void initGui()
     {
-        this.controlList.clear();
+        this.buttonList.clear();
         Keyboard.enableRepeatEvents(true);
         this.field_82300_d = StatCollector.translateToLocal("createWorld.customize.presets.title");
         this.field_82308_m = StatCollector.translateToLocal("createWorld.customize.presets.share");
@@ -41,8 +41,8 @@ public class GuiFlatPresets extends GuiScreen
         this.theFlatPresetsListSlot = new GuiFlatPresetsListSlot(this);
         this.theTextField.setMaxStringLength(1230);
         this.theTextField.setText(this.createFlatWorldGui.getFlatGeneratorInfo());
-        this.controlList.add(this.theButton = new GuiButton(0, this.width / 2 - 155, this.height - 28, 150, 20, StatCollector.translateToLocal("createWorld.customize.presets.select")));
-        this.controlList.add(new GuiButton(1, this.width / 2 + 5, this.height - 28, 150, 20, StatCollector.translateToLocal("gui.cancel")));
+        this.buttonList.add(this.theButton = new GuiButton(0, this.width / 2 - 155, this.height - 28, 150, 20, StatCollector.translateToLocal("createWorld.customize.presets.select")));
+        this.buttonList.add(new GuiButton(1, this.width / 2 + 5, this.height - 28, 150, 20, StatCollector.translateToLocal("gui.cancel")));
         this.func_82296_g();
     }
 

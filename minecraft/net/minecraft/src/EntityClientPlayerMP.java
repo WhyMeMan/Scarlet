@@ -1,7 +1,6 @@
 package net.minecraft.src;
 
 import com.whymeman.scarlet.manager.ModManager;
-import com.whymeman.scarlet.modbase.mod.ModHack;
 import com.whymeman.scarlet.mods.Nofall;
 
 import net.minecraft.client.Minecraft;
@@ -104,14 +103,17 @@ public class EntityClientPlayerMP extends EntityPlayerSP
         double var11 = (double)(this.rotationPitch - this.oldRotationPitch);
         boolean var13 = var3 * var3 + var5 * var5 + var7 * var7 > 9.0E-4D || this.field_71168_co >= 20;
         boolean var14 = var9 != 0.0D || var11 != 0.0D;
+        
         boolean oldGround = onGround;
         Nofall noFall = (Nofall)(ModManager.getModByName("Nofall"));
+        
         if (noFall.getActive())
         {
         	oldGround = onGround;
         	this.onGround = true;
         	this.isJumping = true;
         }
+        
         if (this.ridingEntity != null)
         {
             this.sendQueue.addToSendQueue(new Packet13PlayerLookMove(this.motionX, -999.0D, -999.0D, this.motionZ, this.rotationYaw, this.rotationPitch, this.onGround));

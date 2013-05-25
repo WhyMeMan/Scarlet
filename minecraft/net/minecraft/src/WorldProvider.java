@@ -112,7 +112,7 @@ public abstract class WorldProvider
         return var5;
     }
 
-    public int getMoonPhase(long par1, float par3)
+    public int getMoonPhase(long par1)
     {
         return (int)(par1 / 24000L) % 8;
     }

@@ -35,14 +35,16 @@ public interface IWorldAccess
     void spawnParticle(String var1, double var2, double var4, double var6, double var8, double var10, double var12);
 
     /**
-     * Start the skin for this entity downloading, if necessary, and increment its reference counter
+     * Called on all IWorldAccesses when an entity is created or loaded. On client worlds, starts downloading any
+     * necessary textures. On server worlds, adds the entity to the entity tracker.
      */
-    void obtainEntitySkin(Entity var1);
+    void onEntityCreate(Entity var1);
 
     /**
-     * Decrement the reference counter for this entity's skin image data
+     * Called on all IWorldAccesses when an entity is unloaded or destroyed. On client worlds, releases any downloaded
+     * textures. On server worlds, removes the entity from the entity tracker.
      */
-    void releaseEntitySkin(Entity var1);
+    void onEntityDestroy(Entity var1);
 
     /**
      * Plays the specified record. Arg: recordName, x, y, z

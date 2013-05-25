@@ -21,7 +21,7 @@ public class KillAura extends ModHack
 	
 	public KillAura() 
 	{
-		super("KillAura",Keyboard.KEY_K);
+		super("Kill Aura",Keyboard.KEY_K);
 		this.getProperties().setBypassed(true);
 		this.setHackType(HackType.HACK_COMBAT);
 		timePassed = 0;

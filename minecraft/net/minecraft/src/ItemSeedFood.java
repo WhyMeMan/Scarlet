@@ -31,7 +31,7 @@ public class ItemSeedFood extends ItemFood
 
             if (var11 == this.soilId && par3World.isAirBlock(par4, par5 + 1, par6))
             {
-                par3World.setBlockWithNotify(par4, par5 + 1, par6, this.cropId);
+                par3World.setBlock(par4, par5 + 1, par6, this.cropId);
                 --par1ItemStack.stackSize;
                 return true;
             }

@@ -4,9 +4,9 @@ import java.util.Random;
 
 public class BlockTorch extends Block
 {
-    protected BlockTorch(int par1, int par2)
+    protected BlockTorch(int par1)
     {
-        super(par1, par2, Material.circuits);
+        super(par1, Material.circuits);
         this.setTickRandomly(true);
         this.setCreativeTab(CreativeTabs.tabDecorations);
     }
@@ -126,23 +126,23 @@ public class BlockTorch extends Block
         {
             if (par1World.isBlockNormalCubeDefault(par2 - 1, par3, par4, true))
             {
-                par1World.setBlockMetadataWithNotify(par2, par3, par4, 1);
+                par1World.setBlockMetadataWithNotify(par2, par3, par4, 1, 2);
             }
             else if (par1World.isBlockNormalCubeDefault(par2 + 1, par3, par4, true))
             {
-                par1World.setBlockMetadataWithNotify(par2, par3, par4, 2);
+                par1World.setBlockMetadataWithNotify(par2, par3, par4, 2, 2);
             }
             else if (par1World.isBlockNormalCubeDefault(par2, par3, par4 - 1, true))
             {
-                par1World.setBlockMetadataWithNotify(par2, par3, par4, 3);
+                par1World.setBlockMetadataWithNotify(par2, par3, par4, 3, 2);
             }
             else if (par1World.isBlockNormalCubeDefault(par2, par3, par4 + 1, true))
             {
-                par1World.setBlockMetadataWithNotify(par2, par3, par4, 4);
+                par1World.setBlockMetadataWithNotify(par2, par3, par4, 4, 2);
             }
             else if (this.canPlaceTorchOn(par1World, par2, par3 - 1, par4))
             {
-                par1World.setBlockMetadataWithNotify(par2, par3, par4, 5);
+                par1World.setBlockMetadataWithNotify(par2, par3, par4, 5, 2);
             }
         }
 
@@ -154,6 +154,11 @@ public class BlockTorch extends Block
      * their own) Args: x, y, z, neighbor blockID
      */
     public void onNeighborBlockChange(World par1World, int par2, int par3, int par4, int par5)
+    {
+        this.func_94397_d(par1World, par2, par3, par4, par5);
+    }
+
+    protected boolean func_94397_d(World par1World, int par2, int par3, int par4, int par5)
     {
         if (this.dropTorchIfCantStay(par1World, par2, par3, par4))
         {
@@ -188,8 +193,17 @@ public class BlockTorch extends Block
             if (var7)
             {
                 this.dropBlockAsItem(par1World, par2, par3, par4, par1World.getBlockMetadata(par2, par3, par4), 0);
-                par1World.setBlockWithNotify(par2, par3, par4, 0);
+                par1World.setBlockToAir(par2, par3, par4);
+                return true;
             }
+            else
+            {
+                return false;
+            }
+        }
+        else
+        {
+            return true;
         }
     }
 
@@ -197,14 +211,14 @@ public class BlockTorch extends Block
      * Tests if the block can remain at its current location and will drop as an item if it is unable to stay. Returns
      * True if it can stay and False if it drops. Args: world, x, y, z
      */
-    private boolean dropTorchIfCantStay(World par1World, int par2, int par3, int par4)
+    protected boolean dropTorchIfCantStay(World par1World, int par2, int par3, int par4)
     {
         if (!this.canPlaceBlockAt(par1World, par2, par3, par4))
         {
             if (par1World.getBlockId(par2, par3, par4) == this.blockID)
             {
                 this.dropBlockAsItem(par1World, par2, par3, par4, par1World.getBlockMetadata(par2, par3, par4), 0);
-                par1World.setBlockWithNotify(par2, par3, par4, 0);
+                par1World.setBlockToAir(par2, par3, par4);
             }
 
             return false;

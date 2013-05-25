@@ -6,7 +6,7 @@ public class EntityFireworkStarterFX extends EntityFX
 {
     private int field_92042_ax = 0;
     private final EffectRenderer field_92040_ay;
-    private NBTTagList field_92039_az;
+    private NBTTagList fireworkExplosions;
     boolean field_92041_a;
 
     public EntityFireworkStarterFX(World par1World, double par2, double par4, double par6, double par8, double par10, double par12, EffectRenderer par14EffectRenderer, NBTTagCompound par15NBTTagCompound)
@@ -20,19 +20,19 @@ public class EntityFireworkStarterFX extends EntityFX
 
         if (par15NBTTagCompound != null)
         {
-            this.field_92039_az = par15NBTTagCompound.getTagList("Explosions");
+            this.fireworkExplosions = par15NBTTagCompound.getTagList("Explosions");
 
-            if (this.field_92039_az.tagCount() == 0)
+            if (this.fireworkExplosions.tagCount() == 0)
             {
-                this.field_92039_az = null;
+                this.fireworkExplosions = null;
             }
             else
             {
-                this.particleMaxAge = this.field_92039_az.tagCount() * 2 - 1;
+                this.particleMaxAge = this.fireworkExplosions.tagCount() * 2 - 1;
 
-                for (int var16 = 0; var16 < this.field_92039_az.tagCount(); ++var16)
+                for (int var16 = 0; var16 < this.fireworkExplosions.tagCount(); ++var16)
                 {
-                    NBTTagCompound var17 = (NBTTagCompound)this.field_92039_az.tagAt(var16);
+                    NBTTagCompound var17 = (NBTTagCompound)this.fireworkExplosions.tagAt(var16);
 
                     if (var17.getBoolean("Flicker"))
                     {
@@ -54,20 +54,20 @@ public class EntityFireworkStarterFX extends EntityFX
     {
         boolean var1;
 
-        if (this.field_92042_ax == 0 && this.field_92039_az != null)
+        if (this.field_92042_ax == 0 && this.fireworkExplosions != null)
         {
             var1 = this.func_92037_i();
             boolean var2 = false;
 
-            if (this.field_92039_az.tagCount() >= 3)
+            if (this.fireworkExplosions.tagCount() >= 3)
             {
                 var2 = true;
             }
             else
             {
-                for (int var3 = 0; var3 < this.field_92039_az.tagCount(); ++var3)
+                for (int var3 = 0; var3 < this.fireworkExplosions.tagCount(); ++var3)
                 {
-                    NBTTagCompound var4 = (NBTTagCompound)this.field_92039_az.tagAt(var3);
+                    NBTTagCompound var4 = (NBTTagCompound)this.fireworkExplosions.tagAt(var3);
 
                     if (var4.getByte("Type") == 1)
                     {
@@ -81,10 +81,10 @@ public class EntityFireworkStarterFX extends EntityFX
             this.worldObj.playSound(this.posX, this.posY, this.posZ, var15, 20.0F, 0.95F + this.rand.nextFloat() * 0.1F, true);
         }
 
-        if (this.field_92042_ax % 2 == 0 && this.field_92039_az != null && this.field_92042_ax / 2 < this.field_92039_az.tagCount())
+        if (this.field_92042_ax % 2 == 0 && this.fireworkExplosions != null && this.field_92042_ax / 2 < this.fireworkExplosions.tagCount())
         {
             int var13 = this.field_92042_ax / 2;
-            NBTTagCompound var14 = (NBTTagCompound)this.field_92039_az.tagAt(var13);
+            NBTTagCompound var14 = (NBTTagCompound)this.fireworkExplosions.tagAt(var13);
             byte var17 = var14.getByte("Type");
             boolean var18 = var14.getBoolean("Trail");
             boolean var5 = var14.getBoolean("Flicker");

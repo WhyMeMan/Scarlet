@@ -17,8 +17,10 @@ public class CommandHandler implements ICommandManager
     /** The set of ICommand objects currently loaded. */
     private final Set commandSet = new HashSet();
 
-    public void executeCommand(ICommandSender par1ICommandSender, String par2Str)
+    public int executeCommand(ICommandSender par1ICommandSender, String par2Str)
     {
+        par2Str = par2Str.trim();
+
         if (par2Str.startsWith("/"))
         {
             par2Str = par2Str.substring(1);
@@ -29,6 +31,7 @@ public class CommandHandler implements ICommandManager
         var3 = dropFirstString(var3);
         ICommand var5 = (ICommand)this.commandMap.get(var4);
         int var6 = this.getUsernameIndex(var5, var3);
+        int var7 = 0;
 
         try
         {
@@ -41,51 +44,55 @@ public class CommandHandler implements ICommandManager
             {
                 if (var6 > -1)
                 {
-                    EntityPlayerMP[] var7 = PlayerSelector.matchPlayers(par1ICommandSender, var3[var6]);
-                    String var8 = var3[var6];
-                    EntityPlayerMP[] var9 = var7;
-                    int var10 = var7.length;
+                    EntityPlayerMP[] var8 = PlayerSelector.matchPlayers(par1ICommandSender, var3[var6]);
+                    String var9 = var3[var6];
+                    EntityPlayerMP[] var10 = var8;
+                    int var11 = var8.length;
 
-                    for (int var11 = 0; var11 < var10; ++var11)
+                    for (int var12 = 0; var12 < var11; ++var12)
                     {
-                        EntityPlayerMP var12 = var9[var11];
-                        var3[var6] = var12.getEntityName();
+                        EntityPlayerMP var13 = var10[var12];
+                        var3[var6] = var13.getEntityName();
 
                         try
                         {
                             var5.processCommand(par1ICommandSender, var3);
+                            ++var7;
                         }
-                        catch (PlayerNotFoundException var14)
+                        catch (CommandException var15)
                         {
-                            par1ICommandSender.sendChatToPlayer("\u00a7c" + par1ICommandSender.translateString(var14.getMessage(), var14.getErrorOjbects()));
+                            par1ICommandSender.sendChatToPlayer(EnumChatFormatting.RED + par1ICommandSender.translateString(var15.getMessage(), var15.getErrorOjbects()));
                         }
                     }
 
-                    var3[var6] = var8;
+                    var3[var6] = var9;
                 }
                 else
                 {
                     var5.processCommand(par1ICommandSender, var3);
+                    ++var7;
                 }
             }
             else
             {
-                par1ICommandSender.sendChatToPlayer("\u00a7cYou do not have permission to use this command.");
+                par1ICommandSender.sendChatToPlayer("" + EnumChatFormatting.RED + "You do not have permission to use this command.");
             }
         }
-        catch (WrongUsageException var15)
+        catch (WrongUsageException var16)
         {
-            par1ICommandSender.sendChatToPlayer("\u00a7c" + par1ICommandSender.translateString("commands.generic.usage", new Object[] {par1ICommandSender.translateString(var15.getMessage(), var15.getErrorOjbects())}));
+            par1ICommandSender.sendChatToPlayer(EnumChatFormatting.RED + par1ICommandSender.translateString("commands.generic.usage", new Object[] {par1ICommandSender.translateString(var16.getMessage(), var16.getErrorOjbects())}));
         }
-        catch (CommandException var16)
+        catch (CommandException var17)
         {
-            par1ICommandSender.sendChatToPlayer("\u00a7c" + par1ICommandSender.translateString(var16.getMessage(), var16.getErrorOjbects()));
+            par1ICommandSender.sendChatToPlayer(EnumChatFormatting.RED + par1ICommandSender.translateString(var17.getMessage(), var17.getErrorOjbects()));
         }
-        catch (Throwable var17)
+        catch (Throwable var18)
         {
-            par1ICommandSender.sendChatToPlayer("\u00a7c" + par1ICommandSender.translateString("commands.generic.exception", new Object[0]));
-            var17.printStackTrace();
+            par1ICommandSender.sendChatToPlayer(EnumChatFormatting.RED + par1ICommandSender.translateString("commands.generic.exception", new Object[0]));
+            var18.printStackTrace();
         }
+
+        return var7;
     }
 
     /**
@@ -214,7 +221,7 @@ public class CommandHandler implements ICommandManager
         {
             for (int var3 = 0; var3 < par2ArrayOfStr.length; ++var3)
             {
-                if (par1ICommand.isUsernameIndex(var3) && PlayerSelector.matchesMultiplePlayers(par2ArrayOfStr[var3]))
+                if (par1ICommand.isUsernameIndex(par2ArrayOfStr, var3) && PlayerSelector.matchesMultiplePlayers(par2ArrayOfStr[var3]))
                 {
                     return var3;
                 }

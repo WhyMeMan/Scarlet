@@ -72,7 +72,7 @@ public class GuiWinGame extends GuiScreen
             try
             {
                 String var1 = "";
-                String var2 = "\u00a7f\u00a7k\u00a7a\u00a7b";
+                String var2 = "" + EnumChatFormatting.WHITE + EnumChatFormatting.OBFUSCATED + EnumChatFormatting.GREEN + EnumChatFormatting.AQUA;
                 short var3 = 274;
                 BufferedReader var4 = new BufferedReader(new InputStreamReader(GuiWinGame.class.getResourceAsStream("/title/win.txt"), Charset.forName("UTF-8")));
                 Random var5 = new Random(8124371L);
@@ -83,7 +83,7 @@ public class GuiWinGame extends GuiScreen
                     String var7;
                     String var8;
 
-                    for (var1 = var1.replaceAll("PLAYERNAME", this.mc.session.username); var1.contains(var2); var1 = var7 + "\u00a7f\u00a7k" + "XXXXXXXX".substring(0, var5.nextInt(4) + 3) + var8)
+                    for (var1 = var1.replaceAll("PLAYERNAME", this.mc.session.username); var1.contains(var2); var1 = var7 + EnumChatFormatting.WHITE + EnumChatFormatting.OBFUSCATED + "XXXXXXXX".substring(0, var5.nextInt(4) + 3) + var8)
                     {
                         var6 = var1.indexOf(var2);
                         var7 = var1.substring(0, var6);
@@ -121,7 +121,7 @@ public class GuiWinGame extends GuiScreen
     private void func_73986_b(int par1, int par2, float par3)
     {
         Tessellator var4 = Tessellator.instance;
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.mc.renderEngine.getTexture("%blur%/gui/background.png"));
+        this.mc.renderEngine.bindTexture("%blur%/gui/background.png");
         var4.startDrawingQuads();
         var4.setColorRGBA_F(1.0F, 1.0F, 1.0F, 1.0F);
         int var5 = this.width;
@@ -165,7 +165,7 @@ public class GuiWinGame extends GuiScreen
         float var8 = -((float)this.updateCounter + par3) * this.field_73987_d;
         GL11.glPushMatrix();
         GL11.glTranslatef(0.0F, var8, 0.0F);
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.mc.renderEngine.getTexture("/title/mclogo.png"));
+        this.mc.renderEngine.bindTexture("/title/mclogo.png");
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         this.drawTexturedModalRect(var6, var7, 0, 0, 155, 44);
         this.drawTexturedModalRect(var6 + 155, var7, 0, 45, 155, 44);
@@ -204,7 +204,7 @@ public class GuiWinGame extends GuiScreen
         }
 
         GL11.glPopMatrix();
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.mc.renderEngine.getTexture("%blur%/misc/vignette.png"));
+        this.mc.renderEngine.bindTexture("%blur%/misc/vignette.png");
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_ZERO, GL11.GL_ONE_MINUS_SRC_COLOR);
         var4.startDrawingQuads();

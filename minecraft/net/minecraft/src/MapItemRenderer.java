@@ -84,7 +84,8 @@ public class MapItemRenderer
         var17.draw();
         GL11.glEnable(GL11.GL_ALPHA_TEST);
         GL11.glDisable(GL11.GL_BLEND);
-        par2RenderEngine.bindTexture(par2RenderEngine.getTexture("/misc/mapicons.png"));
+        par2RenderEngine.resetBoundTexture();
+        par2RenderEngine.bindTexture("/misc/mapicons.png");
         int var19 = 0;
 
         for (Iterator var20 = par3MapData.playersVisibleOnMap.values().iterator(); var20.hasNext(); ++var19)

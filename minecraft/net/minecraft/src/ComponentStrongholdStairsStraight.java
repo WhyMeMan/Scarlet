@@ -44,13 +44,13 @@ public class ComponentStrongholdStairsStraight extends ComponentStronghold
             this.fillWithRandomizedBlocks(par1World, par3StructureBoundingBox, 0, 0, 0, 4, 10, 7, true, par2Random, StructureStrongholdPieces.getStrongholdStones());
             this.placeDoor(par1World, par2Random, par3StructureBoundingBox, this.doorType, 1, 7, 0);
             this.placeDoor(par1World, par2Random, par3StructureBoundingBox, EnumDoor.OPENING, 1, 1, 7);
-            int var4 = this.getMetadataWithOffset(Block.stairCompactCobblestone.blockID, 2);
+            int var4 = this.getMetadataWithOffset(Block.stairsCobblestone.blockID, 2);
 
             for (int var5 = 0; var5 < 6; ++var5)
             {
-                this.placeBlockAtCurrentPosition(par1World, Block.stairCompactCobblestone.blockID, var4, 1, 6 - var5, 1 + var5, par3StructureBoundingBox);
-                this.placeBlockAtCurrentPosition(par1World, Block.stairCompactCobblestone.blockID, var4, 2, 6 - var5, 1 + var5, par3StructureBoundingBox);
-                this.placeBlockAtCurrentPosition(par1World, Block.stairCompactCobblestone.blockID, var4, 3, 6 - var5, 1 + var5, par3StructureBoundingBox);
+                this.placeBlockAtCurrentPosition(par1World, Block.stairsCobblestone.blockID, var4, 1, 6 - var5, 1 + var5, par3StructureBoundingBox);
+                this.placeBlockAtCurrentPosition(par1World, Block.stairsCobblestone.blockID, var4, 2, 6 - var5, 1 + var5, par3StructureBoundingBox);
+                this.placeBlockAtCurrentPosition(par1World, Block.stairsCobblestone.blockID, var4, 3, 6 - var5, 1 + var5, par3StructureBoundingBox);
 
                 if (var5 < 5)
                 {

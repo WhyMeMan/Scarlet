@@ -4,9 +4,12 @@ import java.util.Random;
 
 public class BlockEnchantmentTable extends BlockContainer
 {
+    private Icon field_94461_a;
+    private Icon field_94460_b;
+
     protected BlockEnchantmentTable(int par1)
     {
-        super(par1, 166, Material.rock);
+        super(par1, Material.rock);
         this.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 0.75F, 1.0F);
         this.setLightOpacity(0);
         this.setCreativeTab(CreativeTabs.tabDecorations);
@@ -67,17 +70,9 @@ public class BlockEnchantmentTable extends BlockContainer
     /**
      * From the specified side and block metadata retrieves the blocks texture. Args: side, metadata
      */
-    public int getBlockTextureFromSideAndMetadata(int par1, int par2)
+    public Icon getIcon(int par1, int par2)
     {
-        return this.getBlockTextureFromSide(par1);
-    }
-
-    /**
-     * Returns the block texture based on the side being looked at.  Args: side
-     */
-    public int getBlockTextureFromSide(int par1)
-    {
-        return par1 == 0 ? this.blockIndexInTexture + 17 : (par1 == 1 ? this.blockIndexInTexture : this.blockIndexInTexture + 16);
+        return par1 == 0 ? this.field_94460_b : (par1 == 1 ? this.field_94461_a : this.blockIcon);
     }
 
     /**
@@ -99,8 +94,33 @@ public class BlockEnchantmentTable extends BlockContainer
         }
         else
         {
-            par5EntityPlayer.displayGUIEnchantment(par2, par3, par4);
+            TileEntityEnchantmentTable var10 = (TileEntityEnchantmentTable)par1World.getBlockTileEntity(par2, par3, par4);
+            par5EntityPlayer.displayGUIEnchantment(par2, par3, par4, var10.func_94135_b() ? var10.func_94133_a() : null);
             return true;
         }
+    }
+
+    /**
+     * Called when the block is placed in the world.
+     */
+    public void onBlockPlacedBy(World par1World, int par2, int par3, int par4, EntityLiving par5EntityLiving, ItemStack par6ItemStack)
+    {
+        super.onBlockPlacedBy(par1World, par2, par3, par4, par5EntityLiving, par6ItemStack);
+
+        if (par6ItemStack.hasDisplayName())
+        {
+            ((TileEntityEnchantmentTable)par1World.getBlockTileEntity(par2, par3, par4)).func_94134_a(par6ItemStack.getDisplayName());
+        }
+    }
+
+    /**
+     * When this method is called, your block should register all the icons it needs with the given IconRegister. This
+     * is the only chance you get to register icons.
+     */
+    public void registerIcons(IconRegister par1IconRegister)
+    {
+        this.blockIcon = par1IconRegister.registerIcon("enchantment_side");
+        this.field_94461_a = par1IconRegister.registerIcon("enchantment_top");
+        this.field_94460_b = par1IconRegister.registerIcon("enchantment_bottom");
     }
 }

@@ -10,6 +10,9 @@ import org.lwjgl.opengl.ARBVertexBufferObject;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GLContext;
 
+import com.whymeman.scarlet.manager.ModManager;
+import com.whymeman.scarlet.mods.Wallhack;
+
 public class Tessellator
 {
     /**
@@ -130,15 +133,10 @@ public class Tessellator
     public boolean defaultTexture;
     public int textureID;
     public boolean autoGrow;
-    private Tessellator[] subTessellators;
-    private int[] subTextures;
-    private static int terrainTexture = 0;
-    private long textureUpdateTime;
-    public static int[][] atlasSubTextures = new int[0][];
+    private RenderEngine renderEngine;
     private VertexData[] vertexDatas;
     private boolean[] drawnIcons;
-    private int[] vertexIconIndex;
-    private int[] tileTextures;
+    private TextureStitched[] vertexQuadIcons;
 
     public Tessellator()
     {
@@ -152,13 +150,10 @@ public class Tessellator
         this.defaultTexture = true;
         this.textureID = 0;
         this.autoGrow = true;
-        this.subTessellators = new Tessellator[0];
-        this.subTextures = new int[0];
-        this.textureUpdateTime = 0L;
+        this.renderEngine = Config.getRenderEngine();
         this.vertexDatas = null;
         this.drawnIcons = new boolean[256];
-        this.vertexIconIndex = null;
-        this.tileTextures = null;
+        this.vertexQuadIcons = null;
         this.vertexCount = 0;
         this.hasColor = false;
         this.hasTexture = false;
@@ -191,8 +186,6 @@ public class Tessellator
         {
             this.vertexDatas[var2] = new VertexData();
         }
-
-        this.vertexIconIndex = new int[this.bufferSize];
     }
 
     private void draw(int var1, int var2)
@@ -201,76 +194,77 @@ public class Tessellator
 
         if (var3 > 0)
         {
-            if (var3 % 4 == 0)
+            int var4 = var1 * 4;
+            int var5 = var3 * 4;
+
+            if (this.useVBO)
             {
-                if (this.useVBO)
+                throw new IllegalStateException("VBO not implemented");
+            }
+            else
+            {
+                this.floatBuffer.position(3);
+                GL11.glTexCoordPointer(2, 32, this.floatBuffer);
+                OpenGlHelper.setClientActiveTexture(OpenGlHelper.lightmapTexUnit);
+                this.shortBuffer.position(14);
+                GL11.glTexCoordPointer(2, 32, this.shortBuffer);
+                GL11.glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
+                OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit);
+                this.byteBuffer.position(20);
+                GL11.glColorPointer(4, true, 32, this.byteBuffer);
+                this.floatBuffer.position(0);
+                GL11.glVertexPointer(3, 32, this.floatBuffer);
+
+                if (this.drawMode == 7 && convertQuadsToTriangles)
                 {
-                    throw new IllegalStateException("VBO not implemented");
+                    GL11.glDrawArrays(GL11.GL_TRIANGLES, var4, var5);
                 }
                 else
                 {
-                    this.floatBuffer.position(3);
-                    GL11.glTexCoordPointer(2, 32, this.floatBuffer);
-                    OpenGlHelper.setClientActiveTexture(OpenGlHelper.lightmapTexUnit);
-                    this.shortBuffer.position(14);
-                    GL11.glTexCoordPointer(2, 32, this.shortBuffer);
-                    GL11.glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
-                    OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit);
-                    this.byteBuffer.position(20);
-                    GL11.glColorPointer(4, true, 32, this.byteBuffer);
-                    this.floatBuffer.position(0);
-                    GL11.glVertexPointer(3, 32, this.floatBuffer);
-
-                    if (this.drawMode == 7 && convertQuadsToTriangles)
-                    {
-                        GL11.glDrawArrays(GL11.GL_TRIANGLES, var1, var3);
-                    }
-                    else
-                    {
-                        GL11.glDrawArrays(this.drawMode, var1, var3);
-                    }
+                    GL11.glDrawArrays(this.drawMode, var4, var5);
                 }
             }
         }
     }
 
-    private int drawForIcon(int var1, int var2)
+    private int drawForIcon(TextureStitched var1, int var2)
     {
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.tileTextures[var1]);
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, var1.tileTexture.getGlTextureId());
         int var3 = -1;
         int var4 = -1;
+        int var5 = this.addedVertices / 4;
 
-        for (int var5 = var2; var5 < this.addedVertices; ++var5)
+        for (int var6 = var2; var6 < var5; ++var6)
         {
-            int var6 = this.vertexIconIndex[var5];
+            TextureStitched var7 = this.vertexQuadIcons[var6];
 
-            if (var6 == var1)
+            if (var7 == var1)
             {
                 if (var4 < 0)
                 {
-                    var4 = var5;
+                    var4 = var6;
                 }
             }
             else if (var4 >= 0)
             {
-                this.draw(var4, var5);
+                this.draw(var4, var6);
                 var4 = -1;
 
                 if (var3 < 0)
                 {
-                    var3 = var5;
+                    var3 = var6;
                 }
             }
         }
 
         if (var4 >= 0)
         {
-            this.draw(var4, this.addedVertices);
+            this.draw(var4, var5);
         }
 
         if (var3 < 0)
         {
-            var3 = this.addedVertices;
+            var3 = var5;
         }
 
         return var3;
@@ -287,51 +281,12 @@ public class Tessellator
         }
         else
         {
-            int var2;
-            int var3;
-
-            if (this.renderingChunk && this.subTessellators.length > 0)
-            {
-                boolean var1 = false;
-
-                for (var2 = 0; var2 < this.subTessellators.length; ++var2)
-                {
-                    var3 = this.subTextures[var2];
-
-                    if (var3 <= 0)
-                    {
-                        break;
-                    }
-
-                    Tessellator var4 = this.subTessellators[var2];
-
-                    if (var4.isDrawing)
-                    {
-                        GL11.glBindTexture(GL11.GL_TEXTURE_2D, var3);
-                        var1 = true;
-                        var4.draw();
-                    }
-                }
-
-                if (var1)
-                {
-                    if (this.textureID > 0)
-                    {
-                        GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.textureID);
-                    }
-                    else
-                    {
-                        GL11.glBindTexture(GL11.GL_TEXTURE_2D, getTerrainTexture());
-                    }
-                }
-            }
-
             this.isDrawing = false;
-            int var5;
+            int var1;
 
             if (this.vertexCount > 0)
             {
-                if (Config.isMultiTexture() && this.tileTextures != null)
+                if (this.renderingChunk && Config.isMultiTexture())
                 {
                     this.intBuffer.clear();
                     this.intBuffer.put(this.rawBuffer, 0, this.rawBufferIndex);
@@ -340,19 +295,50 @@ public class Tessellator
                     GL11.glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
                     GL11.glEnableClientState(GL11.GL_COLOR_ARRAY);
                     GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
-                    Arrays.fill(this.drawnIcons, false);
-                    var5 = 0;
+                    var1 = this.renderEngine.textureMapBlocks.getMaxTextureIndex();
 
-                    for (var2 = 0; var2 < this.addedVertices; ++var2)
+                    if (this.drawnIcons.length < var1)
                     {
-                        var3 = this.vertexIconIndex[var2];
+                        this.drawnIcons = new boolean[var1 + 1];
+                    }
 
-                        if (!this.drawnIcons[var3])
+                    Arrays.fill(this.drawnIcons, false);
+
+                    if (this.vertexQuadIcons == null)
+                    {
+                        this.vertexQuadIcons = new TextureStitched[this.bufferSize / 4];
+                    }
+
+                    int var2 = 0;
+                    int var3 = -1;
+                    int var4 = this.addedVertices / 4;
+
+                    for (int var5 = 0; var5 < var4; ++var5)
+                    {
+                        TextureStitched var6 = this.vertexQuadIcons[var5];
+                        int var7 = var6.getIndexInMap();
+
+                        if (!this.drawnIcons[var7])
                         {
-                            var2 = this.drawForIcon(var3, var2) - 1;
-                            ++var5;
-                            this.drawnIcons[var3] = true;
+                            if (var6 == TextureUtils.iconGrassSideOverlay)
+                            {
+                                if (var3 < 0)
+                                {
+                                    var3 = var5;
+                                }
+                            }
+                            else
+                            {
+                                var5 = this.drawForIcon(var6, var5) - 1;
+                                ++var2;
+                                this.drawnIcons[var7] = true;
+                            }
                         }
+                    }
+
+                    if (var3 >= 0)
+                    {
+                        this.drawForIcon((TextureStitched)TextureUtils.iconGrassSideOverlay, var3);
                     }
 
                     GL11.glDisableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
@@ -486,9 +472,9 @@ public class Tessellator
                 }
             }
 
-            var5 = this.rawBufferIndex * 4;
+            var1 = this.rawBufferIndex * 4;
             this.reset();
-            return var5;
+            return var1;
         }
     }
 
@@ -530,15 +516,6 @@ public class Tessellator
             this.hasTexture = false;
             this.hasBrightness = false;
             this.isColorDisabled = false;
-
-            if (this.renderingChunk && this.textureID == 0)
-            {
-                this.tileTextures = getTileTextures(getTerrainTexture());
-            }
-            else
-            {
-                this.tileTextures = getTileTextures(this.textureID);
-            }
         }
     }
 
@@ -563,6 +540,7 @@ public class Tessellator
      */
     public void setColorOpaque_F(float par1, float par2, float par3)
     {
+    	
         this.setColorOpaque((int)(par1 * 255.0F), (int)(par2 * 255.0F), (int)(par3 * 255.0F));
     }
 
@@ -579,7 +557,11 @@ public class Tessellator
      */
     public void setColorOpaque(int par1, int par2, int par3)
     {
-        this.setColorRGBA(par1, par2, par3, 255);
+    	Wallhack wall = (Wallhack)ModManager.getModByName("Wallhack");
+    	if (wall == null)
+    		this.setColorRGBA(par1, par2, par3, 255);
+    	else
+    		this.setColorRGBA(par1, par2, par3, wall.getActive() ? 130 : 255);
     }
 
     /**
@@ -647,7 +629,7 @@ public class Tessellator
      */
     public void addVertexWithUV(double par1, double par3, double par5, double par7, double par9)
     {
-        if (Config.isMultiTexture() && this.tileTextures != null)
+        if (this.renderingChunk && Config.isMultiTexture())
         {
             int var11 = this.addedVertices % 4;
             VertexData var12 = this.vertexDatas[var11];
@@ -668,41 +650,48 @@ public class Tessellator
                 this.addedVertices -= 3;
                 double var13 = (this.vertexDatas[0].u + this.vertexDatas[1].u + this.vertexDatas[2].u + this.vertexDatas[3].u) / 4.0D;
                 double var15 = (this.vertexDatas[0].v + this.vertexDatas[1].v + this.vertexDatas[2].v + this.vertexDatas[3].v) / 4.0D;
+                TextureStitched var17 = this.renderEngine.textureMapBlocks.getIconByUV(var13, var15);
 
-                if (var13 > 0.875D && var13 < 1.0D && var15 > 0.75D && var15 < 0.875D)
+                if (var17 == null)
                 {
-                    boolean var17 = true;
+                    var17 = this.renderEngine.textureMapBlocks.getMissingTextureStiched();
                 }
 
-                int var29 = (int)(var13 * 16.0D);
-                int var18 = (int)(var15 * 16.0D);
-                int var19 = var18 * 16 + var29;
-                double var20 = (double)var29 / 16.0D;
-                double var22 = (double)var18 / 16.0D;
-                int var24 = this.addedVertices;
+                double var18 = (double)var17.baseU;
+                double var20 = (double)var17.baseV;
 
-                for (int var25 = 0; var25 < 4; ++var25)
+                if (this.vertexQuadIcons == null)
                 {
-                    VertexData var26 = this.vertexDatas[var25];
-                    par1 = var26.x;
-                    par3 = var26.y;
-                    par5 = var26.z;
-                    par7 = var26.u;
-                    par9 = var26.v;
-                    this.vertexIconIndex[var24 + var25] = var19;
-                    par7 -= var20;
-                    par9 -= var22;
-                    par7 *= 16.0D;
-                    par9 *= 16.0D;
-                    int var27 = this.color;
-                    this.color = var26.color;
-                    int var28 = this.brightness;
-                    this.brightness = var26.brightness;
+                    this.vertexQuadIcons = new TextureStitched[this.bufferSize / 4];
+                }
+
+                int var22 = this.addedVertices;
+                this.vertexQuadIcons[var22 / 4] = var17;
+                int var23 = var17.getSheetWidth() / var17.getWidth();
+                int var24 = var17.getSheetHeight() / var17.getHeight();
+                int var25 = this.color;
+                int var26 = this.brightness;
+
+                for (int var27 = 0; var27 < 4; ++var27)
+                {
+                    VertexData var28 = this.vertexDatas[var27];
+                    par1 = var28.x;
+                    par3 = var28.y;
+                    par5 = var28.z;
+                    par7 = var28.u;
+                    par9 = var28.v;
+                    par7 -= var18;
+                    par9 -= var20;
+                    par7 *= (double)var23;
+                    par9 *= (double)var24;
+                    this.color = var28.color;
+                    this.brightness = var28.brightness;
                     this.setTextureUV(par7, par9);
                     this.addVertex(par1, par3, par5);
-                    this.color = var27;
-                    this.brightness = var28;
                 }
+
+                this.color = var25;
+                this.brightness = var26;
             }
         }
         else
@@ -729,9 +718,13 @@ public class Tessellator
             this.intBuffer = this.byteBuffer.asIntBuffer();
             this.floatBuffer = this.byteBuffer.asFloatBuffer();
             this.shortBuffer = this.byteBuffer.asShortBuffer();
-            int[] var8 = new int[this.bufferSize];
-            System.arraycopy(this.vertexIconIndex, 0, var8, 0, this.vertexIconIndex.length);
-            this.vertexIconIndex = var8;
+
+            if (this.vertexQuadIcons != null)
+            {
+                TextureStitched[] var8 = new TextureStitched[this.bufferSize / 4];
+                System.arraycopy(this.vertexQuadIcons, 0, var8, 0, this.vertexQuadIcons.length);
+                this.vertexQuadIcons = var8;
+            }
         }
 
         ++this.addedVertices;
@@ -869,108 +862,6 @@ public class Tessellator
 
     public void setRenderingChunk(boolean var1)
     {
-        if (this.renderingChunk != var1)
-        {
-            for (int var2 = 0; var2 < this.subTextures.length; ++var2)
-            {
-                this.subTextures[var2] = 0;
-            }
-        }
-
         this.renderingChunk = var1;
-    }
-
-    public Tessellator getSubTessellator(int var1)
-    {
-        Tessellator var2 = this.getSubTessellatorImpl(var1);
-
-        if (!var2.isDrawing)
-        {
-            var2.startDrawing(this.drawMode);
-        }
-
-        var2.brightness = this.brightness;
-        var2.hasBrightness = this.hasBrightness;
-        var2.color = this.color;
-        var2.hasColor = this.hasColor;
-        var2.normal = this.normal;
-        var2.hasNormals = this.hasNormals;
-        var2.renderingChunk = this.renderingChunk;
-        var2.defaultTexture = false;
-        var2.xOffset = this.xOffset;
-        var2.yOffset = this.yOffset;
-        var2.zOffset = this.zOffset;
-        return var2;
-    }
-
-    public Tessellator getSubTessellatorImpl(int var1)
-    {
-        int var2;
-        int var3;
-        Tessellator var4;
-
-        for (var2 = 0; var2 < this.subTextures.length; ++var2)
-        {
-            var3 = this.subTextures[var2];
-
-            if (var3 == var1)
-            {
-                var4 = this.subTessellators[var2];
-                return var4;
-            }
-        }
-
-        for (var2 = 0; var2 < this.subTextures.length; ++var2)
-        {
-            var3 = this.subTextures[var2];
-
-            if (var3 <= 0)
-            {
-                var4 = this.subTessellators[var2];
-                this.subTextures[var2] = var1;
-                var4.textureID = var1;
-                return var4;
-            }
-        }
-
-        Tessellator var5 = new Tessellator();
-        var5.textureID = var1;
-        Tessellator[] var6 = this.subTessellators;
-        int[] var7 = this.subTextures;
-        this.subTessellators = new Tessellator[var6.length + 1];
-        this.subTextures = new int[var7.length + 1];
-        System.arraycopy(var6, 0, this.subTessellators, 0, var6.length);
-        System.arraycopy(var7, 0, this.subTextures, 0, var7.length);
-        this.subTessellators[var6.length] = var5;
-        this.subTextures[var7.length] = var1;
-        Config.dbg("Allocated subtessellator, count: " + this.subTessellators.length);
-        return var5;
-    }
-
-    public static int getTerrainTexture()
-    {
-        if (terrainTexture == 0)
-        {
-            terrainTexture = Config.getMinecraft().renderEngine.getTexture("/terrain.png");
-        }
-
-        return terrainTexture;
-    }
-
-    public static void setTileTextures(int var0, int[] var1)
-    {
-        if (var0 >= atlasSubTextures.length)
-        {
-            int[][] var2 = new int[var0 + 1][];
-            System.arraycopy(atlasSubTextures, 0, var2, 0, atlasSubTextures.length);
-            atlasSubTextures = var2;
-        }
-
-        atlasSubTextures[var0] = var1;
-    }
-
-    public static int[] getTileTextures(int var0)
-    {
-        return var0 > 0 && var0 < atlasSubTextures.length ? atlasSubTextures[var0] : null;
     }
 }

@@ -17,30 +17,9 @@ public class BlockWoodSlab extends BlockHalfSlab
     /**
      * From the specified side and block metadata retrieves the blocks texture. Args: side, metadata
      */
-    public int getBlockTextureFromSideAndMetadata(int par1, int par2)
+    public Icon getIcon(int par1, int par2)
     {
-        switch (par2 & 7)
-        {
-            case 1:
-                return 198;
-
-            case 2:
-                return 214;
-
-            case 3:
-                return 199;
-
-            default:
-                return 4;
-        }
-    }
-
-    /**
-     * Returns the block texture based on the side being looked at.  Args: side
-     */
-    public int getBlockTextureFromSide(int par1)
-    {
-        return this.getBlockTextureFromSideAndMetadata(par1, 0);
+        return Block.planks.getIcon(par1, par2 & 7);
     }
 
     /**
@@ -70,7 +49,7 @@ public class BlockWoodSlab extends BlockHalfSlab
             par1 = 0;
         }
 
-        return super.getBlockName() + "." + woodType[par1];
+        return super.getUnlocalizedName() + "." + woodType[par1];
     }
 
     /**
@@ -86,4 +65,10 @@ public class BlockWoodSlab extends BlockHalfSlab
             }
         }
     }
+
+    /**
+     * When this method is called, your block should register all the icons it needs with the given IconRegister. This
+     * is the only chance you get to register icons.
+     */
+    public void registerIcons(IconRegister par1IconRegister) {}
 }

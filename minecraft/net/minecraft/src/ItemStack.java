@@ -2,6 +2,7 @@ package net.minecraft.src;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public final class ItemStack
 {
@@ -64,6 +65,11 @@ public final class ItemStack
         this.itemID = par1;
         this.stackSize = par2;
         this.itemDamage = par3;
+
+        if (this.itemDamage < 0)
+        {
+            this.itemDamage = 0;
+        }
     }
 
     public static ItemStack loadItemStackFromNBT(NBTTagCompound par0NBTTagCompound)
@@ -106,9 +112,14 @@ public final class ItemStack
     /**
      * Returns the icon index of the current stack.
      */
-    public int getIconIndex()
+    public Icon getIconIndex()
     {
         return this.getItem().getIconIndex(this);
+    }
+
+    public int getItemSpriteNumber()
+    {
+        return this.getItem().getSpriteNumber();
     }
 
     public boolean tryPlaceItemIntoWorld(EntityPlayer par1EntityPlayer, World par2World, int par3, int par4, int par5, int par6, float par7, float par8, float par9)
@@ -142,7 +153,7 @@ public final class ItemStack
 
     public ItemStack onFoodEaten(World par1World, EntityPlayer par2EntityPlayer)
     {
-        return this.getItem().onFoodEaten(this, par1World, par2EntityPlayer);
+        return this.getItem().onEaten(this, par1World, par2EntityPlayer);
     }
 
     /**
@@ -170,6 +181,11 @@ public final class ItemStack
         this.itemID = par1NBTTagCompound.getShort("id");
         this.stackSize = par1NBTTagCompound.getByte("Count");
         this.itemDamage = par1NBTTagCompound.getShort("Damage");
+
+        if (this.itemDamage < 0)
+        {
+            this.itemDamage = 0;
+        }
 
         if (par1NBTTagCompound.hasKey("tag"))
         {
@@ -236,6 +252,11 @@ public final class ItemStack
     public void setItemDamage(int par1)
     {
         this.itemDamage = par1;
+
+        if (this.itemDamage < 0)
+        {
+            this.itemDamage = 0;
+        }
     }
 
     /**
@@ -247,20 +268,27 @@ public final class ItemStack
     }
 
     /**
-     * Damages the item in the ItemStack
+     * Attempts to damage the ItemStack with par1 amount of damage, If the ItemStack has the Unbreaking enchantment
+     * there is a chance for each point of damage to be negated. Returns true if it takes more damage than
+     * getMaxDamage(). Returns false otherwise or if the ItemStack can't be damaged or if all points of damage are
+     * negated.
      */
-    public void damageItem(int par1, EntityLiving par2EntityLiving)
+    public boolean attemptDamageItem(int par1, Random par2Random)
     {
-        if (this.isItemStackDamageable())
+        if (!this.isItemStackDamageable())
         {
-            if (par1 > 0 && par2EntityLiving instanceof EntityPlayer)
+            return false;
+        }
+        else
+        {
+            if (par1 > 0)
             {
                 int var3 = EnchantmentHelper.getEnchantmentLevel(Enchantment.unbreaking.effectId, this);
                 int var4 = 0;
 
                 for (int var5 = 0; var3 > 0 && var5 < par1; ++var5)
                 {
-                    if (EnchantmentDurability.func_92097_a(this, var3, par2EntityLiving.worldObj.rand))
+                    if (EnchantmentDurability.negateDamage(this, var3, par2Random))
                     {
                         ++var4;
                     }
@@ -270,32 +298,42 @@ public final class ItemStack
 
                 if (par1 <= 0)
                 {
-                    return;
+                    return false;
                 }
             }
 
-            if (!(par2EntityLiving instanceof EntityPlayer) || !((EntityPlayer)par2EntityLiving).capabilities.isCreativeMode)
+            this.itemDamage += par1;
+            return this.itemDamage > this.getMaxDamage();
+        }
+    }
+
+    /**
+     * Damages the item in the ItemStack
+     */
+    public void damageItem(int par1, EntityLiving par2EntityLiving)
+    {
+        if (!(par2EntityLiving instanceof EntityPlayer) || !((EntityPlayer)par2EntityLiving).capabilities.isCreativeMode)
+        {
+            if (this.isItemStackDamageable())
             {
-                this.itemDamage += par1;
-            }
-
-            if (this.itemDamage > this.getMaxDamage())
-            {
-                par2EntityLiving.renderBrokenItemStack(this);
-
-                if (par2EntityLiving instanceof EntityPlayer)
+                if (this.attemptDamageItem(par1, par2EntityLiving.getRNG()))
                 {
-                    ((EntityPlayer)par2EntityLiving).addStat(StatList.objectBreakStats[this.itemID], 1);
+                    par2EntityLiving.renderBrokenItemStack(this);
+
+                    if (par2EntityLiving instanceof EntityPlayer)
+                    {
+                        ((EntityPlayer)par2EntityLiving).addStat(StatList.objectBreakStats[this.itemID], 1);
+                    }
+
+                    --this.stackSize;
+
+                    if (this.stackSize < 0)
+                    {
+                        this.stackSize = 0;
+                    }
+
+                    this.itemDamage = 0;
                 }
-
-                --this.stackSize;
-
-                if (this.stackSize < 0)
-                {
-                    this.stackSize = 0;
-                }
-
-                this.itemDamage = 0;
             }
         }
     }
@@ -391,7 +429,7 @@ public final class ItemStack
 
     public String getItemName()
     {
-        return Item.itemsList[this.itemID].getItemNameIS(this);
+        return Item.itemsList[this.itemID].getUnlocalizedName(this);
     }
 
     /**
@@ -404,7 +442,7 @@ public final class ItemStack
 
     public String toString()
     {
-        return this.stackSize + "x" + Item.itemsList[this.itemID].getItemName() + "@" + this.itemDamage;
+        return this.stackSize + "x" + Item.itemsList[this.itemID].getUnlocalizedName() + "@" + this.itemDamage;
     }
 
     /**
@@ -501,7 +539,7 @@ public final class ItemStack
     {
         if (this.stackTagCompound == null)
         {
-            this.stackTagCompound = new NBTTagCompound();
+            this.stackTagCompound = new NBTTagCompound("tag");
         }
 
         if (!this.stackTagCompound.hasKey("display"))
@@ -531,7 +569,7 @@ public final class ItemStack
 
         if (this.hasDisplayName())
         {
-            var5 = "\u00a7o" + var5 + "\u00a7r";
+            var5 = EnumChatFormatting.ITALIC + var5 + EnumChatFormatting.RESET;
         }
 
         if (par2)
@@ -591,7 +629,7 @@ public final class ItemStack
                     }
                     else
                     {
-                        var3.add("\u00a7o" + StatCollector.translateToLocal("item.dyed"));
+                        var3.add(EnumChatFormatting.ITALIC + StatCollector.translateToLocal("item.dyed"));
                     }
                 }
 
@@ -603,7 +641,7 @@ public final class ItemStack
                     {
                         for (int var13 = 0; var13 < var12.tagCount(); ++var13)
                         {
-                            var3.add("\u00a75\u00a7o" + ((NBTTagString)var12.tagAt(var13)).data);
+                            var3.add(EnumChatFormatting.DARK_PURPLE + "" + EnumChatFormatting.ITALIC + ((NBTTagString)var12.tagAt(var13)).data);
                         }
                     }
                 }
@@ -720,7 +758,7 @@ public final class ItemStack
     {
         if (!this.hasTagCompound())
         {
-            this.stackTagCompound = new NBTTagCompound();
+            this.stackTagCompound = new NBTTagCompound("tag");
         }
 
         this.stackTagCompound.setInteger("RepairCost", par1);

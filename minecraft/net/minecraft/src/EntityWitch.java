@@ -237,32 +237,32 @@ public class EntityWitch extends EntityMob implements IRangedAttackMob
     /**
      * Attack the specified entity using a ranged attack.
      */
-    public void attackEntityWithRangedAttack(EntityLiving par1EntityLiving)
+    public void attackEntityWithRangedAttack(EntityLiving par1EntityLiving, float par2)
     {
         if (!this.getAggressive())
         {
-            EntityPotion var2 = new EntityPotion(this.worldObj, this, 32732);
-            var2.rotationPitch -= -20.0F;
-            double var3 = par1EntityLiving.posX + par1EntityLiving.motionX - this.posX;
-            double var5 = par1EntityLiving.posY + (double)par1EntityLiving.getEyeHeight() - 1.100000023841858D - this.posY;
-            double var7 = par1EntityLiving.posZ + par1EntityLiving.motionZ - this.posZ;
-            float var9 = MathHelper.sqrt_double(var3 * var3 + var7 * var7);
+            EntityPotion var3 = new EntityPotion(this.worldObj, this, 32732);
+            var3.rotationPitch -= -20.0F;
+            double var4 = par1EntityLiving.posX + par1EntityLiving.motionX - this.posX;
+            double var6 = par1EntityLiving.posY + (double)par1EntityLiving.getEyeHeight() - 1.100000023841858D - this.posY;
+            double var8 = par1EntityLiving.posZ + par1EntityLiving.motionZ - this.posZ;
+            float var10 = MathHelper.sqrt_double(var4 * var4 + var8 * var8);
 
-            if (var9 >= 8.0F && !par1EntityLiving.isPotionActive(Potion.moveSlowdown))
+            if (var10 >= 8.0F && !par1EntityLiving.isPotionActive(Potion.moveSlowdown))
             {
-                var2.setPotionDamage(32698);
+                var3.setPotionDamage(32698);
             }
             else if (par1EntityLiving.getHealth() >= 8 && !par1EntityLiving.isPotionActive(Potion.poison))
             {
-                var2.setPotionDamage(32660);
+                var3.setPotionDamage(32660);
             }
-            else if (var9 <= 3.0F && !par1EntityLiving.isPotionActive(Potion.weakness) && this.rand.nextFloat() < 0.25F)
+            else if (var10 <= 3.0F && !par1EntityLiving.isPotionActive(Potion.weakness) && this.rand.nextFloat() < 0.25F)
             {
-                var2.setPotionDamage(32696);
+                var3.setPotionDamage(32696);
             }
 
-            var2.setThrowableHeading(var3, var5 + (double)(var9 * 0.2F), var7, 0.75F, 8.0F);
-            this.worldObj.spawnEntityInWorld(var2);
+            var3.setThrowableHeading(var4, var6 + (double)(var10 * 0.2F), var8, 0.75F, 8.0F);
+            this.worldObj.spawnEntityInWorld(var3);
         }
     }
 }

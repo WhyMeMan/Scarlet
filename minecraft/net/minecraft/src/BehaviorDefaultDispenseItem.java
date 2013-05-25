@@ -9,7 +9,7 @@ public class BehaviorDefaultDispenseItem implements IBehaviorDispenseItem
     {
         ItemStack var3 = this.dispenseStack(par1IBlockSource, par2ItemStack);
         this.playDispenseSound(par1IBlockSource);
-        this.spawnDispenseParticles(par1IBlockSource, EnumFacing.getFront(par1IBlockSource.func_82620_h()));
+        this.spawnDispenseParticles(par1IBlockSource, BlockDispenser.getFacing(par1IBlockSource.getBlockMetadata()));
         return var3;
     }
 
@@ -18,14 +18,14 @@ public class BehaviorDefaultDispenseItem implements IBehaviorDispenseItem
      */
     protected ItemStack dispenseStack(IBlockSource par1IBlockSource, ItemStack par2ItemStack)
     {
-        EnumFacing var3 = EnumFacing.getFront(par1IBlockSource.func_82620_h());
-        IPosition var4 = BlockDispenser.func_82525_a(par1IBlockSource);
+        EnumFacing var3 = BlockDispenser.getFacing(par1IBlockSource.getBlockMetadata());
+        IPosition var4 = BlockDispenser.getIPositionFromBlockSource(par1IBlockSource);
         ItemStack var5 = par2ItemStack.splitStack(1);
-        func_82486_a(par1IBlockSource.getWorld(), var5, 6, var3, var4);
+        doDispense(par1IBlockSource.getWorld(), var5, 6, var3, var4);
         return par2ItemStack;
     }
 
-    public static void func_82486_a(World par0World, ItemStack par1ItemStack, int par2, EnumFacing par3EnumFacing, IPosition par4IPosition)
+    public static void doDispense(World par0World, ItemStack par1ItemStack, int par2, EnumFacing par3EnumFacing, IPosition par4IPosition)
     {
         double var5 = par4IPosition.getX();
         double var7 = par4IPosition.getY();

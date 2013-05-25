@@ -8,6 +8,10 @@ import java.util.Set;
 public class EntityTracker
 {
     private final WorldServer theWorld;
+
+    /**
+     * List of tracked entities, used for iteration operations on tracked entities.
+     */
     private Set trackedEntities = new HashSet();
     private IntHashMap trackedEntityIDs = new IntHashMap();
     private int entityViewDistance;
@@ -154,16 +158,37 @@ public class EntityTracker
             par2 = this.entityViewDistance;
         }
 
-        if (this.trackedEntityIDs.containsItem(par1Entity.entityId))
+        try
         {
-            throw new IllegalStateException("Entity is already tracked!");
-        }
-        else
-        {
+            if (this.trackedEntityIDs.containsItem(par1Entity.entityId))
+            {
+                throw new IllegalStateException("Entity is already tracked!");
+            }
+
             EntityTrackerEntry var5 = new EntityTrackerEntry(par1Entity, par2, par3, par4);
             this.trackedEntities.add(var5);
             this.trackedEntityIDs.addKey(par1Entity.entityId, var5);
             var5.sendEventsToPlayers(this.theWorld.playerEntities);
+        }
+        catch (Throwable var11)
+        {
+            CrashReport var6 = CrashReport.makeCrashReport(var11, "Adding entity to track");
+            CrashReportCategory var7 = var6.makeCategory("Entity To Track");
+            var7.addCrashSection("Tracking range", par2 + " blocks");
+            var7.addCrashSectionCallable("Update interval", new CallableEntityTracker(this, par3));
+            par1Entity.func_85029_a(var7);
+            CrashReportCategory var8 = var6.makeCategory("Entity That Is Already Tracked");
+            ((EntityTrackerEntry)this.trackedEntityIDs.lookup(par1Entity.entityId)).myEntity.func_85029_a(var8);
+
+            try
+            {
+                throw new ReportedException(var6);
+            }
+            catch (ReportedException var10)
+            {
+                System.err.println("\"Silently\" catching entity tracking error.");
+                var10.printStackTrace();
+            }
         }
     }
 
@@ -249,7 +274,7 @@ public class EntityTracker
         }
     }
 
-    public void removeAllTrackingPlayers(EntityPlayerMP par1EntityPlayerMP)
+    public void removePlayerFromTrackers(EntityPlayerMP par1EntityPlayerMP)
     {
         Iterator var2 = this.trackedEntities.iterator();
 

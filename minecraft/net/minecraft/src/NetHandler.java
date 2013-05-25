@@ -418,4 +418,44 @@ public abstract class NetHandler
     {
         return false;
     }
+
+    /**
+     * Handle a set objective packet.
+     */
+    public void handleSetObjective(Packet206SetObjective par1Packet206SetObjective)
+    {
+        this.unexpectedPacket(par1Packet206SetObjective);
+    }
+
+    /**
+     * Handle a set score packet.
+     */
+    public void handleSetScore(Packet207SetScore par1Packet207SetScore)
+    {
+        this.unexpectedPacket(par1Packet207SetScore);
+    }
+
+    /**
+     * Handle a set display objective packet.
+     */
+    public void handleSetDisplayObjective(Packet208SetDisplayObjective par1Packet208SetDisplayObjective)
+    {
+        this.unexpectedPacket(par1Packet208SetDisplayObjective);
+    }
+
+    /**
+     * Handle a set player team packet.
+     */
+    public void handleSetPlayerTeam(Packet209SetPlayerTeam par1Packet209SetPlayerTeam)
+    {
+        this.unexpectedPacket(par1Packet209SetPlayerTeam);
+    }
+
+    /**
+     * Handle a world particles packet.
+     */
+    public void handleWorldParticles(Packet63WorldParticles par1Packet63WorldParticles)
+    {
+        this.unexpectedPacket(par1Packet63WorldParticles);
+    }
 }

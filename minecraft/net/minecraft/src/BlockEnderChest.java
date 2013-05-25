@@ -7,7 +7,6 @@ public class BlockEnderChest extends BlockContainer
     protected BlockEnderChest(int par1)
     {
         super(par1, Material.rock);
-        this.blockIndexInTexture = 37;
         this.setCreativeTab(CreativeTabs.tabDecorations);
         this.setBlockBounds(0.0625F, 0.0F, 0.0625F, 0.9375F, 0.875F, 0.9375F);
     }
@@ -64,32 +63,32 @@ public class BlockEnderChest extends BlockContainer
     /**
      * Called when the block is placed in the world.
      */
-    public void onBlockPlacedBy(World par1World, int par2, int par3, int par4, EntityLiving par5EntityLiving)
+    public void onBlockPlacedBy(World par1World, int par2, int par3, int par4, EntityLiving par5EntityLiving, ItemStack par6ItemStack)
     {
-        byte var6 = 0;
-        int var7 = MathHelper.floor_double((double)(par5EntityLiving.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
+        byte var7 = 0;
+        int var8 = MathHelper.floor_double((double)(par5EntityLiving.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
 
-        if (var7 == 0)
+        if (var8 == 0)
         {
-            var6 = 2;
+            var7 = 2;
         }
 
-        if (var7 == 1)
+        if (var8 == 1)
         {
-            var6 = 5;
+            var7 = 5;
         }
 
-        if (var7 == 2)
+        if (var8 == 2)
         {
-            var6 = 3;
+            var7 = 3;
         }
 
-        if (var7 == 3)
+        if (var8 == 3)
         {
-            var6 = 4;
+            var7 = 4;
         }
 
-        par1World.setBlockMetadataWithNotify(par2, par3, par4, var6);
+        par1World.setBlockMetadataWithNotify(par2, par3, par4, var7, 2);
     }
 
     /**
@@ -155,5 +154,14 @@ public class BlockEnderChest extends BlockContainer
             var13 = (double)(par5Random.nextFloat() * 1.0F * (float)var19);
             par1World.spawnParticle("portal", var7, var9, var11, var13, var15, var17);
         }
+    }
+
+    /**
+     * When this method is called, your block should register all the icons it needs with the given IconRegister. This
+     * is the only chance you get to register icons.
+     */
+    public void registerIcons(IconRegister par1IconRegister)
+    {
+        this.blockIcon = par1IconRegister.registerIcon("obsidian");
     }
 }

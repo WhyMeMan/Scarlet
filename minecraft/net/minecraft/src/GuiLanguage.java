@@ -32,9 +32,9 @@ public class GuiLanguage extends GuiScreen
     public void initGui()
     {
         StringTranslate var1 = StringTranslate.getInstance();
-        this.controlList.add(this.doneButton = new GuiSmallButton(6, this.width / 2 - 75, this.height - 38, var1.translateKey("gui.done")));
+        this.buttonList.add(this.doneButton = new GuiSmallButton(6, this.width / 2 - 75, this.height - 38, var1.translateKey("gui.done")));
         this.languageList = new GuiSlotLanguage(this);
-        this.languageList.registerScrollButtons(this.controlList, 7, 8);
+        this.languageList.registerScrollButtons(this.buttonList, 7, 8);
     }
 
     /**

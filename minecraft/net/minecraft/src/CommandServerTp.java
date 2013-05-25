@@ -64,6 +64,7 @@ public class CommandServerTp extends CommandBase
                         return;
                     }
 
+                    var3.mountEntity((Entity)null);
                     var3.playerNetServerHandler.setPlayerLocation(var11.posX, var11.posY, var11.posZ, var11.rotationYaw, var11.rotationPitch);
                     notifyAdmins(par1ICommandSender, "commands.tp.success", new Object[] {var3.getEntityName(), var11.getEntityName()});
                 }
@@ -74,6 +75,7 @@ public class CommandServerTp extends CommandBase
                 double var5 = this.func_82368_a(par1ICommandSender, var3.posX, par2ArrayOfStr[var4++]);
                 double var7 = this.func_82367_a(par1ICommandSender, var3.posY, par2ArrayOfStr[var4++], 0, 0);
                 double var9 = this.func_82368_a(par1ICommandSender, var3.posZ, par2ArrayOfStr[var4++]);
+                var3.mountEntity((Entity)null);
                 var3.setPositionAndUpdate(var5, var7, var9);
                 notifyAdmins(par1ICommandSender, "commands.tp.success.coordinates", new Object[] {var3.getEntityName(), Double.valueOf(var5), Double.valueOf(var7), Double.valueOf(var9)});
             }
@@ -99,7 +101,7 @@ public class CommandServerTp extends CommandBase
                 par4Str = par4Str.substring(1);
             }
 
-            var8 += func_82363_b(par1ICommandSender, par4Str);
+            var8 += parseDouble(par1ICommandSender, par4Str);
 
             if (!var10 && !var7)
             {
@@ -134,8 +136,8 @@ public class CommandServerTp extends CommandBase
     /**
      * Return whether the specified command parameter index is a username parameter.
      */
-    public boolean isUsernameIndex(int par1)
+    public boolean isUsernameIndex(String[] par1ArrayOfStr, int par2)
     {
-        return par1 == 0;
+        return par2 == 0;
     }
 }

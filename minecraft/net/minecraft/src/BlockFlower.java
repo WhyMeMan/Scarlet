@@ -4,19 +4,18 @@ import java.util.Random;
 
 public class BlockFlower extends Block
 {
-    protected BlockFlower(int par1, int par2, Material par3Material)
+    protected BlockFlower(int par1, Material par2Material)
     {
-        super(par1, par3Material);
-        this.blockIndexInTexture = par2;
+        super(par1, par2Material);
         this.setTickRandomly(true);
-        float var4 = 0.2F;
-        this.setBlockBounds(0.5F - var4, 0.0F, 0.5F - var4, 0.5F + var4, var4 * 3.0F, 0.5F + var4);
+        float var3 = 0.2F;
+        this.setBlockBounds(0.5F - var3, 0.0F, 0.5F - var3, 0.5F + var3, var3 * 3.0F, 0.5F + var3);
         this.setCreativeTab(CreativeTabs.tabDecorations);
     }
 
-    protected BlockFlower(int par1, int par2)
+    protected BlockFlower(int par1)
     {
-        this(par1, par2, Material.plants);
+        this(par1, Material.plants);
     }
 
     /**
@@ -59,7 +58,7 @@ public class BlockFlower extends Block
         if (!this.canBlockStay(par1World, par2, par3, par4))
         {
             this.dropBlockAsItem(par1World, par2, par3, par4, par1World.getBlockMetadata(par2, par3, par4), 0);
-            par1World.setBlockWithNotify(par2, par3, par4, 0);
+            par1World.setBlockToAir(par2, par3, par4);
         }
     }
 

@@ -15,7 +15,7 @@ public enum EnumOptions
     FRAMERATE_LIMIT("options.framerateLimit", false, false),
     DIFFICULTY("options.difficulty", false, false),
     GRAPHICS("options.graphics", false, false),
-    AMBIENT_OCCLUSION("options.ao", false, true),
+    AMBIENT_OCCLUSION("options.ao", false, false),
     GUI_SCALE("options.guiScale", false, false),
     RENDER_CLOUDS("options.renderClouds", false, true),
     PARTICLES("options.particles", false, false),
@@ -30,6 +30,10 @@ public enum EnumOptions
     ENABLE_VSYNC("options.vsync", false, true),
     SHOW_CAPE("options.showCape", false, true),
     TOUCHSCREEN("options.touchscreen", false, true),
+    CHAT_SCALE("options.chat.scale", true, false),
+    CHAT_WIDTH("options.chat.width", true, false),
+    CHAT_HEIGHT_FOCUSED("options.chat.height.focused", true, false),
+    CHAT_HEIGHT_UNFOCUSED("options.chat.height.unfocused", true, false),
     FOG_FANCY("Fog", false, false),
     FOG_START("Fog Start", false, false),
     MIPMAP_LEVEL("Mipmap Level", false, false),
@@ -47,7 +51,7 @@ public enum EnumOptions
     ANIMATED_LAVA("Lava Animated", false, false),
     ANIMATED_FIRE("Fire Animated", false, false),
     ANIMATED_PORTAL("Portal Animated", false, false),
-    AO_LEVEL("Smooth Lighting", true, false),
+    AO_LEVEL("Smooth Lighting Level", true, false),
     LAGOMETER("Lagometer", false, false),
     AUTOSAVE_TICKS("Autosave", false, false),
     BETTER_GRASS("Better Grass", false, false),
@@ -69,6 +73,7 @@ public enum EnumOptions
     WATER_PARTICLES("Water Particles", false, false),
     RAIN_SPLASH("Rain Splash", false, false),
     PORTAL_PARTICLES("Portal Particles", false, false),
+    POTION_PARTICLES("Potion Particles", false, false),
     PROFILER("Debug Profiler", false, false),
     DRIPPING_WATER_LAVA("Dripping Water/Lava", false, false),
     BETTER_SNOW("Better Snow", false, false),
@@ -91,7 +96,8 @@ public enum EnumOptions
     FRAMERATE_LIMIT_FINE("Performance", true, false),
     HELD_ITEM_TOOLTIPS("Held Item Tooltips", false, false),
     DROPPED_ITEMS("Dropped Items", false, false),
-    LAZY_CHUNK_LOADING("Lazy Chunk Loading", false, false);
+    LAZY_CHUNK_LOADING("Lazy Chunk Loading", false, false),
+    CUSTOM_SKY("Custom Sky", false, false);
     private final boolean enumFloat;
     private final boolean enumBoolean;
     private final String enumString;

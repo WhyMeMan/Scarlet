@@ -5,6 +5,12 @@ import org.lwjgl.opengl.GL11;
 public class RenderItemFrame extends Render
 {
     private final RenderBlocks renderBlocksInstance = new RenderBlocks();
+    private Icon field_94147_f;
+
+    public void updateIcons(IconRegister par1IconRegister)
+    {
+        this.field_94147_f = par1IconRegister.registerIcon("itemframe_back");
+    }
 
     public void func_82404_a(EntityItemFrame par1EntityItemFrame, double par2, double par4, double par6, float par8, float par9)
     {
@@ -27,7 +33,7 @@ public class RenderItemFrame extends Render
     private void renderFrameItemAsBlock(EntityItemFrame par1EntityItemFrame)
     {
         GL11.glPushMatrix();
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.renderManager.renderEngine.getTexture("/terrain.png"));
+        this.renderManager.renderEngine.bindTexture("/terrain.png");
         GL11.glRotatef(par1EntityItemFrame.rotationYaw, 0.0F, 1.0F, 0.0F);
         Block var2 = Block.planks;
         float var3 = 0.0625F;
@@ -35,12 +41,12 @@ public class RenderItemFrame extends Render
         float var5 = var4 / 2.0F;
         GL11.glPushMatrix();
         this.renderBlocksInstance.overrideBlockBounds(0.0D, (double)(0.5F - var5 + 0.0625F), (double)(0.5F - var5 + 0.0625F), (double)(var3 * 0.5F), (double)(0.5F + var5 - 0.0625F), (double)(0.5F + var5 - 0.0625F));
-        this.renderBlocksInstance.setOverrideBlockTexture(185);
+        this.renderBlocksInstance.setOverrideBlockTexture(this.field_94147_f);
         this.renderBlocksInstance.renderBlockAsItem(var2, 0, 1.0F);
         this.renderBlocksInstance.clearOverrideBlockTexture();
         this.renderBlocksInstance.unlockBlockBounds();
         GL11.glPopMatrix();
-        this.renderBlocksInstance.setOverrideBlockTexture(214);
+        this.renderBlocksInstance.setOverrideBlockTexture(Block.planks.getIcon(1, 2));
         GL11.glPushMatrix();
         this.renderBlocksInstance.overrideBlockBounds(0.0D, (double)(0.5F - var5), (double)(0.5F - var5), (double)(var3 + 1.0E-4F), (double)(var3 + 0.5F - var5), (double)(0.5F + var5));
         this.renderBlocksInstance.renderBlockAsItem(var2, 0, 1.0F);
@@ -92,7 +98,7 @@ public class RenderItemFrame extends Render
 
             if (var3.getEntityItem().getItem() == Item.map)
             {
-                this.renderManager.renderEngine.bindTexture(this.renderManager.renderEngine.getTexture("/misc/mapbg.png"));
+                this.renderManager.renderEngine.bindTexture("/misc/mapbg.png");
                 Tessellator var4 = Tessellator.instance;
                 GL11.glRotatef(180.0F, 0.0F, 1.0F, 0.0F);
                 GL11.glRotatef(180.0F, 0.0F, 0.0F, 1.0F);
@@ -107,6 +113,7 @@ public class RenderItemFrame extends Render
                 var4.addVertexWithUV((double)(0 - var5), (double)(0 - var5), 0.0D, 0.0D, 0.0D);
                 var4.draw();
                 MapData var6 = Item.map.getMapData(var3.getEntityItem(), par1EntityItemFrame.worldObj);
+                GL11.glTranslatef(0.0F, 0.0F, -1.0F);
 
                 if (var6 != null)
                 {
@@ -115,26 +122,28 @@ public class RenderItemFrame extends Render
             }
             else
             {
+                TextureCompass var9;
+
                 if (var3.getEntityItem().getItem() == Item.compass)
                 {
-                    double var8 = TextureCompassFX.instance.field_76868_i;
-                    double var9 = TextureCompassFX.instance.field_76866_j;
-                    TextureCompassFX.instance.field_76868_i = 0.0D;
-                    TextureCompassFX.instance.field_76866_j = 0.0D;
-                    TextureCompassFX.func_82390_a(par1EntityItemFrame.posX, par1EntityItemFrame.posZ, (double)MathHelper.wrapAngleTo180_float((float)(180 + par1EntityItemFrame.hangingDirection * 90)), false, true);
-                    TextureCompassFX.instance.field_76868_i = var8;
-                    TextureCompassFX.instance.field_76866_j = var9;
-                    this.renderManager.renderEngine.updateDynamicTexture(TextureCompassFX.instance, -1);
+                    var9 = TextureCompass.compassTexture;
+                    double var10 = var9.currentAngle;
+                    double var7 = var9.angleDelta;
+                    var9.currentAngle = 0.0D;
+                    var9.angleDelta = 0.0D;
+                    var9.updateCompass(par1EntityItemFrame.worldObj, par1EntityItemFrame.posX, par1EntityItemFrame.posZ, (double)MathHelper.wrapAngleTo180_float((float)(180 + par1EntityItemFrame.hangingDirection * 90)), false, true);
+                    var9.currentAngle = var10;
+                    var9.angleDelta = var7;
                 }
 
-                RenderItem.field_82407_g = true;
+                RenderItem.renderInFrame = true;
                 RenderManager.instance.renderEntityWithPosYaw(var3, 0.0D, 0.0D, 0.0D, 0.0F, 0.0F);
-                RenderItem.field_82407_g = false;
+                RenderItem.renderInFrame = false;
 
                 if (var3.getEntityItem().getItem() == Item.compass)
                 {
-                    TextureCompassFX.instance.onTick();
-                    this.renderManager.renderEngine.updateDynamicTexture(TextureCompassFX.instance, -1);
+                    var9 = TextureCompass.compassTexture;
+                    var9.updateAnimation();
                 }
             }
 

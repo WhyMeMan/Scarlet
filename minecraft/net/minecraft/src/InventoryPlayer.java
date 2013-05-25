@@ -357,46 +357,65 @@ public class InventoryPlayer implements IInventory
      */
     public boolean addItemStackToInventory(ItemStack par1ItemStack)
     {
-        int var2;
-
-        if (par1ItemStack.isItemDamaged())
+        if (par1ItemStack == null)
         {
-            var2 = this.getFirstEmptyStack();
-
-            if (var2 >= 0)
-            {
-                this.mainInventory[var2] = ItemStack.copyItemStack(par1ItemStack);
-                this.mainInventory[var2].animationsToGo = 5;
-                par1ItemStack.stackSize = 0;
-                return true;
-            }
-            else if (this.player.capabilities.isCreativeMode)
-            {
-                par1ItemStack.stackSize = 0;
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return false;
         }
         else
         {
-            do
+            try
             {
-                var2 = par1ItemStack.stackSize;
-                par1ItemStack.stackSize = this.storePartialItemStack(par1ItemStack);
-            }
-            while (par1ItemStack.stackSize > 0 && par1ItemStack.stackSize < var2);
+                int var2;
 
-            if (par1ItemStack.stackSize == var2 && this.player.capabilities.isCreativeMode)
-            {
-                par1ItemStack.stackSize = 0;
-                return true;
+                if (par1ItemStack.isItemDamaged())
+                {
+                    var2 = this.getFirstEmptyStack();
+
+                    if (var2 >= 0)
+                    {
+                        this.mainInventory[var2] = ItemStack.copyItemStack(par1ItemStack);
+                        this.mainInventory[var2].animationsToGo = 5;
+                        par1ItemStack.stackSize = 0;
+                        return true;
+                    }
+                    else if (this.player.capabilities.isCreativeMode)
+                    {
+                        par1ItemStack.stackSize = 0;
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    do
+                    {
+                        var2 = par1ItemStack.stackSize;
+                        par1ItemStack.stackSize = this.storePartialItemStack(par1ItemStack);
+                    }
+                    while (par1ItemStack.stackSize > 0 && par1ItemStack.stackSize < var2);
+
+                    if (par1ItemStack.stackSize == var2 && this.player.capabilities.isCreativeMode)
+                    {
+                        par1ItemStack.stackSize = 0;
+                        return true;
+                    }
+                    else
+                    {
+                        return par1ItemStack.stackSize < var2;
+                    }
+                }
             }
-            else
+            catch (Throwable var5)
             {
-                return par1ItemStack.stackSize < var2;
+                CrashReport var3 = CrashReport.makeCrashReport(var5, "Adding item to inventory");
+                CrashReportCategory var4 = var3.makeCategory("Item being added");
+                var4.addCrashSection("Item ID", Integer.valueOf(par1ItemStack.itemID));
+                var4.addCrashSection("Item data", Integer.valueOf(par1ItemStack.getItemDamage()));
+                var4.addCrashSectionCallable("Item name", new CallableItemName(this, par1ItemStack));
+                throw new ReportedException(var3);
             }
         }
     }
@@ -596,6 +615,15 @@ public class InventoryPlayer implements IInventory
     }
 
     /**
+     * If this returns false, the inventory name will be used as an unlocalized name, and translated into the player's
+     * language. Otherwise it will be used directly.
+     */
+    public boolean isInvNameLocalized()
+    {
+        return false;
+    }
+
+    /**
      * Returns the maximum stack size for a inventory slot. Seems to always be 64, possibly will be extended. *Isn't
      * this more of a set than a get?*
      */
@@ -763,6 +791,14 @@ public class InventoryPlayer implements IInventory
     public void openChest() {}
 
     public void closeChest() {}
+
+    /**
+     * Returns true if automation is allowed to insert the given stack (ignoring stack size) into the given slot.
+     */
+    public boolean isStackValidForSlot(int par1, ItemStack par2ItemStack)
+    {
+        return true;
+    }
 
     /**
      * Copy the ItemStack contents from another InventoryPlayer instance

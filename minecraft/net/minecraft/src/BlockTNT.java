@@ -4,18 +4,21 @@ import java.util.Random;
 
 public class BlockTNT extends Block
 {
-    public BlockTNT(int par1, int par2)
+    private Icon field_94393_a;
+    private Icon field_94392_b;
+
+    public BlockTNT(int par1)
     {
-        super(par1, par2, Material.tnt);
+        super(par1, Material.tnt);
         this.setCreativeTab(CreativeTabs.tabRedstone);
     }
 
     /**
-     * Returns the block texture based on the side being looked at.  Args: side
+     * From the specified side and block metadata retrieves the blocks texture. Args: side, metadata
      */
-    public int getBlockTextureFromSide(int par1)
+    public Icon getIcon(int par1, int par2)
     {
-        return par1 == 0 ? this.blockIndexInTexture + 2 : (par1 == 1 ? this.blockIndexInTexture + 1 : this.blockIndexInTexture);
+        return par1 == 0 ? this.field_94392_b : (par1 == 1 ? this.field_94393_a : this.blockIcon);
     }
 
     /**
@@ -28,7 +31,7 @@ public class BlockTNT extends Block
         if (par1World.isBlockIndirectlyGettingPowered(par2, par3, par4))
         {
             this.onBlockDestroyedByPlayer(par1World, par2, par3, par4, 1);
-            par1World.setBlockWithNotify(par2, par3, par4, 0);
+            par1World.setBlockToAir(par2, par3, par4);
         }
     }
 
@@ -38,10 +41,10 @@ public class BlockTNT extends Block
      */
     public void onNeighborBlockChange(World par1World, int par2, int par3, int par4, int par5)
     {
-        if (par5 > 0 && Block.blocksList[par5].canProvidePower() && par1World.isBlockIndirectlyGettingPowered(par2, par3, par4))
+        if (par1World.isBlockIndirectlyGettingPowered(par2, par3, par4))
         {
             this.onBlockDestroyedByPlayer(par1World, par2, par3, par4, 1);
-            par1World.setBlockWithNotify(par2, par3, par4, 0);
+            par1World.setBlockToAir(par2, par3, par4);
         }
     }
 
@@ -56,13 +59,13 @@ public class BlockTNT extends Block
     /**
      * Called upon the block being destroyed by an explosion
      */
-    public void onBlockDestroyedByExplosion(World par1World, int par2, int par3, int par4)
+    public void onBlockDestroyedByExplosion(World par1World, int par2, int par3, int par4, Explosion par5Explosion)
     {
         if (!par1World.isRemote)
         {
-            EntityTNTPrimed var5 = new EntityTNTPrimed(par1World, (double)((float)par2 + 0.5F), (double)((float)par3 + 0.5F), (double)((float)par4 + 0.5F));
-            var5.fuse = par1World.rand.nextInt(var5.fuse / 4) + var5.fuse / 8;
-            par1World.spawnEntityInWorld(var5);
+            EntityTNTPrimed var6 = new EntityTNTPrimed(par1World, (double)((float)par2 + 0.5F), (double)((float)par3 + 0.5F), (double)((float)par4 + 0.5F), par5Explosion.func_94613_c());
+            var6.fuse = par1World.rand.nextInt(var6.fuse / 4) + var6.fuse / 8;
+            par1World.spawnEntityInWorld(var6);
         }
     }
 
@@ -71,13 +74,18 @@ public class BlockTNT extends Block
      */
     public void onBlockDestroyedByPlayer(World par1World, int par2, int par3, int par4, int par5)
     {
+        this.func_94391_a(par1World, par2, par3, par4, par5, (EntityLiving)null);
+    }
+
+    public void func_94391_a(World par1World, int par2, int par3, int par4, int par5, EntityLiving par6EntityLiving)
+    {
         if (!par1World.isRemote)
         {
             if ((par5 & 1) == 1)
             {
-                EntityTNTPrimed var6 = new EntityTNTPrimed(par1World, (double)((float)par2 + 0.5F), (double)((float)par3 + 0.5F), (double)((float)par4 + 0.5F));
-                par1World.spawnEntityInWorld(var6);
-                par1World.playSoundAtEntity(var6, "random.fuse", 1.0F, 1.0F);
+                EntityTNTPrimed var7 = new EntityTNTPrimed(par1World, (double)((float)par2 + 0.5F), (double)((float)par3 + 0.5F), (double)((float)par4 + 0.5F), par6EntityLiving);
+                par1World.spawnEntityInWorld(var7);
+                par1World.playSoundAtEntity(var7, "random.fuse", 1.0F, 1.0F);
             }
         }
     }
@@ -89,8 +97,8 @@ public class BlockTNT extends Block
     {
         if (par5EntityPlayer.getCurrentEquippedItem() != null && par5EntityPlayer.getCurrentEquippedItem().itemID == Item.flintAndSteel.itemID)
         {
-            this.onBlockDestroyedByPlayer(par1World, par2, par3, par4, 1);
-            par1World.setBlockWithNotify(par2, par3, par4, 0);
+            this.func_94391_a(par1World, par2, par3, par4, 1, par5EntityPlayer);
+            par1World.setBlockToAir(par2, par3, par4);
             return true;
         }
         else
@@ -110,8 +118,8 @@ public class BlockTNT extends Block
 
             if (var6.isBurning())
             {
-                this.onBlockDestroyedByPlayer(par1World, par2, par3, par4, 1);
-                par1World.setBlockWithNotify(par2, par3, par4, 0);
+                this.func_94391_a(par1World, par2, par3, par4, 1, var6.shootingEntity instanceof EntityLiving ? (EntityLiving)var6.shootingEntity : null);
+                par1World.setBlockToAir(par2, par3, par4);
             }
         }
     }
@@ -122,5 +130,16 @@ public class BlockTNT extends Block
     public boolean canDropFromExplosion(Explosion par1Explosion)
     {
         return false;
+    }
+
+    /**
+     * When this method is called, your block should register all the icons it needs with the given IconRegister. This
+     * is the only chance you get to register icons.
+     */
+    public void registerIcons(IconRegister par1IconRegister)
+    {
+        this.blockIcon = par1IconRegister.registerIcon("tnt_side");
+        this.field_94393_a = par1IconRegister.registerIcon("tnt_top");
+        this.field_94392_b = par1IconRegister.registerIcon("tnt_bottom");
     }
 }

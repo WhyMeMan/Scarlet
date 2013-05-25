@@ -2,6 +2,7 @@ package net.minecraft.src;
 
 import java.util.HashMap;
 import java.util.Map;
+import net.minecraft.server.MinecraftServer;
 
 public class TileEntity
 {
@@ -132,7 +133,7 @@ public class TileEntity
         }
         else
         {
-            System.out.println("Skipping TileEntity with id " + par0NBTTagCompound.getString("id"));
+            MinecraftServer.getServer().getLogAgent().logWarning("Skipping TileEntity with id " + par0NBTTagCompound.getString("id"));
         }
 
         return var1;
@@ -160,6 +161,11 @@ public class TileEntity
         {
             this.blockMetadata = this.worldObj.getBlockMetadata(this.xCoord, this.yCoord, this.zCoord);
             this.worldObj.updateTileEntityChunkAndDoNothing(this.xCoord, this.yCoord, this.zCoord, this);
+
+            if (this.getBlockType() != null)
+            {
+                this.worldObj.func_96440_m(this.xCoord, this.yCoord, this.zCoord, this.getBlockType().blockID);
+            }
         }
     }
 
@@ -174,7 +180,7 @@ public class TileEntity
         return var7 * var7 + var9 * var9 + var11 * var11;
     }
 
-    public double func_82115_m()
+    public double getMaxRenderDistanceSquared()
     {
         return 4096.0D;
     }
@@ -227,7 +233,10 @@ public class TileEntity
     /**
      * Called when a client event is received with the event number and argument, see World.sendClientEvent
      */
-    public void receiveClientEvent(int par1, int par2) {}
+    public boolean receiveClientEvent(int par1, int par2)
+    {
+        return false;
+    }
 
     /**
      * Causes the TileEntity to reset all it's cached values for it's container block, blockID, metaData and in the case
@@ -242,10 +251,12 @@ public class TileEntity
     public void func_85027_a(CrashReportCategory par1CrashReportCategory)
     {
         par1CrashReportCategory.addCrashSectionCallable("Name", new CallableTileEntityName(this));
-        CrashReportCategory.func_85068_a(par1CrashReportCategory, this.xCoord, this.yCoord, this.zCoord, this.blockType.blockID, this.blockMetadata);
+        CrashReportCategory.func_85068_a(par1CrashReportCategory, this.xCoord, this.yCoord, this.zCoord, this.getBlockType().blockID, this.getBlockMetadata());
+        par1CrashReportCategory.addCrashSectionCallable("Actual block type", new CallableTileEntityID(this));
+        par1CrashReportCategory.addCrashSectionCallable("Actual block data value", new CallableTileEntityData(this));
     }
 
-    static Map func_85028_t()
+    static Map getClassToNameMap()
     {
         return classToNameMap;
     }
@@ -257,6 +268,7 @@ public class TileEntity
         addMapping(TileEntityEnderChest.class, "EnderChest");
         addMapping(TileEntityRecordPlayer.class, "RecordPlayer");
         addMapping(TileEntityDispenser.class, "Trap");
+        addMapping(TileEntityDropper.class, "Dropper");
         addMapping(TileEntitySign.class, "Sign");
         addMapping(TileEntityMobSpawner.class, "MobSpawner");
         addMapping(TileEntityNote.class, "Music");
@@ -267,5 +279,8 @@ public class TileEntity
         addMapping(TileEntityCommandBlock.class, "Control");
         addMapping(TileEntityBeacon.class, "Beacon");
         addMapping(TileEntitySkull.class, "Skull");
+        addMapping(TileEntityDaylightDetector.class, "DLDetector");
+        addMapping(TileEntityHopper.class, "Hopper");
+        addMapping(TileEntityComparator.class, "Comparator");
     }
 }

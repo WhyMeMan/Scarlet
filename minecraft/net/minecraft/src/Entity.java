@@ -2,6 +2,7 @@ package net.minecraft.src;
 
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 import net.minecraft.server.MinecraftServer;
 
 public abstract class Entity
@@ -21,6 +22,7 @@ public abstract class Entity
 
     /** The entity we are currently riding */
     public Entity ridingEntity;
+    public boolean field_98038_p;
 
     /** Reference to the World object. */
     public World worldObj;
@@ -93,7 +95,7 @@ public abstract class Entity
 
     /** The distance walked multiplied by 0.6 */
     public float distanceWalkedModified;
-    public float field_82151_R;
+    public float distanceWalkedOnStepModified;
     public float fallDistance;
 
     /**
@@ -187,8 +189,9 @@ public abstract class Entity
 
     /** Which dimension the player is in (-1 = the Nether, 0 = normal world) */
     public int dimension;
-    protected int field_82152_aq;
+    protected int teleportDirection;
     private boolean invulnerable;
+    private UUID entityUniqueID;
     public EnumEntitySize myEntitySize;
 
     public Entity(World par1World)
@@ -207,7 +210,7 @@ public abstract class Entity
         this.height = 1.8F;
         this.prevDistanceWalkedModified = 0.0F;
         this.distanceWalkedModified = 0.0F;
-        this.field_82151_R = 0.0F;
+        this.distanceWalkedOnStepModified = 0.0F;
         this.fallDistance = 0.0F;
         this.nextStepDistance = 1;
         this.ySize = 0.0F;
@@ -224,8 +227,9 @@ public abstract class Entity
         this.isImmuneToFire = false;
         this.dataWatcher = new DataWatcher();
         this.addedToChunk = false;
-        this.field_82152_aq = 0;
+        this.teleportDirection = 0;
         this.invulnerable = false;
+        this.entityUniqueID = UUID.randomUUID();
         this.myEntitySize = EnumEntitySize.SIZE_2;
         this.worldObj = par1World;
         this.setPosition(0.0D, 0.0D, 0.0D);
@@ -295,8 +299,15 @@ public abstract class Entity
      */
     protected void setSize(float par1, float par2)
     {
-        this.width = par1;
-        this.height = par2;
+        if (par1 != this.width || par2 != this.height)
+        {
+            this.width = par1;
+            this.height = par2;
+            this.boundingBox.maxX = this.boundingBox.minX + (double)this.width;
+            this.boundingBox.maxZ = this.boundingBox.minZ + (double)this.width;
+            this.boundingBox.maxY = this.boundingBox.minY + (double)this.height;
+        }
+
         float var3 = par1 % 2.0F;
 
         if ((double)var3 < 0.375D)
@@ -811,15 +822,6 @@ public abstract class Entity
                     par5 = var27;
                     this.boundingBox.setBB(var29);
                 }
-                else
-                {
-                    double var40 = this.boundingBox.minY - (double)((int)this.boundingBox.minY);
-
-                    if (var40 > 0.0D)
-                    {
-                        this.ySize = (float)((double)this.ySize + var40 + 0.01D);
-                    }
-                }
             }
 
             this.worldObj.theProfiler.endSection();
@@ -875,11 +877,11 @@ public abstract class Entity
                 }
 
                 this.distanceWalkedModified = (float)((double)this.distanceWalkedModified + (double)MathHelper.sqrt_double(var36 * var36 + var27 * var27) * 0.6D);
-                this.field_82151_R = (float)((double)this.field_82151_R + (double)MathHelper.sqrt_double(var36 * var36 + var25 * var25 + var27 * var27) * 0.6D);
+                this.distanceWalkedOnStepModified = (float)((double)this.distanceWalkedOnStepModified + (double)MathHelper.sqrt_double(var36 * var36 + var25 * var25 + var27 * var27) * 0.6D);
 
-                if (this.field_82151_R > (float)this.nextStepDistance && var32 > 0)
+                if (this.distanceWalkedOnStepModified > (float)this.nextStepDistance && var32 > 0)
                 {
-                    this.nextStepDistance = (int)this.field_82151_R + 1;
+                    this.nextStepDistance = (int)this.distanceWalkedOnStepModified + 1;
 
                     if (this.isInWater())
                     {
@@ -1435,6 +1437,22 @@ public abstract class Entity
         return null;
     }
 
+    public boolean addNotRiddenEntityID(NBTTagCompound par1NBTTagCompound)
+    {
+        String var2 = this.getEntityString();
+
+        if (!this.isDead && var2 != null)
+        {
+            par1NBTTagCompound.setString("id", var2);
+            this.writeToNBT(par1NBTTagCompound);
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
     /**
      * adds the ID of this entity to the NBT given
      */
@@ -1442,7 +1460,7 @@ public abstract class Entity
     {
         String var2 = this.getEntityString();
 
-        if (!this.isDead && var2 != null)
+        if (!this.isDead && var2 != null && this.riddenByEntity == null)
         {
             par1NBTTagCompound.setString("id", var2);
             this.writeToNBT(par1NBTTagCompound);
@@ -1471,7 +1489,19 @@ public abstract class Entity
             par1NBTTagCompound.setInteger("Dimension", this.dimension);
             par1NBTTagCompound.setBoolean("Invulnerable", this.invulnerable);
             par1NBTTagCompound.setInteger("PortalCooldown", this.timeUntilPortal);
+            par1NBTTagCompound.setLong("UUIDMost", this.entityUniqueID.getMostSignificantBits());
+            par1NBTTagCompound.setLong("UUIDLeast", this.entityUniqueID.getLeastSignificantBits());
             this.writeEntityToNBT(par1NBTTagCompound);
+
+            if (this.ridingEntity != null)
+            {
+                NBTTagCompound var2 = new NBTTagCompound("Riding");
+
+                if (this.ridingEntity.addNotRiddenEntityID(var2))
+                {
+                    par1NBTTagCompound.setTag("Riding", var2);
+                }
+            }
         }
         catch (Throwable var5)
         {
@@ -1523,6 +1553,12 @@ public abstract class Entity
             this.dimension = par1NBTTagCompound.getInteger("Dimension");
             this.invulnerable = par1NBTTagCompound.getBoolean("Invulnerable");
             this.timeUntilPortal = par1NBTTagCompound.getInteger("PortalCooldown");
+
+            if (par1NBTTagCompound.hasKey("UUIDMost") && par1NBTTagCompound.hasKey("UUIDLeast"))
+            {
+                this.entityUniqueID = new UUID(par1NBTTagCompound.getLong("UUIDMost"), par1NBTTagCompound.getLong("UUIDLeast"));
+            }
+
             this.setPosition(this.posX, this.posY, this.posZ);
             this.setRotation(this.rotationYaw, this.rotationPitch);
             this.readEntityFromNBT(par1NBTTagCompound);
@@ -1745,14 +1781,17 @@ public abstract class Entity
 
     public void updateRiderPosition()
     {
-        if (!(this.riddenByEntity instanceof EntityPlayer) || !((EntityPlayer)this.riddenByEntity).func_71066_bF())
+        if (this.riddenByEntity != null)
         {
-            this.riddenByEntity.lastTickPosX = this.lastTickPosX;
-            this.riddenByEntity.lastTickPosY = this.lastTickPosY + this.getMountedYOffset() + this.riddenByEntity.getYOffset();
-            this.riddenByEntity.lastTickPosZ = this.lastTickPosZ;
-        }
+            if (!(this.riddenByEntity instanceof EntityPlayer) || !((EntityPlayer)this.riddenByEntity).func_71066_bF())
+            {
+                this.riddenByEntity.lastTickPosX = this.lastTickPosX;
+                this.riddenByEntity.lastTickPosY = this.lastTickPosY + this.getMountedYOffset() + this.riddenByEntity.getYOffset();
+                this.riddenByEntity.lastTickPosZ = this.lastTickPosZ;
+            }
 
-        this.riddenByEntity.setPosition(this.posX, this.posY + this.getMountedYOffset() + this.riddenByEntity.getYOffset(), this.posZ);
+            this.riddenByEntity.setPosition(this.posX, this.posY + this.getMountedYOffset() + this.riddenByEntity.getYOffset(), this.posZ);
+        }
     }
 
     /**
@@ -1789,22 +1828,11 @@ public abstract class Entity
 
             this.ridingEntity = null;
         }
-        else if (this.ridingEntity == par1Entity)
-        {
-            this.unmountEntity(par1Entity);
-            this.ridingEntity.riddenByEntity = null;
-            this.ridingEntity = null;
-        }
         else
         {
             if (this.ridingEntity != null)
             {
                 this.ridingEntity.riddenByEntity = null;
-            }
-
-            if (par1Entity.riddenByEntity != null)
-            {
-                par1Entity.riddenByEntity.ridingEntity = null;
             }
 
             this.ridingEntity = par1Entity;
@@ -1817,9 +1845,16 @@ public abstract class Entity
      */
     public void unmountEntity(Entity par1Entity)
     {
-        double var3 = par1Entity.posX;
-        double var5 = par1Entity.boundingBox.minY + (double)par1Entity.height;
-        double var7 = par1Entity.posZ;
+        double var3 = this.posX;
+        double var5 = this.posY;
+        double var7 = this.posZ;
+
+        if (par1Entity != null)
+        {
+            var3 = par1Entity.posX;
+            var5 = par1Entity.boundingBox.minY + (double)par1Entity.height;
+            var7 = par1Entity.posZ;
+        }
 
         for (double var9 = -1.5D; var9 < 2.0D; ++var9)
         {
@@ -1831,7 +1866,7 @@ public abstract class Entity
                     int var14 = (int)(this.posZ + var11);
                     AxisAlignedBB var2 = this.boundingBox.getOffsetBoundingBox(var9, 1.0D, var11);
 
-                    if (this.worldObj.getAllCollidingBoundingBoxes(var2).isEmpty())
+                    if (this.worldObj.getCollidingBlockBounds(var2).isEmpty())
                     {
                         if (this.worldObj.doesBlockHaveSolidTopSurface(var13, (int)this.posY, var14))
                         {
@@ -1911,7 +1946,7 @@ public abstract class Entity
 
             if (!this.worldObj.isRemote && !this.inPortal)
             {
-                this.field_82152_aq = Direction.getMovementDirection(var1, var3);
+                this.teleportDirection = Direction.getMovementDirection(var1, var3);
             }
 
             this.inPortal = true;
@@ -2004,12 +2039,17 @@ public abstract class Entity
         this.setFlag(3, par1);
     }
 
-    public boolean getHasActivePotion()
+    public boolean isInvisible()
     {
         return this.getFlag(5);
     }
 
-    public void setHasActivePotion(boolean par1)
+    public boolean func_98034_c(EntityPlayer par1EntityPlayer)
+    {
+        return this.isInvisible();
+    }
+
+    public void setInvisible(boolean par1)
     {
         this.setFlag(5, par1);
     }
@@ -2090,7 +2130,7 @@ public abstract class Entity
         double var10 = par1 - (double)var7;
         double var12 = par3 - (double)var8;
         double var14 = par5 - (double)var9;
-        List var16 = this.worldObj.getAllCollidingBoundingBoxes(this.boundingBox);
+        List var16 = this.worldObj.getCollidingBlockBounds(this.boundingBox);
 
         if (var16.isEmpty() && !this.worldObj.func_85174_u(var7, var8, var9))
         {
@@ -2213,7 +2253,7 @@ public abstract class Entity
         return this == par1Entity;
     }
 
-    public float setRotationYawHead()
+    public float getRotationYawHead()
     {
         return 0.0F;
     }
@@ -2221,7 +2261,7 @@ public abstract class Entity
     /**
      * Sets the head's yaw rotation of the entity.
      */
-    public void setHeadRotationYaw(float par1) {}
+    public void setRotationYawHead(float par1) {}
 
     /**
      * If returns false, the item will not inflict any damage against entities.
@@ -2265,7 +2305,7 @@ public abstract class Entity
         par1Entity.writeToNBT(var3);
         this.readFromNBT(var3);
         this.timeUntilPortal = par1Entity.timeUntilPortal;
-        this.field_82152_aq = par1Entity.field_82152_aq;
+        this.teleportDirection = par1Entity.teleportDirection;
     }
 
     /**
@@ -2302,9 +2342,14 @@ public abstract class Entity
         }
     }
 
-    public float func_82146_a(Explosion par1Explosion, Block par2Block, int par3, int par4, int par5)
+    public float func_82146_a(Explosion par1Explosion, World par2World, int par3, int par4, int par5, Block par6Block)
     {
-        return par2Block.getExplosionResistance(this);
+        return par6Block.getExplosionResistance(this);
+    }
+
+    public boolean func_96091_a(Explosion par1Explosion, World par2World, int par3, int par4, int par5, int par6, float par7)
+    {
+        return true;
     }
 
     public int func_82143_as()
@@ -2312,9 +2357,9 @@ public abstract class Entity
         return 3;
     }
 
-    public int func_82148_at()
+    public int getTeleportDirection()
     {
-        return this.field_82152_aq;
+        return this.teleportDirection;
     }
 
     /**
@@ -2329,10 +2374,10 @@ public abstract class Entity
     {
         par1CrashReportCategory.addCrashSectionCallable("Entity Type", new CallableEntityType(this));
         par1CrashReportCategory.addCrashSection("Entity ID", Integer.valueOf(this.entityId));
-        par1CrashReportCategory.addCrashSection("Name", this.getEntityName());
-        par1CrashReportCategory.addCrashSection("Exact location", String.format("%.2f, %.2f, %.2f", new Object[] {Double.valueOf(this.posX), Double.valueOf(this.posY), Double.valueOf(this.posZ)}));
-        par1CrashReportCategory.addCrashSection("Block location", CrashReportCategory.func_85071_a(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posY), MathHelper.floor_double(this.posZ)));
-        par1CrashReportCategory.addCrashSection("Momentum", String.format("%.2f, %.2f, %.2f", new Object[] {Double.valueOf(this.motionX), Double.valueOf(this.motionY), Double.valueOf(this.motionZ)}));
+        par1CrashReportCategory.addCrashSectionCallable("Entity Name", new CallableEntityName(this));
+        par1CrashReportCategory.addCrashSection("Entity\'s Exact location", String.format("%.2f, %.2f, %.2f", new Object[] {Double.valueOf(this.posX), Double.valueOf(this.posY), Double.valueOf(this.posZ)}));
+        par1CrashReportCategory.addCrashSection("Entity\'s Block location", CrashReportCategory.getLocationInfo(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posY), MathHelper.floor_double(this.posZ)));
+        par1CrashReportCategory.addCrashSection("Entity\'s Momentum", String.format("%.2f, %.2f, %.2f", new Object[] {Double.valueOf(this.motionX), Double.valueOf(this.motionY), Double.valueOf(this.motionZ)}));
     }
 
     /**
@@ -2341,5 +2386,18 @@ public abstract class Entity
     public boolean canRenderOnFire()
     {
         return this.isBurning();
+    }
+
+    public boolean func_96092_aw()
+    {
+        return true;
+    }
+
+    /**
+     * Returns the translated name of the entity.
+     */
+    public String getTranslatedEntityName()
+    {
+        return this.getEntityName();
     }
 }

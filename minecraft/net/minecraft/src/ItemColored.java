@@ -25,9 +25,9 @@ public class ItemColored extends ItemBlock
     /**
      * Gets an icon index based on an item's damage value
      */
-    public int getIconFromDamage(int par1)
+    public Icon getIconFromDamage(int par1)
     {
-        return this.blockRef.getBlockTextureFromSideAndMetadata(0, par1);
+        return this.blockRef.getIcon(0, par1);
     }
 
     /**
@@ -47,16 +47,20 @@ public class ItemColored extends ItemBlock
         return this;
     }
 
-    public String getItemNameIS(ItemStack par1ItemStack)
+    /**
+     * Returns the unlocalized name of this item. This version accepts an ItemStack so different stacks can have
+     * different names based on their damage or NBT.
+     */
+    public String getUnlocalizedName(ItemStack par1ItemStack)
     {
         if (this.blockNames == null)
         {
-            return super.getItemNameIS(par1ItemStack);
+            return super.getUnlocalizedName(par1ItemStack);
         }
         else
         {
             int var2 = par1ItemStack.getItemDamage();
-            return var2 >= 0 && var2 < this.blockNames.length ? super.getItemNameIS(par1ItemStack) + "." + this.blockNames[var2] : super.getItemNameIS(par1ItemStack);
+            return var2 >= 0 && var2 < this.blockNames.length ? super.getUnlocalizedName(par1ItemStack) + "." + this.blockNames[var2] : super.getUnlocalizedName(par1ItemStack);
         }
     }
 }

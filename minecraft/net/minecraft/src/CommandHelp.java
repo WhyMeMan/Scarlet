@@ -58,7 +58,7 @@ public class CommandHelp extends CommandBase
         }
 
         int var7 = Math.min((var11 + 1) * var4, var3.size());
-        par1ICommandSender.sendChatToPlayer("\u00a72" + par1ICommandSender.translateString("commands.help.header", new Object[] {Integer.valueOf(var11 + 1), Integer.valueOf(var5 + 1)}));
+        par1ICommandSender.sendChatToPlayer(EnumChatFormatting.DARK_GREEN + par1ICommandSender.translateString("commands.help.header", new Object[] {Integer.valueOf(var11 + 1), Integer.valueOf(var5 + 1)}));
 
         for (int var12 = var11 * var4; var12 < var7; ++var12)
         {
@@ -68,7 +68,7 @@ public class CommandHelp extends CommandBase
 
         if (var11 == 0 && par1ICommandSender instanceof EntityPlayer)
         {
-            par1ICommandSender.sendChatToPlayer("\u00a7a" + par1ICommandSender.translateString("commands.help.footer", new Object[0]));
+            par1ICommandSender.sendChatToPlayer(EnumChatFormatting.GREEN + par1ICommandSender.translateString("commands.help.footer", new Object[0]));
         }
     }
 

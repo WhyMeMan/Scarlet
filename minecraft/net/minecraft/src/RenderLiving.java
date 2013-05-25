@@ -1,15 +1,9 @@
 package net.minecraft.src;
 
-import java.util.ArrayList;
 import java.util.Random;
 import net.minecraft.client.Minecraft;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
-
-import com.whymeman.scarlet.manager.IOManager;
-import com.whymeman.scarlet.manager.ModManager;
-import com.whymeman.scarlet.mods.Tracers;
-import com.whymeman.scarlet.util.mc.Friend;
 
 public class RenderLiving extends Render
 {
@@ -93,8 +87,8 @@ public class RenderLiving extends Render
             GL11.glScalef(-1.0F, -1.0F, 1.0F);
             this.preRenderCallback(par1EntityLiving, par9);
             GL11.glTranslatef(0.0F, -24.0F * var14 - 0.0078125F, 0.0F);
-            float var15 = par1EntityLiving.prevLegYaw + (par1EntityLiving.legYaw - par1EntityLiving.prevLegYaw) * par9;
-            float var16 = par1EntityLiving.legSwing - par1EntityLiving.legYaw * (1.0F - par9);
+            float var15 = par1EntityLiving.prevLimbYaw + (par1EntityLiving.limbYaw - par1EntityLiving.prevLimbYaw) * par9;
+            float var16 = par1EntityLiving.limbSwing - par1EntityLiving.limbYaw * (1.0F - par9);
 
             if (par1EntityLiving.isChild())
             {
@@ -247,15 +241,35 @@ public class RenderLiving extends Render
      */
     protected void renderModel(EntityLiving par1EntityLiving, float par2, float par3, float par4, float par5, float par6, float par7)
     {
-        if (!par1EntityLiving.getHasActivePotion())
+        this.func_98190_a(par1EntityLiving);
+
+        if (!par1EntityLiving.isInvisible())
         {
-            this.loadDownloadableImageTexture(par1EntityLiving.skinUrl, par1EntityLiving.getTexture());
             this.mainModel.render(par1EntityLiving, par2, par3, par4, par5, par6, par7);
+        }
+        else if (!par1EntityLiving.func_98034_c(Minecraft.getMinecraft().thePlayer))
+        {
+            GL11.glPushMatrix();
+            GL11.glColor4f(1.0F, 1.0F, 1.0F, 0.15F);
+            GL11.glDepthMask(false);
+            GL11.glEnable(GL11.GL_BLEND);
+            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+            GL11.glAlphaFunc(GL11.GL_GREATER, 0.003921569F);
+            this.mainModel.render(par1EntityLiving, par2, par3, par4, par5, par6, par7);
+            GL11.glDisable(GL11.GL_BLEND);
+            GL11.glAlphaFunc(GL11.GL_GREATER, 0.1F);
+            GL11.glPopMatrix();
+            GL11.glDepthMask(true);
         }
         else
         {
             this.mainModel.setRotationAngles(par2, par3, par4, par5, par6, par7, par1EntityLiving);
         }
+    }
+
+    protected void func_98190_a(EntityLiving par1EntityLiving)
+    {
+        this.loadTexture(par1EntityLiving.getTexture());
     }
 
     /**
@@ -315,7 +329,7 @@ public class RenderLiving extends Render
             for (int var6 = 0; var6 < var3; ++var6)
             {
                 GL11.glPushMatrix();
-                ModelRenderer var7 = this.mainModel.func_85181_a(var5);
+                ModelRenderer var7 = this.mainModel.getRandomModelBox(var5);
                 ModelBox var8 = (ModelBox)var7.cubeList.get(var5.nextInt(var7.cubeList.size()));
                 var7.postRender(0.0625F);
                 float var9 = var5.nextFloat();
@@ -385,9 +399,66 @@ public class RenderLiving extends Render
      */
     protected void passSpecialRender(EntityLiving par1EntityLiving, double par2, double par4, double par6)
     {
-        if (Minecraft.isDebugInfoEnabled())
+        if (Minecraft.isGuiEnabled() && par1EntityLiving != this.renderManager.livingPlayer && !par1EntityLiving.func_98034_c(Minecraft.getMinecraft().thePlayer) && (par1EntityLiving.func_94059_bO() || par1EntityLiving.func_94056_bM() && par1EntityLiving == this.renderManager.field_96451_i))
         {
-            ;
+            float var8 = 1.6F;
+            float var9 = 0.016666668F * var8;
+            double var10 = par1EntityLiving.getDistanceSqToEntity(this.renderManager.livingPlayer);
+            float var12 = par1EntityLiving.isSneaking() ? 32.0F : 64.0F;
+
+            if (var10 < (double)(var12 * var12))
+            {
+                String var13 = par1EntityLiving.getTranslatedEntityName();
+
+                if (par1EntityLiving.isSneaking())
+                {
+                    FontRenderer var14 = this.getFontRendererFromRenderManager();
+                    GL11.glPushMatrix();
+                    GL11.glTranslatef((float)par2 + 0.0F, (float)par4 + par1EntityLiving.height + 0.5F, (float)par6);
+                    GL11.glNormal3f(0.0F, 1.0F, 0.0F);
+                    GL11.glRotatef(-this.renderManager.playerViewY, 0.0F, 1.0F, 0.0F);
+                    GL11.glRotatef(this.renderManager.playerViewX, 1.0F, 0.0F, 0.0F);
+                    GL11.glScalef(-var9, -var9, var9);
+                    GL11.glDisable(GL11.GL_LIGHTING);
+                    GL11.glTranslatef(0.0F, 0.25F / var9, 0.0F);
+                    GL11.glDepthMask(false);
+                    GL11.glEnable(GL11.GL_BLEND);
+                    GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+                    Tessellator var15 = Tessellator.instance;
+                    GL11.glDisable(GL11.GL_TEXTURE_2D);
+                    var15.startDrawingQuads();
+                    int var16 = var14.getStringWidth(var13) / 2;
+                    var15.setColorRGBA_F(0.0F, 0.0F, 0.0F, 0.25F);
+                    var15.addVertex((double)(-var16 - 1), -1.0D, 0.0D);
+                    var15.addVertex((double)(-var16 - 1), 8.0D, 0.0D);
+                    var15.addVertex((double)(var16 + 1), 8.0D, 0.0D);
+                    var15.addVertex((double)(var16 + 1), -1.0D, 0.0D);
+                    var15.draw();
+                    GL11.glEnable(GL11.GL_TEXTURE_2D);
+                    GL11.glDepthMask(true);
+                    var14.drawString(var13, -var14.getStringWidth(var13) / 2, 0, 553648127);
+                    GL11.glEnable(GL11.GL_LIGHTING);
+                    GL11.glDisable(GL11.GL_BLEND);
+                    GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+                    GL11.glPopMatrix();
+                }
+                else
+                {
+                    this.func_96449_a(par1EntityLiving, par2, par4, par6, var13, var9, var10);
+                }
+            }
+        }
+    }
+
+    protected void func_96449_a(EntityLiving par1EntityLiving, double par2, double par4, double par6, String par8Str, float par9, double par10)
+    {
+        if (par1EntityLiving.isPlayerSleeping())
+        {
+            this.renderLivingLabel(par1EntityLiving, par8Str, par2, par4 - 1.5D, par6, 64);
+        }
+        else
+        {
+            this.renderLivingLabel(par1EntityLiving, par8Str, par2, par4, par6, 64);
         }
     }
 
@@ -396,29 +467,15 @@ public class RenderLiving extends Render
      */
     protected void renderLivingLabel(EntityLiving par1EntityLiving, String par2Str, double par3, double par5, double par7, int par9)
     {
-    	ArrayList<Friend> friends = IOManager.getFriends();
-    	boolean isFriend = false;
-    	for (Friend f : friends)
-    	{
-    		if (f.getName().equalsIgnoreCase(StringUtils.stripControlCodes(par2Str)))
-    		{
-    			isFriend = true;
-    			if (f.hasNick())
-    				par2Str = f.getNick();
-    			break;
-    		}
-    	}
         double var10 = par1EntityLiving.getDistanceSqToEntity(this.renderManager.livingPlayer);
-        float distance = Minecraft.getMinecraft().thePlayer.getDistanceToEntity(par1EntityLiving);
-        distance /= 10;
-        
+
         if (var10 <= (double)(par9 * par9))
         {
             FontRenderer var12 = this.getFontRendererFromRenderManager();
             float var13 = 1.6F;
             float var14 = 0.016666668F * var13;
             GL11.glPushMatrix();
-            GL11.glTranslatef((float)par3 + 0.0F, (float)par5 + 2.3F, (float)par7);
+            GL11.glTranslatef((float)par3 + 0.0F, (float)par5 + par1EntityLiving.height + 0.5F, (float)par7);
             GL11.glNormal3f(0.0F, 1.0F, 0.0F);
             GL11.glRotatef(-this.renderManager.playerViewY, 0.0F, 1.0F, 0.0F);
             GL11.glRotatef(this.renderManager.playerViewX, 1.0F, 0.0F, 0.0F);
@@ -428,8 +485,6 @@ public class RenderLiving extends Render
             GL11.glDisable(GL11.GL_DEPTH_TEST);
             GL11.glEnable(GL11.GL_BLEND);
             GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-            //if (distance >= 1)
-            	//GL11.glScalef(distance, distance, distance);
             Tessellator var15 = Tessellator.instance;
             byte var16 = 0;
 
@@ -448,12 +503,10 @@ public class RenderLiving extends Render
             var15.addVertex((double)(var17 + 1), (double)(-1 + var16), 0.0D);
             var15.draw();
             GL11.glEnable(GL11.GL_TEXTURE_2D);
-            int color = isFriend ? 0x00AAFF : 553648127;
-            var12.drawString(par2Str, -var12.getStringWidth(par2Str) / 2, var16, color);
+            var12.drawString(par2Str, -var12.getStringWidth(par2Str) / 2, var16, 553648127);
             GL11.glEnable(GL11.GL_DEPTH_TEST);
             GL11.glDepthMask(true);
-            var12.drawString(par2Str, -var12.getStringWidth(par2Str) / 2, var16, isFriend ?  color : -1);
-            
+            var12.drawString(par2Str, -var12.getStringWidth(par2Str) / 2, var16, -1);
             GL11.glEnable(GL11.GL_LIGHTING);
             GL11.glDisable(GL11.GL_BLEND);
             GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);

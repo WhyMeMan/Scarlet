@@ -6,20 +6,18 @@ import java.util.Random;
 public class BlockStairs extends Block
 {
     private static final int[][] field_72159_a = new int[][] {{2, 6}, {3, 7}, {2, 3}, {6, 7}, {0, 4}, {1, 5}, {0, 1}, {4, 5}};
-    private static final int[] field_82545_b = new int[] {1, -1, 0, 0};
-    private static final int[] field_82546_c = new int[] {0, 0, 1, -1};
 
     /** The block that is used as model for the stair. */
     private final Block modelBlock;
-    private final int field_72158_c;
+    private final int modelBlockMetadata;
     private boolean field_72156_cr = false;
     private int field_72160_cs = 0;
 
     protected BlockStairs(int par1, Block par2Block, int par3)
     {
-        super(par1, par2Block.blockIndexInTexture, par2Block.blockMaterial);
+        super(par1, par2Block.blockMaterial);
         this.modelBlock = par2Block;
-        this.field_72158_c = par3;
+        this.modelBlockMetadata = par3;
         this.setHardness(par2Block.blockHardness);
         this.setResistance(par2Block.blockResistance / 3.0F);
         this.setStepSound(par2Block.stepSound);
@@ -336,18 +334,19 @@ public class BlockStairs extends Block
     }
 
     /**
-     * if the specified block is in the given AABB, add its collision bounding box to the given list
+     * Adds all intersecting collision boxes to a list. (Be sure to only add boxes to the list if they intersect the
+     * mask.) Parameters: World, X, Y, Z, mask, list, colliding entity
      */
-    public void addCollidingBlockToList(World par1World, int par2, int par3, int par4, AxisAlignedBB par5AxisAlignedBB, List par6List, Entity par7Entity)
+    public void addCollisionBoxesToList(World par1World, int par2, int par3, int par4, AxisAlignedBB par5AxisAlignedBB, List par6List, Entity par7Entity)
     {
         this.func_82541_d(par1World, par2, par3, par4);
-        super.addCollidingBlockToList(par1World, par2, par3, par4, par5AxisAlignedBB, par6List, par7Entity);
+        super.addCollisionBoxesToList(par1World, par2, par3, par4, par5AxisAlignedBB, par6List, par7Entity);
         boolean var8 = this.func_82542_g(par1World, par2, par3, par4);
-        super.addCollidingBlockToList(par1World, par2, par3, par4, par5AxisAlignedBB, par6List, par7Entity);
+        super.addCollisionBoxesToList(par1World, par2, par3, par4, par5AxisAlignedBB, par6List, par7Entity);
 
         if (var8 && this.func_82544_h(par1World, par2, par3, par4))
         {
-            super.addCollidingBlockToList(par1World, par2, par3, par4, par5AxisAlignedBB, par6List, par7Entity);
+            super.addCollisionBoxesToList(par1World, par2, par3, par4, par5AxisAlignedBB, par6List, par7Entity);
         }
 
         this.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
@@ -412,25 +411,17 @@ public class BlockStairs extends Block
     /**
      * From the specified side and block metadata retrieves the blocks texture. Args: side, metadata
      */
-    public int getBlockTextureFromSideAndMetadata(int par1, int par2)
+    public Icon getIcon(int par1, int par2)
     {
-        return this.modelBlock.getBlockTextureFromSideAndMetadata(par1, this.field_72158_c);
-    }
-
-    /**
-     * Returns the block texture based on the side being looked at.  Args: side
-     */
-    public int getBlockTextureFromSide(int par1)
-    {
-        return this.modelBlock.getBlockTextureFromSideAndMetadata(par1, this.field_72158_c);
+        return this.modelBlock.getIcon(par1, this.modelBlockMetadata);
     }
 
     /**
      * How many world ticks before ticking
      */
-    public int tickRate()
+    public int tickRate(World par1World)
     {
-        return this.modelBlock.tickRate();
+        return this.modelBlock.tickRate(par1World);
     }
 
     /**
@@ -517,37 +508,37 @@ public class BlockStairs extends Block
     /**
      * Called upon the block being destroyed by an explosion
      */
-    public void onBlockDestroyedByExplosion(World par1World, int par2, int par3, int par4)
+    public void onBlockDestroyedByExplosion(World par1World, int par2, int par3, int par4, Explosion par5Explosion)
     {
-        this.modelBlock.onBlockDestroyedByExplosion(par1World, par2, par3, par4);
+        this.modelBlock.onBlockDestroyedByExplosion(par1World, par2, par3, par4, par5Explosion);
     }
 
     /**
      * Called when the block is placed in the world.
      */
-    public void onBlockPlacedBy(World par1World, int par2, int par3, int par4, EntityLiving par5EntityLiving)
+    public void onBlockPlacedBy(World par1World, int par2, int par3, int par4, EntityLiving par5EntityLiving, ItemStack par6ItemStack)
     {
-        int var6 = MathHelper.floor_double((double)(par5EntityLiving.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
-        int var7 = par1World.getBlockMetadata(par2, par3, par4) & 4;
+        int var7 = MathHelper.floor_double((double)(par5EntityLiving.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
+        int var8 = par1World.getBlockMetadata(par2, par3, par4) & 4;
 
-        if (var6 == 0)
+        if (var7 == 0)
         {
-            par1World.setBlockMetadataWithNotify(par2, par3, par4, 2 | var7);
+            par1World.setBlockMetadataWithNotify(par2, par3, par4, 2 | var8, 2);
         }
 
-        if (var6 == 1)
+        if (var7 == 1)
         {
-            par1World.setBlockMetadataWithNotify(par2, par3, par4, 1 | var7);
+            par1World.setBlockMetadataWithNotify(par2, par3, par4, 1 | var8, 2);
         }
 
-        if (var6 == 2)
+        if (var7 == 2)
         {
-            par1World.setBlockMetadataWithNotify(par2, par3, par4, 3 | var7);
+            par1World.setBlockMetadataWithNotify(par2, par3, par4, 3 | var8, 2);
         }
 
-        if (var6 == 3)
+        if (var7 == 3)
         {
-            par1World.setBlockMetadataWithNotify(par2, par3, par4, 0 | var7);
+            par1World.setBlockMetadataWithNotify(par2, par3, par4, 0 | var8, 2);
         }
     }
 
@@ -626,4 +617,10 @@ public class BlockStairs extends Block
 
         return var23;
     }
+
+    /**
+     * When this method is called, your block should register all the icons it needs with the given IconRegister. This
+     * is the only chance you get to register icons.
+     */
+    public void registerIcons(IconRegister par1IconRegister) {}
 }

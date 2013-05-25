@@ -4,7 +4,7 @@ public class ModelWitch extends ModelVillager
 {
     public boolean field_82900_g = false;
     private ModelRenderer field_82901_h = (new ModelRenderer(this)).setTextureSize(64, 128);
-    private ModelRenderer field_82902_i;
+    private ModelRenderer witchHat;
 
     public ModelWitch(float par1)
     {
@@ -12,16 +12,16 @@ public class ModelWitch extends ModelVillager
         this.field_82901_h.setRotationPoint(0.0F, -2.0F, 0.0F);
         this.field_82901_h.setTextureOffset(0, 0).addBox(0.0F, 3.0F, -6.75F, 1, 1, 1, -0.25F);
         this.field_82898_f.addChild(this.field_82901_h);
-        this.field_82902_i = (new ModelRenderer(this)).setTextureSize(64, 128);
-        this.field_82902_i.setRotationPoint(-5.0F, -10.03125F, -5.0F);
-        this.field_82902_i.setTextureOffset(0, 64).addBox(0.0F, 0.0F, 0.0F, 10, 2, 10);
-        this.villagerHead.addChild(this.field_82902_i);
+        this.witchHat = (new ModelRenderer(this)).setTextureSize(64, 128);
+        this.witchHat.setRotationPoint(-5.0F, -10.03125F, -5.0F);
+        this.witchHat.setTextureOffset(0, 64).addBox(0.0F, 0.0F, 0.0F, 10, 2, 10);
+        this.villagerHead.addChild(this.witchHat);
         ModelRenderer var2 = (new ModelRenderer(this)).setTextureSize(64, 128);
         var2.setRotationPoint(1.75F, -4.0F, 2.0F);
         var2.setTextureOffset(0, 76).addBox(0.0F, 0.0F, 0.0F, 7, 4, 7);
         var2.rotateAngleX = -0.05235988F;
         var2.rotateAngleZ = 0.02617994F;
-        this.field_82902_i.addChild(var2);
+        this.witchHat.addChild(var2);
         ModelRenderer var3 = (new ModelRenderer(this)).setTextureSize(64, 128);
         var3.setRotationPoint(1.75F, -4.0F, 2.0F);
         var3.setTextureOffset(0, 87).addBox(0.0F, 0.0F, 0.0F, 4, 4, 4);

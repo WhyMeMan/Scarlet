@@ -3,17 +3,17 @@ package net.minecraft.src;
 import java.util.List;
 import java.util.Random;
 
-public class BlockButton extends Block
+public abstract class BlockButton extends Block
 {
     /** Whether this button is sensible to arrows, used by wooden buttons. */
     private final boolean sensible;
 
-    protected BlockButton(int par1, int par2, boolean par3)
+    protected BlockButton(int par1, boolean par2)
     {
-        super(par1, par2, Material.circuits);
+        super(par1, Material.circuits);
         this.setTickRandomly(true);
         this.setCreativeTab(CreativeTabs.tabRedstone);
-        this.sensible = par3;
+        this.sensible = par2;
     }
 
     /**
@@ -28,7 +28,7 @@ public class BlockButton extends Block
     /**
      * How many world ticks before ticking
      */
-    public int tickRate()
+    public int tickRate(World par1World)
     {
         return this.sensible ? 30 : 20;
     }
@@ -141,7 +141,7 @@ public class BlockButton extends Block
             if (var7)
             {
                 this.dropBlockAsItem(par1World, par2, par3, par4, par1World.getBlockMetadata(par2, par3, par4), 0);
-                par1World.setBlockWithNotify(par2, par3, par4, 0);
+                par1World.setBlockToAir(par2, par3, par4);
             }
         }
     }
@@ -154,7 +154,7 @@ public class BlockButton extends Block
         if (!this.canPlaceBlockAt(par1World, par2, par3, par4))
         {
             this.dropBlockAsItem(par1World, par2, par3, par4, par1World.getBlockMetadata(par2, par3, par4), 0);
-            par1World.setBlockWithNotify(par2, par3, par4, 0);
+            par1World.setBlockToAir(par2, par3, par4);
             return false;
         }
         else
@@ -224,11 +224,11 @@ public class BlockButton extends Block
         }
         else
         {
-            par1World.setBlockMetadataWithNotify(par2, par3, par4, var11 + var12);
+            par1World.setBlockMetadataWithNotify(par2, par3, par4, var11 + var12, 3);
             par1World.markBlockRangeForRenderUpdate(par2, par3, par4, par2, par3, par4);
             par1World.playSoundEffect((double)par2 + 0.5D, (double)par3 + 0.5D, (double)par4 + 0.5D, "random.click", 0.3F, 0.6F);
             this.func_82536_d(par1World, par2, par3, par4, var11);
-            par1World.scheduleBlockUpdate(par2, par3, par4, this.blockID, this.tickRate());
+            par1World.scheduleBlockUpdate(par2, par3, par4, this.blockID, this.tickRate(par1World));
             return true;
         }
     }
@@ -252,27 +252,27 @@ public class BlockButton extends Block
      * returns true, standard redstone propagation rules will apply instead and this will not be called. Args: World, X,
      * Y, Z, side. Note that the side is reversed - eg it is 1 (up) when checking the bottom of the block.
      */
-    public boolean isProvidingWeakPower(IBlockAccess par1IBlockAccess, int par2, int par3, int par4, int par5)
+    public int isProvidingWeakPower(IBlockAccess par1IBlockAccess, int par2, int par3, int par4, int par5)
     {
-        return (par1IBlockAccess.getBlockMetadata(par2, par3, par4) & 8) > 0;
+        return (par1IBlockAccess.getBlockMetadata(par2, par3, par4) & 8) > 0 ? 15 : 0;
     }
 
     /**
      * Returns true if the block is emitting direct/strong redstone power on the specified side. Args: World, X, Y, Z,
      * side. Note that the side is reversed - eg it is 1 (up) when checking the bottom of the block.
      */
-    public boolean isProvidingStrongPower(IBlockAccess par1IBlockAccess, int par2, int par3, int par4, int par5)
+    public int isProvidingStrongPower(IBlockAccess par1IBlockAccess, int par2, int par3, int par4, int par5)
     {
         int var6 = par1IBlockAccess.getBlockMetadata(par2, par3, par4);
 
         if ((var6 & 8) == 0)
         {
-            return false;
+            return 0;
         }
         else
         {
             int var7 = var6 & 7;
-            return var7 == 5 && par5 == 1 ? true : (var7 == 4 && par5 == 2 ? true : (var7 == 3 && par5 == 3 ? true : (var7 == 2 && par5 == 4 ? true : var7 == 1 && par5 == 5)));
+            return var7 == 5 && par5 == 1 ? 15 : (var7 == 4 && par5 == 2 ? 15 : (var7 == 3 && par5 == 3 ? 15 : (var7 == 2 && par5 == 4 ? 15 : (var7 == 1 && par5 == 5 ? 15 : 0))));
         }
     }
 
@@ -301,7 +301,7 @@ public class BlockButton extends Block
                 }
                 else
                 {
-                    par1World.setBlockMetadataWithNotify(par2, par3, par4, var6 & 7);
+                    par1World.setBlockMetadataWithNotify(par2, par3, par4, var6 & 7, 3);
                     int var7 = var6 & 7;
                     this.func_82536_d(par1World, par2, par3, par4, var7);
                     par1World.playSoundEffect((double)par2 + 0.5D, (double)par3 + 0.5D, (double)par4 + 0.5D, "random.click", 0.3F, 0.5F);
@@ -345,12 +345,12 @@ public class BlockButton extends Block
         int var6 = var5 & 7;
         boolean var7 = (var5 & 8) != 0;
         this.func_82534_e(var5);
-        List var9 = par1World.getEntitiesWithinAABB(EntityArrow.class, AxisAlignedBB.getAABBPool().addOrModifyAABBInPool((double)par2 + this.minX, (double)par3 + this.minY, (double)par4 + this.minZ, (double)par2 + this.maxX, (double)par3 + this.maxY, (double)par4 + this.maxZ));
+        List var9 = par1World.getEntitiesWithinAABB(EntityArrow.class, AxisAlignedBB.getAABBPool().getAABB((double)par2 + this.minX, (double)par3 + this.minY, (double)par4 + this.minZ, (double)par2 + this.maxX, (double)par3 + this.maxY, (double)par4 + this.maxZ));
         boolean var8 = !var9.isEmpty();
 
         if (var8 && !var7)
         {
-            par1World.setBlockMetadataWithNotify(par2, par3, par4, var6 | 8);
+            par1World.setBlockMetadataWithNotify(par2, par3, par4, var6 | 8, 3);
             this.func_82536_d(par1World, par2, par3, par4, var6);
             par1World.markBlockRangeForRenderUpdate(par2, par3, par4, par2, par3, par4);
             par1World.playSoundEffect((double)par2 + 0.5D, (double)par3 + 0.5D, (double)par4 + 0.5D, "random.click", 0.3F, 0.6F);
@@ -358,7 +358,7 @@ public class BlockButton extends Block
 
         if (!var8 && var7)
         {
-            par1World.setBlockMetadataWithNotify(par2, par3, par4, var6);
+            par1World.setBlockMetadataWithNotify(par2, par3, par4, var6, 3);
             this.func_82536_d(par1World, par2, par3, par4, var6);
             par1World.markBlockRangeForRenderUpdate(par2, par3, par4, par2, par3, par4);
             par1World.playSoundEffect((double)par2 + 0.5D, (double)par3 + 0.5D, (double)par4 + 0.5D, "random.click", 0.3F, 0.5F);
@@ -366,7 +366,7 @@ public class BlockButton extends Block
 
         if (var8)
         {
-            par1World.scheduleBlockUpdate(par2, par3, par4, this.blockID, this.tickRate());
+            par1World.scheduleBlockUpdate(par2, par3, par4, this.blockID, this.tickRate(par1World));
         }
     }
 
@@ -395,4 +395,10 @@ public class BlockButton extends Block
             par1World.notifyBlocksOfNeighborChange(par2, par3 - 1, par4, this.blockID);
         }
     }
+
+    /**
+     * When this method is called, your block should register all the icons it needs with the given IconRegister. This
+     * is the only chance you get to register icons.
+     */
+    public void registerIcons(IconRegister par1IconRegister) {}
 }

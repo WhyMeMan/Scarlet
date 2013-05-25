@@ -93,4 +93,10 @@ public class ReflectorMethod
         Method var1 = this.getTargetMethod();
         return var1 == null ? null : var1.getReturnType();
     }
+
+    public void deactivate()
+    {
+        this.checked = true;
+        this.targetMethod = null;
+    }
 }

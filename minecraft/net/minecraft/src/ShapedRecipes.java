@@ -95,7 +95,7 @@ public class ShapedRecipes implements IRecipe
                         return false;
                     }
 
-                    if (var9.getItemDamage() != -1 && var9.getItemDamage() != var10.getItemDamage())
+                    if (var9.getItemDamage() != 32767 && var9.getItemDamage() != var10.getItemDamage())
                     {
                         return false;
                     }

@@ -26,7 +26,7 @@ public class EntityLargeExplodeFX extends EntityFX
 
         if (var8 <= 15)
         {
-            this.theRenderEngine.bindTexture(this.theRenderEngine.getTexture("/misc/explosion.png"));
+            this.theRenderEngine.bindTexture("/misc/explosion.png");
             float var9 = (float)(var8 % 4) / 4.0F;
             float var10 = var9 + 0.24975F;
             float var11 = (float)(var8 / 4) / 4.0F;

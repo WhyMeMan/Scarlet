@@ -12,10 +12,11 @@ public class BlockFire extends Block
      * fires
      */
     private int[] abilityToCatchFire = new int[256];
+    private Icon[] iconArray;
 
-    protected BlockFire(int par1, int par2)
+    protected BlockFire(int par1)
     {
-        super(par1, par2, Material.fire);
+        super(par1, Material.fire);
         this.setTickRandomly(true);
     }
 
@@ -29,7 +30,7 @@ public class BlockFire extends Block
         this.setBurnRate(Block.woodDoubleSlab.blockID, 5, 20);
         this.setBurnRate(Block.woodSingleSlab.blockID, 5, 20);
         this.setBurnRate(Block.fence.blockID, 5, 20);
-        this.setBurnRate(Block.stairCompactPlanks.blockID, 5, 20);
+        this.setBurnRate(Block.stairsWoodOak.blockID, 5, 20);
         this.setBurnRate(Block.stairsWoodBirch.blockID, 5, 20);
         this.setBurnRate(Block.stairsWoodSpruce.blockID, 5, 20);
         this.setBurnRate(Block.stairsWoodJungle.blockID, 5, 20);
@@ -98,7 +99,7 @@ public class BlockFire extends Block
     /**
      * How many world ticks before ticking
      */
-    public int tickRate()
+    public int tickRate(World par1World)
     {
         return 30;
     }
@@ -119,12 +120,12 @@ public class BlockFire extends Block
 
             if (!this.canPlaceBlockAt(par1World, par2, par3, par4))
             {
-                par1World.setBlockWithNotify(par2, par3, par4, 0);
+                par1World.setBlockToAir(par2, par3, par4);
             }
 
             if (!var6 && par1World.isRaining() && (par1World.canLightningStrikeAt(par2, par3, par4) || par1World.canLightningStrikeAt(par2 - 1, par3, par4) || par1World.canLightningStrikeAt(par2 + 1, par3, par4) || par1World.canLightningStrikeAt(par2, par3, par4 - 1) || par1World.canLightningStrikeAt(par2, par3, par4 + 1)))
             {
-                par1World.setBlockWithNotify(par2, par3, par4, 0);
+                par1World.setBlockToAir(par2, par3, par4);
             }
             else
             {
@@ -132,21 +133,21 @@ public class BlockFire extends Block
 
                 if (var7 < 15)
                 {
-                    par1World.setBlockMetadata(par2, par3, par4, var7 + par5Random.nextInt(3) / 2);
+                    par1World.setBlockMetadataWithNotify(par2, par3, par4, var7 + par5Random.nextInt(3) / 2, 4);
                 }
 
-                par1World.scheduleBlockUpdate(par2, par3, par4, this.blockID, this.tickRate() + par5Random.nextInt(10));
+                par1World.scheduleBlockUpdate(par2, par3, par4, this.blockID, this.tickRate(par1World) + par5Random.nextInt(10));
 
                 if (!var6 && !this.canNeighborBurn(par1World, par2, par3, par4))
                 {
                     if (!par1World.doesBlockHaveSolidTopSurface(par2, par3 - 1, par4) || var7 > 3)
                     {
-                        par1World.setBlockWithNotify(par2, par3, par4, 0);
+                        par1World.setBlockToAir(par2, par3, par4);
                     }
                 }
                 else if (!var6 && !this.canBlockCatchFire(par1World, par2, par3 - 1, par4) && var7 == 15 && par5Random.nextInt(4) == 0)
                 {
-                    par1World.setBlockWithNotify(par2, par3, par4, 0);
+                    par1World.setBlockToAir(par2, par3, par4);
                 }
                 else
                 {
@@ -200,7 +201,7 @@ public class BlockFire extends Block
                                                 var16 = 15;
                                             }
 
-                                            par1World.setBlockAndMetadataWithNotify(var10, var12, var11, this.blockID, var16);
+                                            par1World.setBlock(var10, var12, var11, this.blockID, var16, 3);
                                         }
                                     }
                                 }
@@ -234,11 +235,11 @@ public class BlockFire extends Block
                     var10 = 15;
                 }
 
-                par1World.setBlockAndMetadataWithNotify(par2, par3, par4, this.blockID, var10);
+                par1World.setBlock(par2, par3, par4, this.blockID, var10, 3);
             }
             else
             {
-                par1World.setBlockWithNotify(par2, par3, par4, 0);
+                par1World.setBlockToAir(par2, par3, par4);
             }
 
             if (var9)
@@ -322,7 +323,7 @@ public class BlockFire extends Block
     {
         if (!par1World.doesBlockHaveSolidTopSurface(par2, par3 - 1, par4) && !this.canNeighborBurn(par1World, par2, par3, par4))
         {
-            par1World.setBlockWithNotify(par2, par3, par4, 0);
+            par1World.setBlockToAir(par2, par3, par4);
         }
     }
 
@@ -335,11 +336,11 @@ public class BlockFire extends Block
         {
             if (!par1World.doesBlockHaveSolidTopSurface(par2, par3 - 1, par4) && !this.canNeighborBurn(par1World, par2, par3, par4))
             {
-                par1World.setBlockWithNotify(par2, par3, par4, 0);
+                par1World.setBlockToAir(par2, par3, par4);
             }
             else
             {
-                par1World.scheduleBlockUpdate(par2, par3, par4, this.blockID, this.tickRate() + par1World.rand.nextInt(10));
+                par1World.scheduleBlockUpdate(par2, par3, par4, this.blockID, this.tickRate(par1World) + par1World.rand.nextInt(10));
             }
         }
     }
@@ -426,5 +427,27 @@ public class BlockFire extends Block
                 par1World.spawnParticle("largesmoke", (double)var7, (double)var8, (double)var9, 0.0D, 0.0D, 0.0D);
             }
         }
+    }
+
+    /**
+     * When this method is called, your block should register all the icons it needs with the given IconRegister. This
+     * is the only chance you get to register icons.
+     */
+    public void registerIcons(IconRegister par1IconRegister)
+    {
+        this.iconArray = new Icon[] {par1IconRegister.registerIcon("fire_0"), par1IconRegister.registerIcon("fire_1")};
+    }
+
+    public Icon func_94438_c(int par1)
+    {
+        return this.iconArray[par1];
+    }
+
+    /**
+     * From the specified side and block metadata retrieves the blocks texture. Args: side, metadata
+     */
+    public Icon getIcon(int par1, int par2)
+    {
+        return this.iconArray[0];
     }
 }

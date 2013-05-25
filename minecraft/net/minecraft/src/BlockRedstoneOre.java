@@ -6,22 +6,22 @@ public class BlockRedstoneOre extends Block
 {
     private boolean glowing;
 
-    public BlockRedstoneOre(int par1, int par2, boolean par3)
+    public BlockRedstoneOre(int par1, boolean par2)
     {
-        super(par1, par2, Material.rock);
+        super(par1, Material.rock);
 
-        if (par3)
+        if (par2)
         {
             this.setTickRandomly(true);
         }
 
-        this.glowing = par3;
+        this.glowing = par2;
     }
 
     /**
      * How many world ticks before ticking
      */
-    public int tickRate()
+    public int tickRate(World par1World)
     {
         return 30;
     }
@@ -62,7 +62,7 @@ public class BlockRedstoneOre extends Block
 
         if (this.blockID == Block.oreRedstone.blockID)
         {
-            par1World.setBlockWithNotify(par2, par3, par4, Block.oreRedstoneGlowing.blockID);
+            par1World.setBlock(par2, par3, par4, Block.oreRedstoneGlowing.blockID);
         }
     }
 
@@ -73,7 +73,7 @@ public class BlockRedstoneOre extends Block
     {
         if (this.blockID == Block.oreRedstoneGlowing.blockID)
         {
-            par1World.setBlockWithNotify(par2, par3, par4, Block.oreRedstone.blockID);
+            par1World.setBlock(par2, par3, par4, Block.oreRedstone.blockID);
         }
     }
 

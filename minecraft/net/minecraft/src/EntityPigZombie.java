@@ -54,7 +54,7 @@ public class EntityPigZombie extends EntityZombie
      */
     public boolean getCanSpawnHere()
     {
-        return this.worldObj.difficultySetting > 0 && this.worldObj.checkIfAABBIsClear(this.boundingBox) && this.worldObj.getCollidingBoundingBoxes(this, this.boundingBox).isEmpty() && !this.worldObj.isAnyLiquid(this.boundingBox);
+        return this.worldObj.difficultySetting > 0 && this.worldObj.checkNoEntityCollision(this.boundingBox) && this.worldObj.getCollidingBoundingBoxes(this, this.boundingBox).isEmpty() && !this.worldObj.isAnyLiquid(this.boundingBox);
     }
 
     /**
@@ -196,7 +196,10 @@ public class EntityPigZombie extends EntityZombie
         return Item.rottenFlesh.itemID;
     }
 
-    protected void func_82164_bB()
+    /**
+     * Makes entity wear random armor based on difficulty
+     */
+    protected void addRandomArmor()
     {
         this.setCurrentItemOrArmor(0, new ItemStack(Item.swordGold));
     }

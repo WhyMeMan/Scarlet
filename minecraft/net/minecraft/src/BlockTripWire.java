@@ -8,7 +8,7 @@ public class BlockTripWire extends Block
 {
     public BlockTripWire(int par1)
     {
-        super(par1, 173, Material.circuits);
+        super(par1, Material.circuits);
         this.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 0.15625F, 1.0F);
         this.setTickRandomly(true);
     }
@@ -16,7 +16,7 @@ public class BlockTripWire extends Block
     /**
      * How many world ticks before ticking
      */
-    public int tickRate()
+    public int tickRate(World par1World)
     {
         return 10;
     }
@@ -92,7 +92,7 @@ public class BlockTripWire extends Block
         if (var7 != var8)
         {
             this.dropBlockAsItem(par1World, par2, par3, par4, var6, 0);
-            par1World.setBlockWithNotify(par2, par3, par4, 0);
+            par1World.setBlockToAir(par2, par3, par4);
         }
     }
 
@@ -125,7 +125,7 @@ public class BlockTripWire extends Block
     public void onBlockAdded(World par1World, int par2, int par3, int par4)
     {
         int var5 = par1World.doesBlockHaveSolidTopSurface(par2, par3 - 1, par4) ? 0 : 2;
-        par1World.setBlockMetadataWithNotify(par2, par3, par4, var5);
+        par1World.setBlockMetadataWithNotify(par2, par3, par4, var5, 3);
         this.func_72149_e(par1World, par2, par3, par4, var5);
     }
 
@@ -146,7 +146,7 @@ public class BlockTripWire extends Block
         {
             if (par6EntityPlayer.getCurrentEquippedItem() != null && par6EntityPlayer.getCurrentEquippedItem().itemID == Item.shears.itemID)
             {
-                par1World.setBlockMetadataWithNotify(par2, par3, par4, par5 | 8);
+                par1World.setBlockMetadataWithNotify(par2, par3, par4, par5 | 8, 4);
             }
         }
     }
@@ -171,7 +171,7 @@ public class BlockTripWire extends Block
                     {
                         int var11 = par1World.getBlockMetadata(var8, par3, var9) & 3;
 
-                        if (var11 == Direction.footInvisibleFaceRemap[var6])
+                        if (var11 == Direction.rotateOpposite[var6])
                         {
                             Block.tripWireSource.func_72143_a(par1World, var8, par3, var9, var10, par1World.getBlockMetadata(var8, par3, var9), true, var7, par5);
                         }
@@ -222,7 +222,7 @@ public class BlockTripWire extends Block
         int var5 = par1World.getBlockMetadata(par2, par3, par4);
         boolean var6 = (var5 & 1) == 1;
         boolean var7 = false;
-        List var8 = par1World.getEntitiesWithinAABBExcludingEntity((Entity)null, AxisAlignedBB.getAABBPool().addOrModifyAABBInPool((double)par2 + this.minX, (double)par3 + this.minY, (double)par4 + this.minZ, (double)par2 + this.maxX, (double)par3 + this.maxY, (double)par4 + this.maxZ));
+        List var8 = par1World.getEntitiesWithinAABBExcludingEntity((Entity)null, AxisAlignedBB.getAABBPool().getAABB((double)par2 + this.minX, (double)par3 + this.minY, (double)par4 + this.minZ, (double)par2 + this.maxX, (double)par3 + this.maxY, (double)par4 + this.maxZ));
 
         if (!var8.isEmpty())
         {
@@ -252,13 +252,13 @@ public class BlockTripWire extends Block
 
         if (var7 != var6)
         {
-            par1World.setBlockMetadataWithNotify(par2, par3, par4, var5);
+            par1World.setBlockMetadataWithNotify(par2, par3, par4, var5, 3);
             this.func_72149_e(par1World, par2, par3, par4, var5);
         }
 
         if (var7)
         {
-            par1World.scheduleBlockUpdate(par2, par3, par4, this.blockID, this.tickRate());
+            par1World.scheduleBlockUpdate(par2, par3, par4, this.blockID, this.tickRate(par1World));
         }
     }
 
@@ -274,7 +274,7 @@ public class BlockTripWire extends Block
         {
             var11 = par0IBlockAccess.getBlockMetadata(var6, par2, var8);
             int var13 = var11 & 3;
-            return var13 == Direction.footInvisibleFaceRemap[par5];
+            return var13 == Direction.rotateOpposite[par5];
         }
         else if (var9 == Block.tripWire.blockID)
         {

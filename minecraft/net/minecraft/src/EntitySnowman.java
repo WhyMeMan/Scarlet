@@ -57,7 +57,7 @@ public class EntitySnowman extends EntityGolem implements IRangedAttackMob
 
             if (this.worldObj.getBlockId(var2, var3, var4) == 0 && this.worldObj.getBiomeGenForCoords(var2, var4).getFloatTemperature() < 0.8F && Block.snow.canPlaceBlockAt(this.worldObj, var2, var3, var4))
             {
-                this.worldObj.setBlockWithNotify(var2, var3, var4, Block.snow.blockID);
+                this.worldObj.setBlock(var2, var3, var4, Block.snow.blockID);
             }
         }
     }
@@ -87,15 +87,15 @@ public class EntitySnowman extends EntityGolem implements IRangedAttackMob
     /**
      * Attack the specified entity using a ranged attack.
      */
-    public void attackEntityWithRangedAttack(EntityLiving par1EntityLiving)
+    public void attackEntityWithRangedAttack(EntityLiving par1EntityLiving, float par2)
     {
-        EntitySnowball var2 = new EntitySnowball(this.worldObj, this);
-        double var3 = par1EntityLiving.posX - this.posX;
-        double var5 = par1EntityLiving.posY + (double)par1EntityLiving.getEyeHeight() - 1.100000023841858D - var2.posY;
-        double var7 = par1EntityLiving.posZ - this.posZ;
-        float var9 = MathHelper.sqrt_double(var3 * var3 + var7 * var7) * 0.2F;
-        var2.setThrowableHeading(var3, var5 + (double)var9, var7, 1.6F, 12.0F);
+        EntitySnowball var3 = new EntitySnowball(this.worldObj, this);
+        double var4 = par1EntityLiving.posX - this.posX;
+        double var6 = par1EntityLiving.posY + (double)par1EntityLiving.getEyeHeight() - 1.100000023841858D - var3.posY;
+        double var8 = par1EntityLiving.posZ - this.posZ;
+        float var10 = MathHelper.sqrt_double(var4 * var4 + var8 * var8) * 0.2F;
+        var3.setThrowableHeading(var4, var6 + (double)var10, var8, 1.6F, 12.0F);
         this.playSound("random.bow", 1.0F, 1.0F / (this.getRNG().nextFloat() * 0.4F + 0.8F));
-        this.worldObj.spawnEntityInWorld(var2);
+        this.worldObj.spawnEntityInWorld(var3);
     }
 }

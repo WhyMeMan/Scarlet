@@ -55,7 +55,7 @@ public class ItemEditableBook extends Item
 
             if (var6 != null)
             {
-                par3List.add("\u00a77" + String.format(StatCollector.translateToLocalFormatted("book.byAuthor", new Object[] {var6.data}), new Object[0]));
+                par3List.add(EnumChatFormatting.GRAY + String.format(StatCollector.translateToLocalFormatted("book.byAuthor", new Object[] {var6.data}), new Object[0]));
             }
         }
     }

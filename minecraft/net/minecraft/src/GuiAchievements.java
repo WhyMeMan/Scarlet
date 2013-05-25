@@ -56,8 +56,8 @@ public class GuiAchievements extends GuiScreen
      */
     public void initGui()
     {
-        this.controlList.clear();
-        this.controlList.add(new GuiSmallButton(1, this.width / 2 + 24, this.height / 2 + 74, 80, 20, StatCollector.translateToLocal("gui.done")));
+        this.buttonList.clear();
+        this.buttonList.add(new GuiSmallButton(1, this.width / 2 + 24, this.height / 2 + 74, 80, 20, StatCollector.translateToLocal("gui.done")));
     }
 
     /**
@@ -211,12 +211,10 @@ public class GuiAchievements extends GuiScreen
             var5 = guiMapRight - 1;
         }
 
-        int var6 = this.mc.renderEngine.getTexture("/terrain.png");
-        int var7 = this.mc.renderEngine.getTexture("/achievement/bg.png");
-        int var8 = (this.width - this.achievementsPaneWidth) / 2;
-        int var9 = (this.height - this.achievementsPaneHeight) / 2;
-        int var10 = var8 + 16;
-        int var11 = var9 + 17;
+        int var6 = (this.width - this.achievementsPaneWidth) / 2;
+        int var7 = (this.height - this.achievementsPaneHeight) / 2;
+        int var8 = var6 + 16;
+        int var9 = var7 + 17;
         this.zLevel = 0.0F;
         GL11.glDepthFunc(GL11.GL_GEQUAL);
         GL11.glPushMatrix();
@@ -225,128 +223,128 @@ public class GuiAchievements extends GuiScreen
         GL11.glDisable(GL11.GL_LIGHTING);
         GL11.glEnable(GL12.GL_RESCALE_NORMAL);
         GL11.glEnable(GL11.GL_COLOR_MATERIAL);
-        this.mc.renderEngine.bindTexture(var6);
-        int var12 = var4 + 288 >> 4;
-        int var13 = var5 + 288 >> 4;
-        int var14 = (var4 + 288) % 16;
-        int var15 = (var5 + 288) % 16;
-        Random var21 = new Random();
+        this.mc.renderEngine.bindTexture("/terrain.png");
+        int var10 = var4 + 288 >> 4;
+        int var11 = var5 + 288 >> 4;
+        int var12 = (var4 + 288) % 16;
+        int var13 = (var5 + 288) % 16;
+        Random var19 = new Random();
+        int var20;
+        int var23;
         int var22;
-        int var25;
-        int var24;
-        int var26;
 
-        for (var22 = 0; var22 * 16 - var15 < 155; ++var22)
+        for (var20 = 0; var20 * 16 - var13 < 155; ++var20)
         {
-            float var23 = 0.6F - (float)(var13 + var22) / 25.0F * 0.3F;
-            GL11.glColor4f(var23, var23, var23, 1.0F);
+            float var21 = 0.6F - (float)(var11 + var20) / 25.0F * 0.3F;
+            GL11.glColor4f(var21, var21, var21, 1.0F);
 
-            for (var24 = 0; var24 * 16 - var14 < 224; ++var24)
+            for (var22 = 0; var22 * 16 - var12 < 224; ++var22)
             {
-                var21.setSeed((long)(1234 + var12 + var24));
-                var21.nextInt();
-                var25 = var21.nextInt(1 + var13 + var22) + (var13 + var22) / 2;
-                var26 = Block.sand.blockIndexInTexture;
+                var19.setSeed((long)(1234 + var10 + var22));
+                var19.nextInt();
+                var23 = var19.nextInt(1 + var11 + var20) + (var11 + var20) / 2;
+                Icon var24 = Block.sand.getIcon(0, 0);
 
-                if (var25 <= 37 && var13 + var22 != 35)
+                if (var23 <= 37 && var11 + var20 != 35)
                 {
-                    if (var25 == 22)
+                    if (var23 == 22)
                     {
-                        if (var21.nextInt(2) == 0)
+                        if (var19.nextInt(2) == 0)
                         {
-                            var26 = Block.oreDiamond.blockIndexInTexture;
+                            var24 = Block.oreDiamond.getIcon(0, 0);
                         }
                         else
                         {
-                            var26 = Block.oreRedstone.blockIndexInTexture;
+                            var24 = Block.oreRedstone.getIcon(0, 0);
                         }
                     }
-                    else if (var25 == 10)
+                    else if (var23 == 10)
                     {
-                        var26 = Block.oreIron.blockIndexInTexture;
+                        var24 = Block.oreIron.getIcon(0, 0);
                     }
-                    else if (var25 == 8)
+                    else if (var23 == 8)
                     {
-                        var26 = Block.oreCoal.blockIndexInTexture;
+                        var24 = Block.oreCoal.getIcon(0, 0);
                     }
-                    else if (var25 > 4)
+                    else if (var23 > 4)
                     {
-                        var26 = Block.stone.blockIndexInTexture;
+                        var24 = Block.stone.getIcon(0, 0);
                     }
-                    else if (var25 > 0)
+                    else if (var23 > 0)
                     {
-                        var26 = Block.dirt.blockIndexInTexture;
+                        var24 = Block.dirt.getIcon(0, 0);
                     }
                 }
                 else
                 {
-                    var26 = Block.bedrock.blockIndexInTexture;
+                    var24 = Block.bedrock.getIcon(0, 0);
                 }
 
-                this.drawTexturedModalRect(var10 + var24 * 16 - var14, var11 + var22 * 16 - var15, var26 % 16 << 4, var26 >> 4 << 4, 16, 16);
+                this.drawTexturedModelRectFromIcon(var8 + var22 * 16 - var12, var9 + var20 * 16 - var13, var24, 16, 16);
             }
         }
 
         GL11.glEnable(GL11.GL_DEPTH_TEST);
         GL11.glDepthFunc(GL11.GL_LEQUAL);
         GL11.glDisable(GL11.GL_TEXTURE_2D);
-        int var27;
-        int var30;
+        int var25;
+        int var28;
+        int var41;
 
-        for (var22 = 0; var22 < AchievementList.achievementList.size(); ++var22)
+        for (var20 = 0; var20 < AchievementList.achievementList.size(); ++var20)
         {
-            Achievement var33 = (Achievement)AchievementList.achievementList.get(var22);
+            Achievement var31 = (Achievement)AchievementList.achievementList.get(var20);
 
-            if (var33.parentAchievement != null)
+            if (var31.parentAchievement != null)
             {
-                var24 = var33.displayColumn * 24 - var4 + 11 + var10;
-                var25 = var33.displayRow * 24 - var5 + 11 + var11;
-                var26 = var33.parentAchievement.displayColumn * 24 - var4 + 11 + var10;
-                var27 = var33.parentAchievement.displayRow * 24 - var5 + 11 + var11;
-                boolean var28 = this.statFileWriter.hasAchievementUnlocked(var33);
-                boolean var29 = this.statFileWriter.canUnlockAchievement(var33);
-                var30 = Math.sin((double)(Minecraft.getSystemTime() % 600L) / 600.0D * Math.PI * 2.0D) > 0.6D ? 255 : 130;
-                int var31 = -16777216;
+                var22 = var31.displayColumn * 24 - var4 + 11 + var8;
+                var23 = var31.displayRow * 24 - var5 + 11 + var9;
+                var41 = var31.parentAchievement.displayColumn * 24 - var4 + 11 + var8;
+                var25 = var31.parentAchievement.displayRow * 24 - var5 + 11 + var9;
+                boolean var26 = this.statFileWriter.hasAchievementUnlocked(var31);
+                boolean var27 = this.statFileWriter.canUnlockAchievement(var31);
+                var28 = Math.sin((double)(Minecraft.getSystemTime() % 600L) / 600.0D * Math.PI * 2.0D) > 0.6D ? 255 : 130;
+                int var29 = -16777216;
 
-                if (var28)
+                if (var26)
                 {
-                    var31 = -9408400;
+                    var29 = -9408400;
                 }
-                else if (var29)
+                else if (var27)
                 {
-                    var31 = 65280 + (var30 << 24);
+                    var29 = 65280 + (var28 << 24);
                 }
 
-                this.drawHorizontalLine(var24, var26, var25, var31);
-                this.drawVerticalLine(var26, var25, var27, var31);
+                this.drawHorizontalLine(var22, var41, var23, var29);
+                this.drawVerticalLine(var41, var23, var25, var29);
             }
         }
 
-        Achievement var32 = null;
-        RenderItem var37 = new RenderItem();
+        Achievement var30 = null;
+        RenderItem var32 = new RenderItem();
         RenderHelper.enableGUIStandardItemLighting();
         GL11.glDisable(GL11.GL_LIGHTING);
         GL11.glEnable(GL12.GL_RESCALE_NORMAL);
         GL11.glEnable(GL11.GL_COLOR_MATERIAL);
-        int var42;
-        int var41;
+        int var39;
+        int var40;
 
-        for (var24 = 0; var24 < AchievementList.achievementList.size(); ++var24)
+        for (var22 = 0; var22 < AchievementList.achievementList.size(); ++var22)
         {
-            Achievement var35 = (Achievement)AchievementList.achievementList.get(var24);
-            var26 = var35.displayColumn * 24 - var4;
-            var27 = var35.displayRow * 24 - var5;
+            Achievement var34 = (Achievement)AchievementList.achievementList.get(var22);
+            var41 = var34.displayColumn * 24 - var4;
+            var25 = var34.displayRow * 24 - var5;
 
-            if (var26 >= -24 && var27 >= -24 && var26 <= 224 && var27 <= 155)
+            if (var41 >= -24 && var25 >= -24 && var41 <= 224 && var25 <= 155)
             {
                 float var38;
 
-                if (this.statFileWriter.hasAchievementUnlocked(var35))
+                if (this.statFileWriter.hasAchievementUnlocked(var34))
                 {
                     var38 = 1.0F;
                     GL11.glColor4f(var38, var38, var38, 1.0F);
                 }
-                else if (this.statFileWriter.canUnlockAchievement(var35))
+                else if (this.statFileWriter.canUnlockAchievement(var34))
                 {
                     var38 = Math.sin((double)(Minecraft.getSystemTime() % 600L) / 600.0D * Math.PI * 2.0D) < 0.6D ? 0.6F : 0.8F;
                     GL11.glColor4f(var38, var38, var38, 1.0F);
@@ -357,41 +355,41 @@ public class GuiAchievements extends GuiScreen
                     GL11.glColor4f(var38, var38, var38, 1.0F);
                 }
 
-                this.mc.renderEngine.bindTexture(var7);
-                var42 = var10 + var26;
-                var41 = var11 + var27;
+                this.mc.renderEngine.bindTexture("/achievement/bg.png");
+                var40 = var8 + var41;
+                var39 = var9 + var25;
 
-                if (var35.getSpecial())
+                if (var34.getSpecial())
                 {
-                    this.drawTexturedModalRect(var42 - 2, var41 - 2, 26, 202, 26, 26);
+                    this.drawTexturedModalRect(var40 - 2, var39 - 2, 26, 202, 26, 26);
                 }
                 else
                 {
-                    this.drawTexturedModalRect(var42 - 2, var41 - 2, 0, 202, 26, 26);
+                    this.drawTexturedModalRect(var40 - 2, var39 - 2, 0, 202, 26, 26);
                 }
 
-                if (!this.statFileWriter.canUnlockAchievement(var35))
+                if (!this.statFileWriter.canUnlockAchievement(var34))
                 {
-                    float var40 = 0.1F;
-                    GL11.glColor4f(var40, var40, var40, 1.0F);
-                    var37.field_77024_a = false;
+                    float var37 = 0.1F;
+                    GL11.glColor4f(var37, var37, var37, 1.0F);
+                    var32.renderWithColor = false;
                 }
 
                 GL11.glEnable(GL11.GL_LIGHTING);
                 GL11.glEnable(GL11.GL_CULL_FACE);
-                var37.renderItemAndEffectIntoGUI(this.mc.fontRenderer, this.mc.renderEngine, var35.theItemStack, var42 + 3, var41 + 3);
+                var32.renderItemAndEffectIntoGUI(this.mc.fontRenderer, this.mc.renderEngine, var34.theItemStack, var40 + 3, var39 + 3);
                 GL11.glDisable(GL11.GL_LIGHTING);
 
-                if (!this.statFileWriter.canUnlockAchievement(var35))
+                if (!this.statFileWriter.canUnlockAchievement(var34))
                 {
-                    var37.field_77024_a = true;
+                    var32.renderWithColor = true;
                 }
 
                 GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 
-                if (par1 >= var10 && par2 >= var11 && par1 < var10 + 224 && par2 < var11 + 155 && par1 >= var42 && par1 <= var42 + 22 && par2 >= var41 && par2 <= var41 + 22)
+                if (par1 >= var8 && par2 >= var9 && par1 < var8 + 224 && par2 < var9 + 155 && par1 >= var40 && par1 <= var40 + 22 && par2 >= var39 && par2 <= var39 + 22)
                 {
-                    var32 = var35;
+                    var30 = var34;
                 }
             }
         }
@@ -399,8 +397,8 @@ public class GuiAchievements extends GuiScreen
         GL11.glDisable(GL11.GL_DEPTH_TEST);
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        this.mc.renderEngine.bindTexture(var7);
-        this.drawTexturedModalRect(var8, var9, 0, 0, this.achievementsPaneWidth, this.achievementsPaneHeight);
+        this.mc.renderEngine.bindTexture("/achievement/bg.png");
+        this.drawTexturedModalRect(var6, var7, 0, 0, this.achievementsPaneWidth, this.achievementsPaneHeight);
         GL11.glPopMatrix();
         this.zLevel = 0.0F;
         GL11.glDepthFunc(GL11.GL_LEQUAL);
@@ -408,41 +406,41 @@ public class GuiAchievements extends GuiScreen
         GL11.glEnable(GL11.GL_TEXTURE_2D);
         super.drawScreen(par1, par2, par3);
 
-        if (var32 != null)
+        if (var30 != null)
         {
-            String var34 = StatCollector.translateToLocal(var32.getName());
-            String var36 = var32.getDescription();
-            var26 = par1 + 12;
-            var27 = par2 - 4;
+            String var33 = StatCollector.translateToLocal(var30.getName());
+            String var35 = var30.getDescription();
+            var41 = par1 + 12;
+            var25 = par2 - 4;
 
-            if (this.statFileWriter.canUnlockAchievement(var32))
+            if (this.statFileWriter.canUnlockAchievement(var30))
             {
-                var42 = Math.max(this.fontRenderer.getStringWidth(var34), 120);
-                var41 = this.fontRenderer.splitStringWidth(var36, var42);
+                var40 = Math.max(this.fontRenderer.getStringWidth(var33), 120);
+                var39 = this.fontRenderer.splitStringWidth(var35, var40);
 
-                if (this.statFileWriter.hasAchievementUnlocked(var32))
+                if (this.statFileWriter.hasAchievementUnlocked(var30))
                 {
-                    var41 += 12;
+                    var39 += 12;
                 }
 
-                this.drawGradientRect(var26 - 3, var27 - 3, var26 + var42 + 3, var27 + var41 + 3 + 12, -1073741824, -1073741824);
-                this.fontRenderer.drawSplitString(var36, var26, var27 + 12, var42, -6250336);
+                this.drawGradientRect(var41 - 3, var25 - 3, var41 + var40 + 3, var25 + var39 + 3 + 12, -1073741824, -1073741824);
+                this.fontRenderer.drawSplitString(var35, var41, var25 + 12, var40, -6250336);
 
-                if (this.statFileWriter.hasAchievementUnlocked(var32))
+                if (this.statFileWriter.hasAchievementUnlocked(var30))
                 {
-                    this.fontRenderer.drawStringWithShadow(StatCollector.translateToLocal("achievement.taken"), var26, var27 + var41 + 4, -7302913);
+                    this.fontRenderer.drawStringWithShadow(StatCollector.translateToLocal("achievement.taken"), var41, var25 + var39 + 4, -7302913);
                 }
             }
             else
             {
-                var42 = Math.max(this.fontRenderer.getStringWidth(var34), 120);
-                String var39 = StatCollector.translateToLocalFormatted("achievement.requires", new Object[] {StatCollector.translateToLocal(var32.parentAchievement.getName())});
-                var30 = this.fontRenderer.splitStringWidth(var39, var42);
-                this.drawGradientRect(var26 - 3, var27 - 3, var26 + var42 + 3, var27 + var30 + 12 + 3, -1073741824, -1073741824);
-                this.fontRenderer.drawSplitString(var39, var26, var27 + 12, var42, -9416624);
+                var40 = Math.max(this.fontRenderer.getStringWidth(var33), 120);
+                String var36 = StatCollector.translateToLocalFormatted("achievement.requires", new Object[] {StatCollector.translateToLocal(var30.parentAchievement.getName())});
+                var28 = this.fontRenderer.splitStringWidth(var36, var40);
+                this.drawGradientRect(var41 - 3, var25 - 3, var41 + var40 + 3, var25 + var28 + 12 + 3, -1073741824, -1073741824);
+                this.fontRenderer.drawSplitString(var36, var41, var25 + 12, var40, -9416624);
             }
 
-            this.fontRenderer.drawStringWithShadow(var34, var26, var27, this.statFileWriter.canUnlockAchievement(var32) ? (var32.getSpecial() ? -128 : -1) : (var32.getSpecial() ? -8355776 : -8355712));
+            this.fontRenderer.drawStringWithShadow(var33, var41, var25, this.statFileWriter.canUnlockAchievement(var30) ? (var30.getSpecial() ? -128 : -1) : (var30.getSpecial() ? -8355776 : -8355712));
         }
 
         GL11.glEnable(GL11.GL_DEPTH_TEST);

@@ -3,7 +3,7 @@ package net.minecraft.src;
 public class ScreenChatOptions extends GuiScreen
 {
     /** An array of all EnumOptions which are to do with chat. */
-    private static final EnumOptions[] allScreenChatOptions = new EnumOptions[] {EnumOptions.CHAT_VISIBILITY, EnumOptions.CHAT_COLOR, EnumOptions.CHAT_LINKS, EnumOptions.CHAT_OPACITY, EnumOptions.CHAT_LINKS_PROMPT};
+    private static final EnumOptions[] allScreenChatOptions = new EnumOptions[] {EnumOptions.CHAT_VISIBILITY, EnumOptions.CHAT_COLOR, EnumOptions.CHAT_LINKS, EnumOptions.CHAT_OPACITY, EnumOptions.CHAT_LINKS_PROMPT, EnumOptions.CHAT_SCALE, EnumOptions.CHAT_HEIGHT_FOCUSED, EnumOptions.CHAT_HEIGHT_UNFOCUSED, EnumOptions.CHAT_WIDTH};
     private static final EnumOptions[] allMultiplayerOptions = new EnumOptions[] {EnumOptions.SHOW_CAPE};
 
     /** Instance of GuiScreen. */
@@ -41,11 +41,11 @@ public class ScreenChatOptions extends GuiScreen
 
             if (var6.getEnumFloat())
             {
-                this.controlList.add(new GuiSlider(var6.returnEnumOrdinal(), this.width / 2 - 155 + var2 % 2 * 160, this.height / 6 + 24 * (var2 >> 1), var6, this.theSettings.getKeyBinding(var6), this.theSettings.getOptionFloatValue(var6)));
+                this.buttonList.add(new GuiSlider(var6.returnEnumOrdinal(), this.width / 2 - 155 + var2 % 2 * 160, this.height / 6 + 24 * (var2 >> 1), var6, this.theSettings.getKeyBinding(var6), this.theSettings.getOptionFloatValue(var6)));
             }
             else
             {
-                this.controlList.add(new GuiSmallButton(var6.returnEnumOrdinal(), this.width / 2 - 155 + var2 % 2 * 160, this.height / 6 + 24 * (var2 >> 1), var6, this.theSettings.getKeyBinding(var6)));
+                this.buttonList.add(new GuiSmallButton(var6.returnEnumOrdinal(), this.width / 2 - 155 + var2 % 2 * 160, this.height / 6 + 24 * (var2 >> 1), var6, this.theSettings.getKeyBinding(var6)));
             }
 
             ++var2;
@@ -67,17 +67,17 @@ public class ScreenChatOptions extends GuiScreen
 
             if (var6.getEnumFloat())
             {
-                this.controlList.add(new GuiSlider(var6.returnEnumOrdinal(), this.width / 2 - 155 + var2 % 2 * 160, this.height / 6 + 24 * (var2 >> 1), var6, this.theSettings.getKeyBinding(var6), this.theSettings.getOptionFloatValue(var6)));
+                this.buttonList.add(new GuiSlider(var6.returnEnumOrdinal(), this.width / 2 - 155 + var2 % 2 * 160, this.height / 6 + 24 * (var2 >> 1), var6, this.theSettings.getKeyBinding(var6), this.theSettings.getOptionFloatValue(var6)));
             }
             else
             {
-                this.controlList.add(new GuiSmallButton(var6.returnEnumOrdinal(), this.width / 2 - 155 + var2 % 2 * 160, this.height / 6 + 24 * (var2 >> 1), var6, this.theSettings.getKeyBinding(var6)));
+                this.buttonList.add(new GuiSmallButton(var6.returnEnumOrdinal(), this.width / 2 - 155 + var2 % 2 * 160, this.height / 6 + 24 * (var2 >> 1), var6, this.theSettings.getKeyBinding(var6)));
             }
 
             ++var2;
         }
 
-        this.controlList.add(new GuiButton(200, this.width / 2 - 100, this.height / 6 + 168, var1.translateKey("gui.done")));
+        this.buttonList.add(new GuiButton(200, this.width / 2 - 100, this.height / 6 + 168, var1.translateKey("gui.done")));
     }
 
     /**

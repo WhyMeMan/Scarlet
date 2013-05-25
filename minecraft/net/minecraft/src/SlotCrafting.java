@@ -68,7 +68,7 @@ public class SlotCrafting extends Slot
         {
             this.thePlayer.addStat(AchievementList.buildPickaxe, 1);
         }
-        else if (par1ItemStack.itemID == Block.stoneOvenIdle.blockID)
+        else if (par1ItemStack.itemID == Block.furnaceIdle.blockID)
         {
             this.thePlayer.addStat(AchievementList.buildFurnace, 1);
         }

@@ -4,9 +4,9 @@ import java.util.Random;
 
 public class BlockSnowBlock extends Block
 {
-    protected BlockSnowBlock(int par1, int par2)
+    protected BlockSnowBlock(int par1)
     {
-        super(par1, par2, Material.craftedSnow);
+        super(par1, Material.craftedSnow);
         this.setTickRandomly(true);
         this.setCreativeTab(CreativeTabs.tabBlock);
     }
@@ -35,7 +35,7 @@ public class BlockSnowBlock extends Block
         if (par1World.getSavedLightValue(EnumSkyBlock.Block, par2, par3, par4) > 11)
         {
             this.dropBlockAsItem(par1World, par2, par3, par4, par1World.getBlockMetadata(par2, par3, par4), 0);
-            par1World.setBlockWithNotify(par2, par3, par4, 0);
+            par1World.setBlockToAir(par2, par3, par4);
         }
     }
 }

@@ -9,10 +9,10 @@ class GuiCreateFlatWorldListSlot extends GuiSlot
 
     final GuiCreateFlatWorld createFlatWorldGui;
 
-    public GuiCreateFlatWorldListSlot(GuiCreateFlatWorld par1)
+    public GuiCreateFlatWorldListSlot(GuiCreateFlatWorld par1GuiCreateFlatWorld)
     {
-        super(par1.mc, par1.width, par1.height, 43, par1.height - 60, 24);
-        this.createFlatWorldGui = par1;
+        super(par1GuiCreateFlatWorld.mc, par1GuiCreateFlatWorld.width, par1GuiCreateFlatWorld.height, 43, par1GuiCreateFlatWorld.height - 60, 24);
+        this.createFlatWorldGui = par1GuiCreateFlatWorld;
         this.field_82454_a = -1;
     }
 
@@ -38,16 +38,15 @@ class GuiCreateFlatWorldListSlot extends GuiSlot
 
     private void func_82450_b(int par1, int par2, int par3, int par4)
     {
-        int var5 = this.createFlatWorldGui.mc.renderEngine.getTexture("/gui/slot.png");
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        this.createFlatWorldGui.mc.renderEngine.bindTexture(var5);
-        Tessellator var10 = Tessellator.instance;
-        var10.startDrawingQuads();
-        var10.addVertexWithUV((double)(par1 + 0), (double)(par2 + 18), (double)this.createFlatWorldGui.zLevel, (double)((float)(par3 + 0) * 0.0078125F), (double)((float)(par4 + 18) * 0.0078125F));
-        var10.addVertexWithUV((double)(par1 + 18), (double)(par2 + 18), (double)this.createFlatWorldGui.zLevel, (double)((float)(par3 + 18) * 0.0078125F), (double)((float)(par4 + 18) * 0.0078125F));
-        var10.addVertexWithUV((double)(par1 + 18), (double)(par2 + 0), (double)this.createFlatWorldGui.zLevel, (double)((float)(par3 + 18) * 0.0078125F), (double)((float)(par4 + 0) * 0.0078125F));
-        var10.addVertexWithUV((double)(par1 + 0), (double)(par2 + 0), (double)this.createFlatWorldGui.zLevel, (double)((float)(par3 + 0) * 0.0078125F), (double)((float)(par4 + 0) * 0.0078125F));
-        var10.draw();
+        this.createFlatWorldGui.mc.renderEngine.bindTexture("/gui/slot.png");
+        Tessellator var9 = Tessellator.instance;
+        var9.startDrawingQuads();
+        var9.addVertexWithUV((double)(par1 + 0), (double)(par2 + 18), (double)this.createFlatWorldGui.zLevel, (double)((float)(par3 + 0) * 0.0078125F), (double)((float)(par4 + 18) * 0.0078125F));
+        var9.addVertexWithUV((double)(par1 + 18), (double)(par2 + 18), (double)this.createFlatWorldGui.zLevel, (double)((float)(par3 + 18) * 0.0078125F), (double)((float)(par4 + 18) * 0.0078125F));
+        var9.addVertexWithUV((double)(par1 + 18), (double)(par2 + 0), (double)this.createFlatWorldGui.zLevel, (double)((float)(par3 + 18) * 0.0078125F), (double)((float)(par4 + 0) * 0.0078125F));
+        var9.addVertexWithUV((double)(par1 + 0), (double)(par2 + 0), (double)this.createFlatWorldGui.zLevel, (double)((float)(par3 + 0) * 0.0078125F), (double)((float)(par4 + 0) * 0.0078125F));
+        var9.draw();
     }
 
     /**

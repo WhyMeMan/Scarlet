@@ -2,6 +2,9 @@ package net.minecraft.src;
 
 public abstract class EntityAgeable extends EntityCreature
 {
+    private float field_98056_d = -1.0F;
+    private float field_98057_e;
+
     public EntityAgeable(World par1World)
     {
         super(par1World);
@@ -29,6 +32,11 @@ public abstract class EntityAgeable extends EntityCreature
                     var4.setGrowingAge(-24000);
                     var4.setLocationAndAngles(this.posX, this.posY, this.posZ, 0.0F, 0.0F);
                     this.worldObj.spawnEntityInWorld(var4);
+
+                    if (var2.hasDisplayName())
+                    {
+                        var4.func_94058_c(var2.getDisplayName());
+                    }
 
                     if (!par1EntityPlayer.capabilities.isCreativeMode)
                     {
@@ -69,6 +77,7 @@ public abstract class EntityAgeable extends EntityCreature
     public void setGrowingAge(int par1)
     {
         this.dataWatcher.updateObject(12, Integer.valueOf(par1));
+        this.func_98054_a(this.isChild());
     }
 
     /**
@@ -96,17 +105,25 @@ public abstract class EntityAgeable extends EntityCreature
     public void onLivingUpdate()
     {
         super.onLivingUpdate();
-        int var1 = this.getGrowingAge();
 
-        if (var1 < 0)
+        if (this.worldObj.isRemote)
         {
-            ++var1;
-            this.setGrowingAge(var1);
+            this.func_98054_a(this.isChild());
         }
-        else if (var1 > 0)
+        else
         {
-            --var1;
-            this.setGrowingAge(var1);
+            int var1 = this.getGrowingAge();
+
+            if (var1 < 0)
+            {
+                ++var1;
+                this.setGrowingAge(var1);
+            }
+            else if (var1 > 0)
+            {
+                --var1;
+                this.setGrowingAge(var1);
+            }
         }
     }
 
@@ -116,5 +133,30 @@ public abstract class EntityAgeable extends EntityCreature
     public boolean isChild()
     {
         return this.getGrowingAge() < 0;
+    }
+
+    public void func_98054_a(boolean par1)
+    {
+        this.func_98055_j(par1 ? 0.5F : 1.0F);
+    }
+
+    /**
+     * Sets the width and height of the entity. Args: width, height
+     */
+    protected final void setSize(float par1, float par2)
+    {
+        boolean var3 = this.field_98056_d > 0.0F;
+        this.field_98056_d = par1;
+        this.field_98057_e = par2;
+
+        if (!var3)
+        {
+            this.func_98055_j(1.0F);
+        }
+    }
+
+    private void func_98055_j(float par1)
+    {
+        super.setSize(this.field_98056_d * par1, this.field_98057_e * par1);
     }
 }

@@ -5,6 +5,7 @@ import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.net.SocketTimeoutException;
+import net.minecraft.client.Minecraft;
 
 public class ThreadLanServerFind extends Thread
 {
@@ -51,7 +52,7 @@ public class ThreadLanServerFind extends Thread
             }
 
             String var3 = new String(var1.getData(), var1.getOffset(), var1.getLength());
-            System.out.println(var1.getAddress() + ": " + var3);
+            Minecraft.getMinecraft().getLogAgent().logFine(var1.getAddress() + ": " + var3);
             this.localServerList.func_77551_a(var3, var1.getAddress());
         }
 

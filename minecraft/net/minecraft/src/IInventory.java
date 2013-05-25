@@ -35,6 +35,12 @@ public interface IInventory
     String getInvName();
 
     /**
+     * If this returns false, the inventory name will be used as an unlocalized name, and translated into the player's
+     * language. Otherwise it will be used directly.
+     */
+    boolean isInvNameLocalized();
+
+    /**
      * Returns the maximum stack size for a inventory slot. Seems to always be 64, possibly will be extended. *Isn't
      * this more of a set than a get?*
      */
@@ -53,4 +59,9 @@ public interface IInventory
     void openChest();
 
     void closeChest();
+
+    /**
+     * Returns true if automation is allowed to insert the given stack (ignoring stack size) into the given slot.
+     */
+    boolean isStackValidForSlot(int var1, ItemStack var2);
 }

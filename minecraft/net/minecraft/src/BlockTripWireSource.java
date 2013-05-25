@@ -6,7 +6,7 @@ public class BlockTripWireSource extends Block
 {
     public BlockTripWireSource(int par1)
     {
-        super(par1, 172, Material.circuits);
+        super(par1, Material.circuits);
         this.setCreativeTab(CreativeTabs.tabRedstone);
         this.setTickRandomly(true);
     }
@@ -48,7 +48,7 @@ public class BlockTripWireSource extends Block
     /**
      * How many world ticks before ticking
      */
-    public int tickRate()
+    public int tickRate(World par1World)
     {
         return 10;
     }
@@ -144,7 +144,7 @@ public class BlockTripWireSource extends Block
                 if (var8)
                 {
                     this.dropBlockAsItem(par1World, par2, par3, par4, var6, 0);
-                    par1World.setBlockWithNotify(par2, par3, par4, 0);
+                    par1World.setBlockToAir(par2, par3, par4);
                 }
             }
         }
@@ -178,7 +178,7 @@ public class BlockTripWireSource extends Block
             {
                 var24 = par1World.getBlockMetadata(var21, par3, var22);
 
-                if ((var24 & 3) == Direction.footInvisibleFaceRemap[var10])
+                if ((var24 & 3) == Direction.rotateOpposite[var10])
                 {
                     var18 = var20;
                 }
@@ -203,7 +203,7 @@ public class BlockTripWireSource extends Block
 
                 if (var20 == par8)
                 {
-                    par1World.scheduleBlockUpdate(par2, par3, par4, par5, this.tickRate());
+                    par1World.scheduleBlockUpdate(par2, par3, par4, par5, this.tickRate(par1World));
                     var13 &= var25;
                 }
             }
@@ -218,8 +218,8 @@ public class BlockTripWireSource extends Block
         {
             var21 = par2 + var16 * var18;
             var22 = par4 + var17 * var18;
-            var23 = Direction.footInvisibleFaceRemap[var10];
-            par1World.setBlockMetadataWithNotify(var21, par3, var22, var23 | var20);
+            var23 = Direction.rotateOpposite[var10];
+            par1World.setBlockMetadataWithNotify(var21, par3, var22, var23 | var20, 3);
             this.notifyNeighborOfChange(par1World, var21, par3, var22, var23);
             this.playSoundEffect(par1World, var21, par3, var22, var13, var14, var11, var12);
         }
@@ -228,7 +228,7 @@ public class BlockTripWireSource extends Block
 
         if (par5 > 0)
         {
-            par1World.setBlockMetadataWithNotify(par2, par3, par4, par6);
+            par1World.setBlockMetadataWithNotify(par2, par3, par4, par6, 3);
 
             if (par7)
             {
@@ -255,7 +255,7 @@ public class BlockTripWireSource extends Block
                         var24 &= -5;
                     }
 
-                    par1World.setBlockMetadataWithNotify(var22, par3, var23, var24);
+                    par1World.setBlockMetadataWithNotify(var22, par3, var23, var24, 3);
                 }
             }
         }
@@ -319,7 +319,7 @@ public class BlockTripWireSource extends Block
         if (!this.canPlaceBlockAt(par1World, par2, par3, par4))
         {
             this.dropBlockAsItem(par1World, par2, par3, par4, par1World.getBlockMetadata(par2, par3, par4), 0);
-            par1World.setBlockWithNotify(par2, par3, par4, 0);
+            par1World.setBlockToAir(par2, par3, par4);
             return false;
         }
         else
@@ -398,27 +398,27 @@ public class BlockTripWireSource extends Block
      * returns true, standard redstone propagation rules will apply instead and this will not be called. Args: World, X,
      * Y, Z, side. Note that the side is reversed - eg it is 1 (up) when checking the bottom of the block.
      */
-    public boolean isProvidingWeakPower(IBlockAccess par1IBlockAccess, int par2, int par3, int par4, int par5)
+    public int isProvidingWeakPower(IBlockAccess par1IBlockAccess, int par2, int par3, int par4, int par5)
     {
-        return (par1IBlockAccess.getBlockMetadata(par2, par3, par4) & 8) == 8;
+        return (par1IBlockAccess.getBlockMetadata(par2, par3, par4) & 8) == 8 ? 15 : 0;
     }
 
     /**
      * Returns true if the block is emitting direct/strong redstone power on the specified side. Args: World, X, Y, Z,
      * side. Note that the side is reversed - eg it is 1 (up) when checking the bottom of the block.
      */
-    public boolean isProvidingStrongPower(IBlockAccess par1IBlockAccess, int par2, int par3, int par4, int par5)
+    public int isProvidingStrongPower(IBlockAccess par1IBlockAccess, int par2, int par3, int par4, int par5)
     {
         int var6 = par1IBlockAccess.getBlockMetadata(par2, par3, par4);
 
         if ((var6 & 8) != 8)
         {
-            return false;
+            return 0;
         }
         else
         {
             int var7 = var6 & 3;
-            return var7 == 2 && par5 == 2 ? true : (var7 == 0 && par5 == 3 ? true : (var7 == 1 && par5 == 4 ? true : var7 == 3 && par5 == 5));
+            return var7 == 2 && par5 == 2 ? 15 : (var7 == 0 && par5 == 3 ? 15 : (var7 == 1 && par5 == 4 ? 15 : (var7 == 3 && par5 == 5 ? 15 : 0)));
         }
     }
 

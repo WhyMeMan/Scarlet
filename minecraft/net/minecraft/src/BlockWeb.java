@@ -4,9 +4,9 @@ import java.util.Random;
 
 public class BlockWeb extends Block
 {
-    public BlockWeb(int par1, int par2)
+    public BlockWeb(int par1)
     {
-        super(par1, par2, Material.web);
+        super(par1, Material.web);
         this.setCreativeTab(CreativeTabs.tabDecorations);
     }
 

@@ -19,6 +19,7 @@ public class EntityFallingSand extends Entity
 
     /** Actual damage dealt to entities hit by falling block */
     private float fallHurtAmount;
+    public NBTTagCompound fallingBlockTileEntityData;
 
     public EntityFallingSand(World par1World)
     {
@@ -29,6 +30,7 @@ public class EntityFallingSand extends Entity
         this.isAnvil = false;
         this.fallHurtMax = 40;
         this.fallHurtAmount = 2.0F;
+        this.fallingBlockTileEntityData = null;
     }
 
     public EntityFallingSand(World par1World, double par2, double par4, double par6, int par8)
@@ -45,6 +47,7 @@ public class EntityFallingSand extends Entity
         this.isAnvil = false;
         this.fallHurtMax = 40;
         this.fallHurtAmount = 2.0F;
+        this.fallingBlockTileEntityData = null;
         this.blockID = par8;
         this.metadata = par9;
         this.preventEntitySpawning = true;
@@ -107,13 +110,13 @@ public class EntityFallingSand extends Entity
 
                 if (this.fallTime == 1)
                 {
-                    if (this.fallTime != 1 || this.worldObj.getBlockId(var1, var2, var3) != this.blockID)
+                    if (this.worldObj.getBlockId(var1, var2, var3) != this.blockID)
                     {
                         this.setDead();
                         return;
                     }
 
-                    this.worldObj.setBlockWithNotify(var1, var2, var3, 0);
+                    this.worldObj.setBlockToAir(var1, var2, var3);
                 }
 
                 if (this.onGround)
@@ -126,11 +129,36 @@ public class EntityFallingSand extends Entity
                     {
                         this.setDead();
 
-                        if (!this.isBreakingAnvil && this.worldObj.canPlaceEntityOnSide(this.blockID, var1, var2, var3, true, 1, (Entity)null) && !BlockSand.canFallBelow(this.worldObj, var1, var2 - 1, var3) && this.worldObj.setBlockAndMetadataWithNotify(var1, var2, var3, this.blockID, this.metadata))
+                        if (!this.isBreakingAnvil && this.worldObj.canPlaceEntityOnSide(this.blockID, var1, var2, var3, true, 1, (Entity)null, (ItemStack)null) && !BlockSand.canFallBelow(this.worldObj, var1, var2 - 1, var3) && this.worldObj.setBlock(var1, var2, var3, this.blockID, this.metadata, 3))
                         {
                             if (Block.blocksList[this.blockID] instanceof BlockSand)
                             {
                                 ((BlockSand)Block.blocksList[this.blockID]).onFinishFalling(this.worldObj, var1, var2, var3, this.metadata);
+                            }
+
+                            if (this.fallingBlockTileEntityData != null && Block.blocksList[this.blockID] instanceof ITileEntityProvider)
+                            {
+                                TileEntity var4 = this.worldObj.getBlockTileEntity(var1, var2, var3);
+
+                                if (var4 != null)
+                                {
+                                    NBTTagCompound var5 = new NBTTagCompound();
+                                    var4.writeToNBT(var5);
+                                    Iterator var6 = this.fallingBlockTileEntityData.getTags().iterator();
+
+                                    while (var6.hasNext())
+                                    {
+                                        NBTBase var7 = (NBTBase)var6.next();
+
+                                        if (!var7.getName().equals("x") && !var7.getName().equals("y") && !var7.getName().equals("z"))
+                                        {
+                                            var5.setTag(var7.getName(), var7.copy());
+                                        }
+                                    }
+
+                                    var4.readFromNBT(var5);
+                                    var4.onInventoryChanged();
+                                }
                             }
                         }
                         else if (this.shouldDropItem && !this.isBreakingAnvil)
@@ -198,12 +226,18 @@ public class EntityFallingSand extends Entity
     protected void writeEntityToNBT(NBTTagCompound par1NBTTagCompound)
     {
         par1NBTTagCompound.setByte("Tile", (byte)this.blockID);
+        par1NBTTagCompound.setInteger("TileID", this.blockID);
         par1NBTTagCompound.setByte("Data", (byte)this.metadata);
         par1NBTTagCompound.setByte("Time", (byte)this.fallTime);
         par1NBTTagCompound.setBoolean("DropItem", this.shouldDropItem);
         par1NBTTagCompound.setBoolean("HurtEntities", this.isAnvil);
         par1NBTTagCompound.setFloat("FallHurtAmount", this.fallHurtAmount);
         par1NBTTagCompound.setInteger("FallHurtMax", this.fallHurtMax);
+
+        if (this.fallingBlockTileEntityData != null)
+        {
+            par1NBTTagCompound.setCompoundTag("TileEntityData", this.fallingBlockTileEntityData);
+        }
     }
 
     /**
@@ -211,7 +245,15 @@ public class EntityFallingSand extends Entity
      */
     protected void readEntityFromNBT(NBTTagCompound par1NBTTagCompound)
     {
-        this.blockID = par1NBTTagCompound.getByte("Tile") & 255;
+        if (par1NBTTagCompound.hasKey("TileID"))
+        {
+            this.blockID = par1NBTTagCompound.getInteger("TileID");
+        }
+        else
+        {
+            this.blockID = par1NBTTagCompound.getByte("Tile") & 255;
+        }
+
         this.metadata = par1NBTTagCompound.getByte("Data") & 255;
         this.fallTime = par1NBTTagCompound.getByte("Time") & 255;
 
@@ -229,6 +271,11 @@ public class EntityFallingSand extends Entity
         if (par1NBTTagCompound.hasKey("DropItem"))
         {
             this.shouldDropItem = par1NBTTagCompound.getBoolean("DropItem");
+        }
+
+        if (par1NBTTagCompound.hasKey("TileEntityData"))
+        {
+            this.fallingBlockTileEntityData = par1NBTTagCompound.getCompoundTag("TileEntityData");
         }
 
         if (this.blockID == 0)

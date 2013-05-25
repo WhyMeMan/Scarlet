@@ -34,17 +34,17 @@ public class GuiPerformanceSettingsOF extends GuiScreen
 
             if (!var6.getEnumFloat())
             {
-                this.controlList.add(new GuiSmallButton(var6.returnEnumOrdinal(), var7, var8, var6, this.settings.getKeyBinding(var6)));
+                this.buttonList.add(new GuiSmallButton(var6.returnEnumOrdinal(), var7, var8, var6, this.settings.getKeyBinding(var6)));
             }
             else
             {
-                this.controlList.add(new GuiSlider(var6.returnEnumOrdinal(), var7, var8, var6, this.settings.getKeyBinding(var6), this.settings.getOptionFloatValue(var6)));
+                this.buttonList.add(new GuiSlider(var6.returnEnumOrdinal(), var7, var8, var6, this.settings.getKeyBinding(var6), this.settings.getOptionFloatValue(var6)));
             }
 
             ++var2;
         }
 
-        this.controlList.add(new GuiButton(200, this.width / 2 - 100, this.height / 6 + 168 + 11, var1.translateKey("gui.done")));
+        this.buttonList.add(new GuiButton(200, this.width / 2 - 100, this.height / 6 + 168 + 11, var1.translateKey("gui.done")));
     }
 
     /**
@@ -144,9 +144,9 @@ public class GuiPerformanceSettingsOF extends GuiScreen
 
     private GuiButton getSelectedButton(int var1, int var2)
     {
-        for (int var3 = 0; var3 < this.controlList.size(); ++var3)
+        for (int var3 = 0; var3 < this.buttonList.size(); ++var3)
         {
-            GuiButton var4 = (GuiButton)this.controlList.get(var3);
+            GuiButton var4 = (GuiButton)this.buttonList.get(var3);
             boolean var5 = var1 >= var4.xPosition && var2 >= var4.yPosition && var1 < var4.xPosition + var4.width && var2 < var4.yPosition + var4.height;
 
             if (var5)

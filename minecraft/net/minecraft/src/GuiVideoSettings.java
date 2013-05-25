@@ -16,7 +16,7 @@ public class GuiVideoSettings extends GuiScreen
     private boolean is64bit = false;
 
     /** An array of all of EnumOption's video options. */
-    private static EnumOptions[] videoOptions = new EnumOptions[] {EnumOptions.GRAPHICS, EnumOptions.RENDER_DISTANCE_FINE, EnumOptions.AO_LEVEL, EnumOptions.FRAMERATE_LIMIT_FINE, EnumOptions.ANAGLYPH, EnumOptions.VIEW_BOBBING, EnumOptions.GUI_SCALE, EnumOptions.ADVANCED_OPENGL, EnumOptions.GAMMA, EnumOptions.CHUNK_LOADING, EnumOptions.FOG_FANCY, EnumOptions.FOG_START};
+    private static EnumOptions[] videoOptions = new EnumOptions[] {EnumOptions.GRAPHICS, EnumOptions.RENDER_DISTANCE_FINE, EnumOptions.AMBIENT_OCCLUSION, EnumOptions.FRAMERATE_LIMIT_FINE, EnumOptions.AO_LEVEL, EnumOptions.VIEW_BOBBING, EnumOptions.GUI_SCALE, EnumOptions.ADVANCED_OPENGL, EnumOptions.GAMMA, EnumOptions.CHUNK_LOADING, EnumOptions.FOG_FANCY, EnumOptions.FOG_START, EnumOptions.USE_SERVER_TEXTURES};
     private int lastMouseX = 0;
     private int lastMouseY = 0;
     private long mouseStillTime = 0L;
@@ -48,11 +48,11 @@ public class GuiVideoSettings extends GuiScreen
 
             if (var6.getEnumFloat())
             {
-                this.controlList.add(new GuiSlider(var6.returnEnumOrdinal(), var7, var8, var6, this.guiGameSettings.getKeyBinding(var6), this.guiGameSettings.getOptionFloatValue(var6)));
+                this.buttonList.add(new GuiSlider(var6.returnEnumOrdinal(), var7, var8, var6, this.guiGameSettings.getKeyBinding(var6), this.guiGameSettings.getOptionFloatValue(var6)));
             }
             else
             {
-                this.controlList.add(new GuiSmallButton(var6.returnEnumOrdinal(), var7, var8, var6, this.guiGameSettings.getKeyBinding(var6)));
+                this.buttonList.add(new GuiSmallButton(var6.returnEnumOrdinal(), var7, var8, var6, this.guiGameSettings.getKeyBinding(var6)));
             }
 
             ++var2;
@@ -60,21 +60,19 @@ public class GuiVideoSettings extends GuiScreen
 
         int var13 = this.height / 6 + 21 * (var5 / 2) - 10;
         boolean var14 = false;
-        var7 = this.width / 2 - 155 + 0;
-        this.controlList.add(new GuiSmallButton(101, var7, var13, "Details..."));
         var7 = this.width / 2 - 155 + 160;
-        this.controlList.add(new GuiSmallButton(102, var7, var13, "Quality..."));
+        this.buttonList.add(new GuiSmallButton(102, var7, var13, "Quality..."));
         var13 += 21;
         var7 = this.width / 2 - 155 + 0;
-        this.controlList.add(new GuiSmallButton(111, var7, var13, "Animations..."));
+        this.buttonList.add(new GuiSmallButton(101, var7, var13, "Details..."));
         var7 = this.width / 2 - 155 + 160;
-        this.controlList.add(new GuiSmallButton(112, var7, var13, "Performance..."));
+        this.buttonList.add(new GuiSmallButton(112, var7, var13, "Performance..."));
         var13 += 21;
         var7 = this.width / 2 - 155 + 0;
-        this.controlList.add(new GuiSmallButton(121, var7, var13, "Texture Packs..."));
+        this.buttonList.add(new GuiSmallButton(111, var7, var13, "Animations..."));
         var7 = this.width / 2 - 155 + 160;
-        this.controlList.add(new GuiSmallButton(122, var7, var13, "Other..."));
-        this.controlList.add(new GuiButton(200, this.width / 2 - 100, this.height / 6 + 168 + 11, var1.translateKey("gui.done")));
+        this.buttonList.add(new GuiSmallButton(122, var7, var13, "Other..."));
+        this.buttonList.add(new GuiButton(200, this.width / 2 - 100, this.height / 6 + 168 + 11, var1.translateKey("gui.done")));
         this.is64bit = false;
         String[] var15 = new String[] {"sun.arch.data.model", "com.ibm.vm.bitmode", "os.arch"};
         String[] var9 = var15;
@@ -150,18 +148,11 @@ public class GuiVideoSettings extends GuiScreen
                 this.mc.displayGuiScreen(var9);
             }
 
-            if (par1GuiButton.id == 121)
-            {
-                this.mc.gameSettings.saveOptions();
-                GuiTexturePacks var10 = new GuiTexturePacks(this);
-                this.mc.displayGuiScreen(var10);
-            }
-
             if (par1GuiButton.id == 122)
             {
                 this.mc.gameSettings.saveOptions();
-                GuiOtherSettingsOF var11 = new GuiOtherSettingsOF(this, this.guiGameSettings);
-                this.mc.displayGuiScreen(var11);
+                GuiOtherSettingsOF var10 = new GuiOtherSettingsOF(this, this.guiGameSettings);
+                this.mc.displayGuiScreen(var10);
             }
 
             if (par1GuiButton.id == EnumOptions.AO_LEVEL.ordinal())
@@ -239,9 +230,9 @@ public class GuiVideoSettings extends GuiScreen
 
     private GuiButton getSelectedButton(int var1, int var2)
     {
-        for (int var3 = 0; var3 < this.controlList.size(); ++var3)
+        for (int var3 = 0; var3 < this.buttonList.size(); ++var3)
         {
-            GuiButton var4 = (GuiButton)this.controlList.get(var3);
+            GuiButton var4 = (GuiButton)this.buttonList.get(var3);
             boolean var5 = var1 >= var4.xPosition && var2 >= var4.yPosition && var1 < var4.xPosition + var4.width && var2 < var4.yPosition + var4.height;
 
             if (var5)

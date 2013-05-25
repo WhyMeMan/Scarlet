@@ -63,16 +63,16 @@ public class ComponentStrongholdPortalRoom extends ComponentStronghold
             this.fillWithBlocks(par1World, par3StructureBoundingBox, var5, 3, 15, var5, 4, 15, Block.fenceIron.blockID, Block.fenceIron.blockID, false);
         }
 
-        var5 = this.getMetadataWithOffset(Block.stairsStoneBrickSmooth.blockID, 3);
+        var5 = this.getMetadataWithOffset(Block.stairsStoneBrick.blockID, 3);
         this.fillWithRandomizedBlocks(par1World, par3StructureBoundingBox, 4, 1, 5, 6, 1, 7, false, par2Random, StructureStrongholdPieces.getStrongholdStones());
         this.fillWithRandomizedBlocks(par1World, par3StructureBoundingBox, 4, 2, 6, 6, 2, 7, false, par2Random, StructureStrongholdPieces.getStrongholdStones());
         this.fillWithRandomizedBlocks(par1World, par3StructureBoundingBox, 4, 3, 7, 6, 3, 7, false, par2Random, StructureStrongholdPieces.getStrongholdStones());
 
         for (int var6 = 4; var6 <= 6; ++var6)
         {
-            this.placeBlockAtCurrentPosition(par1World, Block.stairsStoneBrickSmooth.blockID, var5, var6, 1, 4, par3StructureBoundingBox);
-            this.placeBlockAtCurrentPosition(par1World, Block.stairsStoneBrickSmooth.blockID, var5, var6, 2, 5, par3StructureBoundingBox);
-            this.placeBlockAtCurrentPosition(par1World, Block.stairsStoneBrickSmooth.blockID, var5, var6, 3, 6, par3StructureBoundingBox);
+            this.placeBlockAtCurrentPosition(par1World, Block.stairsStoneBrick.blockID, var5, var6, 1, 4, par3StructureBoundingBox);
+            this.placeBlockAtCurrentPosition(par1World, Block.stairsStoneBrick.blockID, var5, var6, 2, 5, par3StructureBoundingBox);
+            this.placeBlockAtCurrentPosition(par1World, Block.stairsStoneBrick.blockID, var5, var6, 3, 6, par3StructureBoundingBox);
         }
 
         byte var14 = 2;
@@ -126,12 +126,12 @@ public class ComponentStrongholdPortalRoom extends ComponentStronghold
             if (par3StructureBoundingBox.isVecInside(var10, var13, var11))
             {
                 this.hasSpawner = true;
-                par1World.setBlockWithNotify(var10, var13, var11, Block.mobSpawner.blockID);
+                par1World.setBlock(var10, var13, var11, Block.mobSpawner.blockID, 0, 2);
                 TileEntityMobSpawner var12 = (TileEntityMobSpawner)par1World.getBlockTileEntity(var10, var13, var11);
 
                 if (var12 != null)
                 {
-                    var12.setMobID("Silverfish");
+                    var12.func_98049_a().setMobID("Silverfish");
                 }
             }
         }

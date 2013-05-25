@@ -125,7 +125,7 @@ public class TileEntityRenderer
      */
     public void renderTileEntity(TileEntity par1TileEntity, float par2)
     {
-        if (par1TileEntity.getDistanceFrom(this.playerX, this.playerY, this.playerZ) < par1TileEntity.func_82115_m())
+        if (par1TileEntity.getDistanceFrom(this.playerX, this.playerY, this.playerZ) < par1TileEntity.getMaxRenderDistanceSquared())
         {
             int var3 = this.worldObj.getLightBrightnessForSkyBlocks(par1TileEntity.xCoord, par1TileEntity.yCoord, par1TileEntity.zCoord, 0);
             int var4 = var3 % 65536;
@@ -145,7 +145,17 @@ public class TileEntityRenderer
 
         if (var9 != null)
         {
-            var9.renderTileEntityAt(par1TileEntity, par2, par4, par6, par8);
+            try
+            {
+                var9.renderTileEntityAt(par1TileEntity, par2, par4, par6, par8);
+            }
+            catch (Throwable var13)
+            {
+                CrashReport var11 = CrashReport.makeCrashReport(var13, "Rendering Tile Entity");
+                CrashReportCategory var12 = var11.makeCategory("Tile Entity Details");
+                par1TileEntity.func_85027_a(var12);
+                throw new ReportedException(var11);
+            }
         }
     }
 

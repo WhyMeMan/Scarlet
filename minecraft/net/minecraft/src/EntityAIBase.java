@@ -22,9 +22,9 @@ public abstract class EntityAIBase
     }
 
     /**
-     * Returns whether the task requires multiple updates or not
+     * Determine if this AI Task is interruptible by a higher (= lower value) priority task.
      */
-    public boolean isContinuous()
+    public boolean isInterruptible()
     {
         return true;
     }

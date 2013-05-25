@@ -24,6 +24,33 @@ public class TileEntityEnchantmentTable extends TileEntity
     public float bookRotationPrev;
     public float bookRotation;
     private static Random rand = new Random();
+    private String field_94136_s;
+
+    /**
+     * Writes a tile entity to NBT.
+     */
+    public void writeToNBT(NBTTagCompound par1NBTTagCompound)
+    {
+        super.writeToNBT(par1NBTTagCompound);
+
+        if (this.func_94135_b())
+        {
+            par1NBTTagCompound.setString("CustomName", this.field_94136_s);
+        }
+    }
+
+    /**
+     * Reads a tile entity from NBT.
+     */
+    public void readFromNBT(NBTTagCompound par1NBTTagCompound)
+    {
+        super.readFromNBT(par1NBTTagCompound);
+
+        if (par1NBTTagCompound.hasKey("CustomName"))
+        {
+            this.field_94136_s = par1NBTTagCompound.getString("CustomName");
+        }
+    }
 
     /**
      * Allows the entity to update its state. Overridden in most subclasses, e.g. the mob spawner uses this to count
@@ -121,5 +148,20 @@ public class TileEntityEnchantmentTable extends TileEntity
 
         this.field_70374_e += (var3 - this.field_70374_e) * 0.9F;
         this.pageFlip += this.field_70374_e;
+    }
+
+    public String func_94133_a()
+    {
+        return this.func_94135_b() ? this.field_94136_s : "container.enchant";
+    }
+
+    public boolean func_94135_b()
+    {
+        return this.field_94136_s != null && this.field_94136_s.length() > 0;
+    }
+
+    public void func_94134_a(String par1Str)
+    {
+        this.field_94136_s = par1Str;
     }
 }

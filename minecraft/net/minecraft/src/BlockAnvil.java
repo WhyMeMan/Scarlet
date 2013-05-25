@@ -6,11 +6,13 @@ public class BlockAnvil extends BlockSand
 {
     /** List of types/statues the Anvil can be in. */
     public static final String[] statuses = new String[] {"intact", "slightlyDamaged", "veryDamaged"};
+    private static final String[] anvilIconNames = new String[] {"anvil_top", "anvil_top_damaged_1", "anvil_top_damaged_2"};
     public int field_82521_b = 0;
+    private Icon[] iconArray;
 
     protected BlockAnvil(int par1)
     {
-        super(par1, 215, Material.anvil);
+        super(par1, Material.anvil);
         this.setLightOpacity(0);
         this.setCreativeTab(CreativeTabs.tabDecorations);
     }
@@ -35,66 +37,62 @@ public class BlockAnvil extends BlockSand
     /**
      * From the specified side and block metadata retrieves the blocks texture. Args: side, metadata
      */
-    public int getBlockTextureFromSideAndMetadata(int par1, int par2)
+    public Icon getIcon(int par1, int par2)
     {
         if (this.field_82521_b == 3 && par1 == 1)
         {
-            int var3 = par2 >> 2;
-
-            switch (var3)
-            {
-                case 1:
-                    return this.blockIndexInTexture + 1;
-
-                case 2:
-                    return this.blockIndexInTexture + 16 + 1;
-
-                default:
-                    return this.blockIndexInTexture + 16;
-            }
+            int var3 = (par2 >> 2) % this.iconArray.length;
+            return this.iconArray[var3];
         }
         else
         {
-            return this.blockIndexInTexture;
+            return this.blockIcon;
         }
     }
 
     /**
-     * Returns the block texture based on the side being looked at.  Args: side
+     * When this method is called, your block should register all the icons it needs with the given IconRegister. This
+     * is the only chance you get to register icons.
      */
-    public int getBlockTextureFromSide(int par1)
+    public void registerIcons(IconRegister par1IconRegister)
     {
-        return super.getBlockTextureFromSide(par1);
+        this.blockIcon = par1IconRegister.registerIcon("anvil_base");
+        this.iconArray = new Icon[anvilIconNames.length];
+
+        for (int var2 = 0; var2 < this.iconArray.length; ++var2)
+        {
+            this.iconArray[var2] = par1IconRegister.registerIcon(anvilIconNames[var2]);
+        }
     }
 
     /**
      * Called when the block is placed in the world.
      */
-    public void onBlockPlacedBy(World par1World, int par2, int par3, int par4, EntityLiving par5EntityLiving)
+    public void onBlockPlacedBy(World par1World, int par2, int par3, int par4, EntityLiving par5EntityLiving, ItemStack par6ItemStack)
     {
-        int var6 = MathHelper.floor_double((double)(par5EntityLiving.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
-        int var7 = par1World.getBlockMetadata(par2, par3, par4) >> 2;
-        ++var6;
-        var6 %= 4;
+        int var7 = MathHelper.floor_double((double)(par5EntityLiving.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
+        int var8 = par1World.getBlockMetadata(par2, par3, par4) >> 2;
+        ++var7;
+        var7 %= 4;
 
-        if (var6 == 0)
+        if (var7 == 0)
         {
-            par1World.setBlockMetadataWithNotify(par2, par3, par4, 2 | var7 << 2);
+            par1World.setBlockMetadataWithNotify(par2, par3, par4, 2 | var8 << 2, 2);
         }
 
-        if (var6 == 1)
+        if (var7 == 1)
         {
-            par1World.setBlockMetadataWithNotify(par2, par3, par4, 3 | var7 << 2);
+            par1World.setBlockMetadataWithNotify(par2, par3, par4, 3 | var8 << 2, 2);
         }
 
-        if (var6 == 2)
+        if (var7 == 2)
         {
-            par1World.setBlockMetadataWithNotify(par2, par3, par4, 0 | var7 << 2);
+            par1World.setBlockMetadataWithNotify(par2, par3, par4, 0 | var8 << 2, 2);
         }
 
-        if (var6 == 3)
+        if (var7 == 3)
         {
-            par1World.setBlockMetadataWithNotify(par2, par3, par4, 1 | var7 << 2);
+            par1World.setBlockMetadataWithNotify(par2, par3, par4, 1 | var8 << 2, 2);
         }
     }
 

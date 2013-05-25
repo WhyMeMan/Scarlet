@@ -74,7 +74,7 @@ public class WorldRendererSmooth extends WorldRenderer
                 {
                     float var3 = 0.0F;
                     GL11.glNewList(this.glRenderList + 2, GL11.GL_COMPILE);
-                    RenderItem.renderAABB(AxisAlignedBB.getAABBPool().addOrModifyAABBInPool((double)((float)this.posXClip - var3), (double)((float)this.posYClip - var3), (double)((float)this.posZClip - var3), (double)((float)(this.posXClip + 16) + var3), (double)((float)(this.posYClip + 16) + var3), (double)((float)(this.posZClip + 16) + var3)));
+                    RenderItem.renderAABB(AxisAlignedBB.getAABBPool().getAABB((double)((float)this.posXClip - var3), (double)((float)this.posYClip - var3), (double)((float)this.posZClip - var3), (double)((float)(this.posXClip + 16) + var3), (double)((float)(this.posYClip + 16) + var3), (double)((float)(this.posZClip + 16) + var3)));
                     GL11.glEndList();
                     this.needsBoxUpdate = false;
                 }
@@ -107,7 +107,7 @@ public class WorldRendererSmooth extends WorldRenderer
                 }
 
                 byte var27 = 1;
-                var9 = new ChunkCache(this.worldObj, var26 - var27, var4 - var27, var5 - var27, var6 + var27, var7 + var27, var8 + var27);
+                var9 = new ChunkCache(this.worldObj, var26 - var27, var4 - var27, var5 - var27, var6 + var27, var7 + var27, var8 + var27, var27);
                 var10 = new RenderBlocks(var9);
                 var11 = new HashSet();
                 var11.addAll(this.tileEntityRenderers);
@@ -143,12 +143,6 @@ public class WorldRendererSmooth extends WorldRenderer
                             if (var17)
                             {
                                 GL11.glNewList(this.glWorkLists[this.activeSet][var14][this.activeListIndex[var14]], GL11.GL_COMPILE);
-
-                                if (var13)
-                                {
-                                    Reflector.callVoid(Reflector.ForgeHooksClient_beforeRenderPass, new Object[] {Integer.valueOf(var14)});
-                                }
-
                                 var28.setRenderingChunk(true);
                                 var28.startDrawingQuads();
                                 var28.setTranslation((double)(-globalChunkOffsetX), 0.0D, (double)(-globalChunkOffsetZ));
@@ -156,11 +150,6 @@ public class WorldRendererSmooth extends WorldRenderer
                         }
                         else if (var17 && var1 != 0L && System.nanoTime() - var1 > 0L && this.activeListIndex[var14] < 15)
                         {
-                            if (var13)
-                            {
-                                Reflector.callVoid(Reflector.ForgeHooksClient_afterRenderPass, new Object[] {Integer.valueOf(var14)});
-                            }
-
                             var28.draw();
                             GL11.glEndList();
                             var28.setRenderingChunk(false);
@@ -190,12 +179,6 @@ public class WorldRendererSmooth extends WorldRenderer
                                     {
                                         var17 = true;
                                         GL11.glNewList(this.glWorkLists[this.activeSet][var14][this.activeListIndex[var14]], GL11.GL_COMPILE);
-
-                                        if (var13)
-                                        {
-                                            Reflector.callVoid(Reflector.ForgeHooksClient_beforeRenderPass, new Object[] {Integer.valueOf(var14)});
-                                        }
-
                                         var28.setRenderingChunk(true);
                                         var28.startDrawingQuads();
                                         var28.setTranslation((double)(-globalChunkOffsetX), 0.0D, (double)(-globalChunkOffsetZ));
@@ -229,17 +212,7 @@ public class WorldRendererSmooth extends WorldRenderer
 
                                     if (var24)
                                     {
-                                        if (var13)
-                                        {
-                                            Reflector.callVoid(Reflector.ForgeHooksClient_beforeBlockRender, new Object[] {var22, var10});
-                                        }
-
                                         var16 |= var10.renderBlockByRenderType(var22, var20, var18, var19);
-
-                                        if (var13)
-                                        {
-                                            Reflector.callVoid(Reflector.ForgeHooksClient_afterBlockRender, new Object[] {var22, var10});
-                                        }
                                     }
                                 }
                             }
@@ -248,11 +221,6 @@ public class WorldRendererSmooth extends WorldRenderer
 
                     if (var17)
                     {
-                        if (var13)
-                        {
-                            Reflector.callVoid(Reflector.ForgeHooksClient_afterRenderPass, new Object[] {Integer.valueOf(var14)});
-                        }
-
                         this.bytesDrawn += var28.draw();
                         GL11.glEndList();
                         var28.setRenderingChunk(false);

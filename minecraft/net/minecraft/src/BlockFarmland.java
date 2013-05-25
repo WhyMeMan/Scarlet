@@ -4,10 +4,12 @@ import java.util.Random;
 
 public class BlockFarmland extends Block
 {
+    private Icon field_94441_a;
+    private Icon field_94440_b;
+
     protected BlockFarmland(int par1)
     {
         super(par1, Material.ground);
-        this.blockIndexInTexture = 87;
         this.setTickRandomly(true);
         this.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 0.9375F, 1.0F);
         this.setLightOpacity(255);
@@ -19,7 +21,7 @@ public class BlockFarmland extends Block
      */
     public AxisAlignedBB getCollisionBoundingBoxFromPool(World par1World, int par2, int par3, int par4)
     {
-        return AxisAlignedBB.getAABBPool().addOrModifyAABBInPool((double)(par2 + 0), (double)(par3 + 0), (double)(par4 + 0), (double)(par2 + 1), (double)(par3 + 1), (double)(par4 + 1));
+        return AxisAlignedBB.getAABBPool().getAABB((double)(par2 + 0), (double)(par3 + 0), (double)(par4 + 0), (double)(par2 + 1), (double)(par3 + 1), (double)(par4 + 1));
     }
 
     /**
@@ -42,9 +44,9 @@ public class BlockFarmland extends Block
     /**
      * From the specified side and block metadata retrieves the blocks texture. Args: side, metadata
      */
-    public int getBlockTextureFromSideAndMetadata(int par1, int par2)
+    public Icon getIcon(int par1, int par2)
     {
-        return par1 == 1 && par2 > 0 ? this.blockIndexInTexture - 1 : (par1 == 1 ? this.blockIndexInTexture : 2);
+        return par1 == 1 ? (par2 > 0 ? this.field_94441_a : this.field_94440_b) : Block.dirt.getBlockTextureFromSide(par1);
     }
 
     /**
@@ -58,16 +60,16 @@ public class BlockFarmland extends Block
 
             if (var6 > 0)
             {
-                par1World.setBlockMetadataWithNotify(par2, par3, par4, var6 - 1);
+                par1World.setBlockMetadataWithNotify(par2, par3, par4, var6 - 1, 2);
             }
             else if (!this.isCropsNearby(par1World, par2, par3, par4))
             {
-                par1World.setBlockWithNotify(par2, par3, par4, Block.dirt.blockID);
+                par1World.setBlock(par2, par3, par4, Block.dirt.blockID);
             }
         }
         else
         {
-            par1World.setBlockMetadataWithNotify(par2, par3, par4, 7);
+            par1World.setBlockMetadataWithNotify(par2, par3, par4, 7, 2);
         }
     }
 
@@ -83,7 +85,7 @@ public class BlockFarmland extends Block
                 return;
             }
 
-            par1World.setBlockWithNotify(par2, par3, par4, Block.dirt.blockID);
+            par1World.setBlock(par2, par3, par4, Block.dirt.blockID);
         }
     }
 
@@ -143,7 +145,7 @@ public class BlockFarmland extends Block
 
         if (var6.isSolid())
         {
-            par1World.setBlockWithNotify(par2, par3, par4, Block.dirt.blockID);
+            par1World.setBlock(par2, par3, par4, Block.dirt.blockID);
         }
     }
 
@@ -161,5 +163,15 @@ public class BlockFarmland extends Block
     public int idPicked(World par1World, int par2, int par3, int par4)
     {
         return Block.dirt.blockID;
+    }
+
+    /**
+     * When this method is called, your block should register all the icons it needs with the given IconRegister. This
+     * is the only chance you get to register icons.
+     */
+    public void registerIcons(IconRegister par1IconRegister)
+    {
+        this.field_94441_a = par1IconRegister.registerIcon("farmland_wet");
+        this.field_94440_b = par1IconRegister.registerIcon("farmland_dry");
     }
 }

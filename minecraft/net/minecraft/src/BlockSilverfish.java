@@ -10,7 +10,7 @@ public class BlockSilverfish extends Block
 
     public BlockSilverfish(int par1)
     {
-        super(par1, 1, Material.clay);
+        super(par1, Material.clay);
         this.setHardness(0.0F);
         this.setCreativeTab(CreativeTabs.tabDecorations);
     }
@@ -18,10 +18,16 @@ public class BlockSilverfish extends Block
     /**
      * From the specified side and block metadata retrieves the blocks texture. Args: side, metadata
      */
-    public int getBlockTextureFromSideAndMetadata(int par1, int par2)
+    public Icon getIcon(int par1, int par2)
     {
-        return par2 == 1 ? Block.cobblestone.blockIndexInTexture : (par2 == 2 ? Block.stoneBrick.blockIndexInTexture : Block.stone.blockIndexInTexture);
+        return par2 == 1 ? Block.cobblestone.getBlockTextureFromSide(par1) : (par2 == 2 ? Block.stoneBrick.getBlockTextureFromSide(par1) : Block.stone.getBlockTextureFromSide(par1));
     }
+
+    /**
+     * When this method is called, your block should register all the icons it needs with the given IconRegister. This
+     * is the only chance you get to register icons.
+     */
+    public void registerIcons(IconRegister par1IconRegister) {}
 
     /**
      * Called right before the block is destroyed by a player.  Args: world, x, y, z, metaData

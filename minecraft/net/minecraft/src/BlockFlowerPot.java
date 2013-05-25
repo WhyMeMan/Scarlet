@@ -7,9 +7,7 @@ public class BlockFlowerPot extends Block
     public BlockFlowerPot(int par1)
     {
         super(par1, Material.circuits);
-        this.blockIndexInTexture = 186;
         this.setBlockBoundsForItemRender();
-        this.setRequiresSelfNotify();
     }
 
     /**
@@ -68,7 +66,7 @@ public class BlockFlowerPot extends Block
 
             if (var11 > 0)
             {
-                par1World.setBlockMetadataWithNotify(par2, par3, par4, var11);
+                par1World.setBlockMetadataWithNotify(par2, par3, par4, var11, 2);
 
                 if (!par5EntityPlayer.capabilities.isCreativeMode && --var10.stackSize <= 0)
                 {
@@ -102,7 +100,10 @@ public class BlockFlowerPot extends Block
         return var5 == null ? Item.flowerPot.itemID : var5.getItemDamage();
     }
 
-    public boolean func_82505_u_()
+    /**
+     * Returns true only if block is flowerPot
+     */
+    public boolean isFlowerPot()
     {
         return true;
     }
@@ -124,7 +125,7 @@ public class BlockFlowerPot extends Block
         if (!par1World.doesBlockHaveSolidTopSurface(par2, par3 - 1, par4))
         {
             this.dropBlockAsItem(par1World, par2, par3, par4, par1World.getBlockMetadata(par2, par3, par4), 0);
-            par1World.setBlockWithNotify(par2, par3, par4, 0);
+            par1World.setBlockToAir(par2, par3, par4);
         }
     }
 

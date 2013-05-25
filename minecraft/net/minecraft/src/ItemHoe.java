@@ -43,7 +43,7 @@ public class ItemHoe extends Item
                 }
                 else
                 {
-                    par3World.setBlockWithNotify(par4, par5, par6, var13.blockID);
+                    par3World.setBlock(par4, par5, par6, var13.blockID);
                     par1ItemStack.damageItem(1, par2EntityPlayer);
                     return true;
                 }
@@ -59,7 +59,11 @@ public class ItemHoe extends Item
         return true;
     }
 
-    public String func_77842_f()
+    /**
+     * Returns the name of the material this tool is made from as it is declared in EnumToolMaterial (meaning diamond
+     * would return "EMERALD")
+     */
+    public String getMaterialName()
     {
         return this.theToolMaterial.toString();
     }

@@ -38,11 +38,11 @@ public class GuiStats extends GuiScreen
     {
         this.statsTitle = StatCollector.translateToLocal("gui.stats");
         this.slotGeneral = new GuiSlotStatsGeneral(this);
-        this.slotGeneral.registerScrollButtons(this.controlList, 1, 1);
+        this.slotGeneral.registerScrollButtons(this.buttonList, 1, 1);
         this.slotItem = new GuiSlotStatsItem(this);
-        this.slotItem.registerScrollButtons(this.controlList, 1, 1);
+        this.slotItem.registerScrollButtons(this.buttonList, 1, 1);
         this.slotBlock = new GuiSlotStatsBlock(this);
-        this.slotBlock.registerScrollButtons(this.controlList, 1, 1);
+        this.slotBlock.registerScrollButtons(this.buttonList, 1, 1);
         this.selectedSlot = this.slotGeneral;
         this.addHeaderButtons();
     }
@@ -53,12 +53,12 @@ public class GuiStats extends GuiScreen
     public void addHeaderButtons()
     {
         StringTranslate var1 = StringTranslate.getInstance();
-        this.controlList.add(new GuiButton(0, this.width / 2 + 4, this.height - 28, 150, 20, var1.translateKey("gui.done")));
-        this.controlList.add(new GuiButton(1, this.width / 2 - 154, this.height - 52, 100, 20, var1.translateKey("stat.generalButton")));
+        this.buttonList.add(new GuiButton(0, this.width / 2 + 4, this.height - 28, 150, 20, var1.translateKey("gui.done")));
+        this.buttonList.add(new GuiButton(1, this.width / 2 - 154, this.height - 52, 100, 20, var1.translateKey("stat.generalButton")));
         GuiButton var2;
-        this.controlList.add(var2 = new GuiButton(2, this.width / 2 - 46, this.height - 52, 100, 20, var1.translateKey("stat.blocksButton")));
+        this.buttonList.add(var2 = new GuiButton(2, this.width / 2 - 46, this.height - 52, 100, 20, var1.translateKey("stat.blocksButton")));
         GuiButton var3;
-        this.controlList.add(var3 = new GuiButton(3, this.width / 2 + 62, this.height - 52, 100, 20, var1.translateKey("stat.itemsButton")));
+        this.buttonList.add(var3 = new GuiButton(3, this.width / 2 + 62, this.height - 52, 100, 20, var1.translateKey("stat.itemsButton")));
 
         if (this.slotBlock.getSize() == 0)
         {
@@ -137,16 +137,15 @@ public class GuiStats extends GuiScreen
      */
     private void drawSprite(int par1, int par2, int par3, int par4)
     {
-        int var5 = this.mc.renderEngine.getTexture("/gui/slot.png");
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        this.mc.renderEngine.bindTexture(var5);
-        Tessellator var10 = Tessellator.instance;
-        var10.startDrawingQuads();
-        var10.addVertexWithUV((double)(par1 + 0), (double)(par2 + 18), (double)this.zLevel, (double)((float)(par3 + 0) * 0.0078125F), (double)((float)(par4 + 18) * 0.0078125F));
-        var10.addVertexWithUV((double)(par1 + 18), (double)(par2 + 18), (double)this.zLevel, (double)((float)(par3 + 18) * 0.0078125F), (double)((float)(par4 + 18) * 0.0078125F));
-        var10.addVertexWithUV((double)(par1 + 18), (double)(par2 + 0), (double)this.zLevel, (double)((float)(par3 + 18) * 0.0078125F), (double)((float)(par4 + 0) * 0.0078125F));
-        var10.addVertexWithUV((double)(par1 + 0), (double)(par2 + 0), (double)this.zLevel, (double)((float)(par3 + 0) * 0.0078125F), (double)((float)(par4 + 0) * 0.0078125F));
-        var10.draw();
+        this.mc.renderEngine.bindTexture("/gui/slot.png");
+        Tessellator var9 = Tessellator.instance;
+        var9.startDrawingQuads();
+        var9.addVertexWithUV((double)(par1 + 0), (double)(par2 + 18), (double)this.zLevel, (double)((float)(par3 + 0) * 0.0078125F), (double)((float)(par4 + 18) * 0.0078125F));
+        var9.addVertexWithUV((double)(par1 + 18), (double)(par2 + 18), (double)this.zLevel, (double)((float)(par3 + 18) * 0.0078125F), (double)((float)(par4 + 18) * 0.0078125F));
+        var9.addVertexWithUV((double)(par1 + 18), (double)(par2 + 0), (double)this.zLevel, (double)((float)(par3 + 18) * 0.0078125F), (double)((float)(par4 + 0) * 0.0078125F));
+        var9.addVertexWithUV((double)(par1 + 0), (double)(par2 + 0), (double)this.zLevel, (double)((float)(par3 + 0) * 0.0078125F), (double)((float)(par4 + 0) * 0.0078125F));
+        var9.draw();
     }
 
     static Minecraft getMinecraft(GuiStats par0GuiStats)

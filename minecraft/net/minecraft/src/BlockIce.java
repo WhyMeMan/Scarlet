@@ -4,9 +4,9 @@ import java.util.Random;
 
 public class BlockIce extends BlockBreakable
 {
-    public BlockIce(int par1, int par2)
+    public BlockIce(int par1)
     {
-        super(par1, par2, Material.ice, false);
+        super(par1, "ice", Material.ice, false);
         this.slipperiness = 0.98F;
         this.setTickRandomly(true);
         this.setCreativeTab(CreativeTabs.tabBlock);
@@ -51,7 +51,7 @@ public class BlockIce extends BlockBreakable
         {
             if (par1World.provider.isHellWorld)
             {
-                par1World.setBlockWithNotify(par3, par4, par5, 0);
+                par1World.setBlockToAir(par3, par4, par5);
                 return;
             }
 
@@ -61,7 +61,7 @@ public class BlockIce extends BlockBreakable
 
             if (var8.blocksMovement() || var8.isLiquid())
             {
-                par1World.setBlockWithNotify(par3, par4, par5, Block.waterMoving.blockID);
+                par1World.setBlock(par3, par4, par5, Block.waterMoving.blockID);
             }
         }
     }
@@ -83,12 +83,12 @@ public class BlockIce extends BlockBreakable
         {
             if (par1World.provider.isHellWorld)
             {
-                par1World.setBlockWithNotify(par2, par3, par4, 0);
+                par1World.setBlockToAir(par2, par3, par4);
                 return;
             }
 
             this.dropBlockAsItem(par1World, par2, par3, par4, par1World.getBlockMetadata(par2, par3, par4), 0);
-            par1World.setBlockWithNotify(par2, par3, par4, Block.waterStill.blockID);
+            par1World.setBlock(par2, par3, par4, Block.waterStill.blockID);
         }
     }
 

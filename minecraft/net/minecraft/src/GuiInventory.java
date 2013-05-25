@@ -39,7 +39,7 @@ public class GuiInventory extends InventoryEffectRenderer
      */
     public void initGui()
     {
-        this.controlList.clear();
+        this.buttonList.clear();
 
         if (this.mc.playerController.isInCreativeMode())
         {
@@ -74,13 +74,12 @@ public class GuiInventory extends InventoryEffectRenderer
      */
     protected void drawGuiContainerBackgroundLayer(float par1, int par2, int par3)
     {
-        int var4 = this.mc.renderEngine.getTexture("/gui/inventory.png");
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        this.mc.renderEngine.bindTexture(var4);
-        int var5 = this.guiLeft;
-        int var6 = this.guiTop;
-        this.drawTexturedModalRect(var5, var6, 0, 0, this.xSize, this.ySize);
-        drawPlayerOnGui(this.mc, var5 + 51, var6 + 75, 30, (float)(var5 + 51) - this.xSize_lo, (float)(var6 + 75 - 50) - this.ySize_lo);
+        this.mc.renderEngine.bindTexture("/gui/inventory.png");
+        int var4 = this.guiLeft;
+        int var5 = this.guiTop;
+        this.drawTexturedModalRect(var4, var5, 0, 0, this.xSize, this.ySize);
+        drawPlayerOnGui(this.mc, var4 + 51, var5 + 75, 30, (float)(var4 + 51) - this.xSize_lo, (float)(var5 + 75 - 50) - this.ySize_lo);
     }
 
     public static void drawPlayerOnGui(Minecraft par0Minecraft, int par1, int par2, int par3, float par4, float par5)

@@ -4,9 +4,12 @@ import java.util.Random;
 
 public class BlockMushroom extends BlockFlower
 {
-    protected BlockMushroom(int par1, int par2)
+    private final String field_94374_a;
+
+    protected BlockMushroom(int par1, String par2Str)
     {
-        super(par1, par2);
+        super(par1);
+        this.field_94374_a = par2Str;
         float var3 = 0.2F;
         this.setBlockBounds(0.5F - var3, 0.0F, 0.5F - var3, 0.5F + var3, var3 * 2.0F, 0.5F + var3);
         this.setTickRandomly(true);
@@ -64,7 +67,7 @@ public class BlockMushroom extends BlockFlower
 
             if (par1World.isAirBlock(var8, var9, var10) && this.canBlockStay(par1World, var8, var9, var10))
             {
-                par1World.setBlockWithNotify(var8, var9, var10, this.blockID);
+                par1World.setBlock(var8, var9, var10, this.blockID);
             }
         }
     }
@@ -108,7 +111,7 @@ public class BlockMushroom extends BlockFlower
     public boolean fertilizeMushroom(World par1World, int par2, int par3, int par4, Random par5Random)
     {
         int var6 = par1World.getBlockMetadata(par2, par3, par4);
-        par1World.setBlock(par2, par3, par4, 0);
+        par1World.setBlockToAir(par2, par3, par4);
         WorldGenBigMushroom var7 = null;
 
         if (this.blockID == Block.mushroomBrown.blockID)
@@ -126,8 +129,17 @@ public class BlockMushroom extends BlockFlower
         }
         else
         {
-            par1World.setBlockAndMetadata(par2, par3, par4, this.blockID, var6);
+            par1World.setBlock(par2, par3, par4, this.blockID, var6, 3);
             return false;
         }
+    }
+
+    /**
+     * When this method is called, your block should register all the icons it needs with the given IconRegister. This
+     * is the only chance you get to register icons.
+     */
+    public void registerIcons(IconRegister par1IconRegister)
+    {
+        this.blockIcon = par1IconRegister.registerIcon(this.field_94374_a);
     }
 }

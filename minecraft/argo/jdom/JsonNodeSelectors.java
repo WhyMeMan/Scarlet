@@ -9,6 +9,16 @@ public final class JsonNodeSelectors
         return chainOn(par0ArrayOfObj, new JsonNodeSelector(new JsonNodeSelectors_String()));
     }
 
+    public static JsonNodeSelector func_98316_b(Object ... par0ArrayOfObj)
+    {
+        return chainOn(par0ArrayOfObj, new JsonNodeSelector(new JsonNodeSelectors_Number()));
+    }
+
+    public static JsonNodeSelector func_98315_c(Object ... par0ArrayOfObj)
+    {
+        return chainOn(par0ArrayOfObj, new JsonNodeSelector(new JsonNodeSelectors_Boolean()));
+    }
+
     public static JsonNodeSelector func_74683_b(Object ... par0ArrayOfObj)
     {
         return chainOn(par0ArrayOfObj, new JsonNodeSelector(new JsonNodeSelectors_Array()));

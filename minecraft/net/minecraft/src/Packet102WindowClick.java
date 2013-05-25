@@ -29,7 +29,7 @@ public class Packet102WindowClick extends Packet
         this.window_Id = par1;
         this.inventorySlot = par2;
         this.mouseClick = par3;
-        this.itemStack = par5ItemStack;
+        this.itemStack = par5ItemStack != null ? par5ItemStack.copy() : null;
         this.action = par6;
         this.holdingShift = par4;
     }

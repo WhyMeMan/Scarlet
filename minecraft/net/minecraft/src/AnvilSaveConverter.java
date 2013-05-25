@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import net.minecraft.server.MinecraftServer;
 
 public class AnvilSaveConverter extends SaveFormatOld
 {
@@ -17,39 +18,46 @@ public class AnvilSaveConverter extends SaveFormatOld
         super(par1File);
     }
 
-    public List getSaveList()
+    public List getSaveList() throws AnvilConverterException
     {
-        ArrayList var1 = new ArrayList();
-        File[] var2 = this.savesDirectory.listFiles();
-        File[] var3 = var2;
-        int var4 = var2.length;
-
-        for (int var5 = 0; var5 < var4; ++var5)
+        if (this.savesDirectory != null && this.savesDirectory.exists() && this.savesDirectory.isDirectory())
         {
-            File var6 = var3[var5];
+            ArrayList var1 = new ArrayList();
+            File[] var2 = this.savesDirectory.listFiles();
+            File[] var3 = var2;
+            int var4 = var2.length;
 
-            if (var6.isDirectory())
+            for (int var5 = 0; var5 < var4; ++var5)
             {
-                String var7 = var6.getName();
-                WorldInfo var8 = this.getWorldInfo(var7);
+                File var6 = var3[var5];
 
-                if (var8 != null && (var8.getSaveVersion() == 19132 || var8.getSaveVersion() == 19133))
+                if (var6.isDirectory())
                 {
-                    boolean var9 = var8.getSaveVersion() != this.getSaveVersion();
-                    String var10 = var8.getWorldName();
+                    String var7 = var6.getName();
+                    WorldInfo var8 = this.getWorldInfo(var7);
 
-                    if (var10 == null || MathHelper.stringNullOrLengthZero(var10))
+                    if (var8 != null && (var8.getSaveVersion() == 19132 || var8.getSaveVersion() == 19133))
                     {
-                        var10 = var7;
-                    }
+                        boolean var9 = var8.getSaveVersion() != this.getSaveVersion();
+                        String var10 = var8.getWorldName();
 
-                    long var11 = 0L;
-                    var1.add(new SaveFormatComparator(var7, var10, var8.getLastTimePlayed(), var11, var8.getGameType(), var9, var8.isHardcoreModeEnabled(), var8.areCommandsAllowed()));
+                        if (var10 == null || MathHelper.stringNullOrLengthZero(var10))
+                        {
+                            var10 = var7;
+                        }
+
+                        long var11 = 0L;
+                        var1.add(new SaveFormatComparator(var7, var10, var8.getLastTimePlayed(), var11, var8.getGameType(), var9, var8.isHardcoreModeEnabled(), var8.areCommandsAllowed()));
+                    }
                 }
             }
-        }
 
-        return var1;
+            return var1;
+        }
+        else
+        {
+            throw new AnvilConverterException("Unable to read or access folder where game worlds are saved!");
+        }
     }
 
     protected int getSaveVersion()
@@ -91,7 +99,7 @@ public class AnvilSaveConverter extends SaveFormatOld
         File var6 = new File(this.savesDirectory, par1Str);
         File var7 = new File(var6, "DIM-1");
         File var8 = new File(var6, "DIM1");
-        System.out.println("Scanning folders...");
+        MinecraftServer.getServer().getLogAgent().logInfo("Scanning folders...");
         this.addRegionFilesToCollection(var6, var3);
 
         if (var7.exists())
@@ -105,7 +113,7 @@ public class AnvilSaveConverter extends SaveFormatOld
         }
 
         int var9 = var3.size() + var4.size() + var5.size();
-        System.out.println("Total conversion count is " + var9);
+        MinecraftServer.getServer().getLogAgent().logInfo("Total conversion count is " + var9);
         WorldInfo var10 = this.getWorldInfo(par1Str);
         Object var11 = null;
 
@@ -202,7 +210,7 @@ public class AnvilSaveConverter extends SaveFormatOld
 
                         if (var12 == null)
                         {
-                            System.out.println("Failed to fetch input stream");
+                            MinecraftServer.getServer().getLogAgent().logWarning("Failed to fetch input stream");
                         }
                         else
                         {

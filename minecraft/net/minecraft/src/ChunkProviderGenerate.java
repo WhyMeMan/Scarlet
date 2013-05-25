@@ -532,12 +532,12 @@ public class ChunkProviderGenerate implements IChunkProvider
 
                 if (this.worldObj.isBlockFreezable(var12 + var4, var14 - 1, var13 + var5))
                 {
-                    this.worldObj.setBlockWithNotify(var12 + var4, var14 - 1, var13 + var5, Block.ice.blockID);
+                    this.worldObj.setBlock(var12 + var4, var14 - 1, var13 + var5, Block.ice.blockID, 0, 2);
                 }
 
                 if (this.worldObj.canSnowAt(var12 + var4, var14, var13 + var5))
                 {
-                    this.worldObj.setBlockWithNotify(var12 + var4, var14, var13 + var5, Block.snow.blockID);
+                    this.worldObj.setBlock(var12 + var4, var14, var13 + var5, Block.snow.blockID, 0, 2);
                 }
             }
         }
@@ -554,11 +554,12 @@ public class ChunkProviderGenerate implements IChunkProvider
         return true;
     }
 
+    public void func_104112_b() {}
+
     /**
-     * Unloads the 100 oldest chunks from memory, due to a bug with chunkSet.add() never being called it thinks the list
-     * is always empty and will not remove any chunks.
+     * Unloads chunks that are marked to be unloaded. This is not guaranteed to unload every such chunk.
      */
-    public boolean unload100OldestChunks()
+    public boolean unloadQueuedChunks()
     {
         return false;
     }

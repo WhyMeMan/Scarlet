@@ -3,11 +3,13 @@ package net.minecraft.src;
 public class BlockBreakable extends Block
 {
     private boolean localFlag;
+    private String breakableBlockIcon;
 
-    protected BlockBreakable(int par1, int par2, Material par3Material, boolean par4)
+    protected BlockBreakable(int par1, String par2Str, Material par3Material, boolean par4)
     {
-        super(par1, par2, par3Material);
+        super(par1, par3Material);
         this.localFlag = par4;
+        this.breakableBlockIcon = par2Str;
     }
 
     /**
@@ -27,5 +29,14 @@ public class BlockBreakable extends Block
     {
         int var6 = par1IBlockAccess.getBlockId(par2, par3, par4);
         return !this.localFlag && var6 == this.blockID ? false : super.shouldSideBeRendered(par1IBlockAccess, par2, par3, par4, par5);
+    }
+
+    /**
+     * When this method is called, your block should register all the icons it needs with the given IconRegister. This
+     * is the only chance you get to register icons.
+     */
+    public void registerIcons(IconRegister par1IconRegister)
+    {
+        this.blockIcon = par1IconRegister.registerIcon(this.breakableBlockIcon);
     }
 }

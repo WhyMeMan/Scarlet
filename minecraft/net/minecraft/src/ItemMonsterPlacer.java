@@ -5,6 +5,8 @@ import java.util.List;
 
 public class ItemMonsterPlacer extends Item
 {
+    private Icon theIcon;
+
     public ItemMonsterPlacer(int par1)
     {
         super(par1);
@@ -14,7 +16,7 @@ public class ItemMonsterPlacer extends Item
 
     public String getItemDisplayName(ItemStack par1ItemStack)
     {
-        String var2 = ("" + StatCollector.translateToLocal(this.getItemName() + ".name")).trim();
+        String var2 = ("" + StatCollector.translateToLocal(this.getUnlocalizedName() + ".name")).trim();
         String var3 = EntityList.getStringFromID(par1ItemStack.getItemDamage());
 
         if (var3 != null)
@@ -39,9 +41,9 @@ public class ItemMonsterPlacer extends Item
     /**
      * Gets an icon index based on an item's damage value and the given render pass
      */
-    public int getIconFromDamageForRenderPass(int par1, int par2)
+    public Icon getIconFromDamageForRenderPass(int par1, int par2)
     {
-        return par2 > 0 ? super.getIconFromDamageForRenderPass(par1, par2) + 16 : super.getIconFromDamageForRenderPass(par1, par2);
+        return par2 > 0 ? this.theIcon : super.getIconFromDamageForRenderPass(par1, par2);
     }
 
     /**
@@ -67,9 +69,19 @@ public class ItemMonsterPlacer extends Item
                 var12 = 0.5D;
             }
 
-            if (spawnCreature(par3World, par1ItemStack.getItemDamage(), (double)par4 + 0.5D, (double)par5 + var12, (double)par6 + 0.5D) != null && !par2EntityPlayer.capabilities.isCreativeMode)
+            Entity var14 = spawnCreature(par3World, par1ItemStack.getItemDamage(), (double)par4 + 0.5D, (double)par5 + var12, (double)par6 + 0.5D);
+
+            if (var14 != null)
             {
-                --par1ItemStack.stackSize;
+                if (var14 instanceof EntityLiving && par1ItemStack.hasDisplayName())
+                {
+                    ((EntityLiving)var14).func_94058_c(par1ItemStack.getDisplayName());
+                }
+
+                if (!par2EntityPlayer.capabilities.isCreativeMode)
+                {
+                    --par1ItemStack.stackSize;
+                }
             }
 
             return true;
@@ -122,5 +134,11 @@ public class ItemMonsterPlacer extends Item
             EntityEggInfo var5 = (EntityEggInfo)var4.next();
             par3List.add(new ItemStack(par1, 1, var5.spawnedID));
         }
+    }
+
+    public void registerIcons(IconRegister par1IconRegister)
+    {
+        super.registerIcons(par1IconRegister);
+        this.theIcon = par1IconRegister.registerIcon("monsterPlacer_overlay");
     }
 }

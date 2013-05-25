@@ -39,11 +39,11 @@ public class RenderWitherSkull extends Render
 
         if (par1EntityWitherSkull.isInvulnerable())
         {
-            this.loadDownloadableImageTexture((String)null, "/mob/wither_invul.png");
+            this.loadTexture("/mob/wither_invul.png");
         }
         else
         {
-            this.loadDownloadableImageTexture((String)null, "/mob/wither.png");
+            this.loadTexture("/mob/wither.png");
         }
 
         this.skeletonHeadModel.render(par1EntityWitherSkull, 0.0F, 0.0F, 0.0F, var10, var11, var12);

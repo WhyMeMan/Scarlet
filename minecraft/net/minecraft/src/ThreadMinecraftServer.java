@@ -4,17 +4,17 @@ import net.minecraft.server.MinecraftServer;
 
 public class ThreadMinecraftServer extends Thread
 {
-    /** Reference to the MinecraftServer object. */
-    final MinecraftServer mcServer;
+    /** Instance of MinecraftServer. */
+    final MinecraftServer theServer;
 
     public ThreadMinecraftServer(MinecraftServer par1MinecraftServer, String par2Str)
     {
         super(par2Str);
-        this.mcServer = par1MinecraftServer;
+        this.theServer = par1MinecraftServer;
     }
 
     public void run()
     {
-        this.mcServer.run();
+        this.theServer.run();
     }
 }

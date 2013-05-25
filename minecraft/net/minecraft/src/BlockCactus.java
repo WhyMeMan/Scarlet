@@ -4,9 +4,12 @@ import java.util.Random;
 
 public class BlockCactus extends Block
 {
-    protected BlockCactus(int par1, int par2)
+    private Icon cactusTopIcon;
+    private Icon cactusBottomIcon;
+
+    protected BlockCactus(int par1)
     {
-        super(par1, par2, Material.cactus);
+        super(par1, Material.cactus);
         this.setTickRandomly(true);
         this.setCreativeTab(CreativeTabs.tabDecorations);
     }
@@ -31,12 +34,13 @@ public class BlockCactus extends Block
 
                 if (var7 == 15)
                 {
-                    par1World.setBlockWithNotify(par2, par3 + 1, par4, this.blockID);
-                    par1World.setBlockMetadataWithNotify(par2, par3, par4, 0);
+                    par1World.setBlock(par2, par3 + 1, par4, this.blockID);
+                    par1World.setBlockMetadataWithNotify(par2, par3, par4, 0, 4);
+                    this.onNeighborBlockChange(par1World, par2, par3 + 1, par4, this.blockID);
                 }
                 else
                 {
-                    par1World.setBlockMetadataWithNotify(par2, par3, par4, var7 + 1);
+                    par1World.setBlockMetadataWithNotify(par2, par3, par4, var7 + 1, 4);
                 }
             }
         }
@@ -49,7 +53,7 @@ public class BlockCactus extends Block
     public AxisAlignedBB getCollisionBoundingBoxFromPool(World par1World, int par2, int par3, int par4)
     {
         float var5 = 0.0625F;
-        return AxisAlignedBB.getAABBPool().addOrModifyAABBInPool((double)((float)par2 + var5), (double)par3, (double)((float)par4 + var5), (double)((float)(par2 + 1) - var5), (double)((float)(par3 + 1) - var5), (double)((float)(par4 + 1) - var5));
+        return AxisAlignedBB.getAABBPool().getAABB((double)((float)par2 + var5), (double)par3, (double)((float)par4 + var5), (double)((float)(par2 + 1) - var5), (double)((float)(par3 + 1) - var5), (double)((float)(par4 + 1) - var5));
     }
 
     /**
@@ -58,15 +62,15 @@ public class BlockCactus extends Block
     public AxisAlignedBB getSelectedBoundingBoxFromPool(World par1World, int par2, int par3, int par4)
     {
         float var5 = 0.0625F;
-        return AxisAlignedBB.getAABBPool().addOrModifyAABBInPool((double)((float)par2 + var5), (double)par3, (double)((float)par4 + var5), (double)((float)(par2 + 1) - var5), (double)(par3 + 1), (double)((float)(par4 + 1) - var5));
+        return AxisAlignedBB.getAABBPool().getAABB((double)((float)par2 + var5), (double)par3, (double)((float)par4 + var5), (double)((float)(par2 + 1) - var5), (double)(par3 + 1), (double)((float)(par4 + 1) - var5));
     }
 
     /**
-     * Returns the block texture based on the side being looked at.  Args: side
+     * From the specified side and block metadata retrieves the blocks texture. Args: side, metadata
      */
-    public int getBlockTextureFromSide(int par1)
+    public Icon getIcon(int par1, int par2)
     {
-        return par1 == 1 ? this.blockIndexInTexture - 1 : (par1 == 0 ? this.blockIndexInTexture + 1 : this.blockIndexInTexture);
+        return par1 == 1 ? this.cactusTopIcon : (par1 == 0 ? this.cactusBottomIcon : this.blockIcon);
     }
 
     /**
@@ -110,8 +114,7 @@ public class BlockCactus extends Block
     {
         if (!this.canBlockStay(par1World, par2, par3, par4))
         {
-            this.dropBlockAsItem(par1World, par2, par3, par4, par1World.getBlockMetadata(par2, par3, par4), 0);
-            par1World.setBlockWithNotify(par2, par3, par4, 0);
+            par1World.destroyBlock(par2, par3, par4, true);
         }
     }
 
@@ -149,5 +152,16 @@ public class BlockCactus extends Block
     public void onEntityCollidedWithBlock(World par1World, int par2, int par3, int par4, Entity par5Entity)
     {
         par5Entity.attackEntityFrom(DamageSource.cactus, 1);
+    }
+
+    /**
+     * When this method is called, your block should register all the icons it needs with the given IconRegister. This
+     * is the only chance you get to register icons.
+     */
+    public void registerIcons(IconRegister par1IconRegister)
+    {
+        this.blockIcon = par1IconRegister.registerIcon("cactus_side");
+        this.cactusTopIcon = par1IconRegister.registerIcon("cactus_top");
+        this.cactusBottomIcon = par1IconRegister.registerIcon("cactus_bottom");
     }
 }

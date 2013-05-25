@@ -67,11 +67,11 @@ public class WorldGenForest extends WorldGenerator
                 if ((var8 == Block.grass.blockID || var8 == Block.dirt.blockID) && par4 < 256 - var6 - 1)
                 {
                     this.setBlock(par1World, par3, par4 - 1, par5, Block.dirt.blockID);
-                    int var16;
+                    int var17;
 
-                    for (var16 = par4 - 3 + var6; var16 <= par4 + var6; ++var16)
+                    for (var17 = par4 - 3 + var6; var17 <= par4 + var6; ++var17)
                     {
-                        var10 = var16 - (par4 + var6);
+                        var10 = var17 - (par4 + var6);
                         var11 = 1 - var10 / 2;
 
                         for (var12 = par3 - var11; var12 <= par3 + var11; ++var12)
@@ -82,21 +82,26 @@ public class WorldGenForest extends WorldGenerator
                             {
                                 int var15 = var14 - par5;
 
-                                if ((Math.abs(var13) != var11 || Math.abs(var15) != var11 || par2Random.nextInt(2) != 0 && var10 != 0) && !Block.opaqueCubeLookup[par1World.getBlockId(var12, var16, var14)])
+                                if (Math.abs(var13) != var11 || Math.abs(var15) != var11 || par2Random.nextInt(2) != 0 && var10 != 0)
                                 {
-                                    this.setBlockAndMetadata(par1World, var12, var16, var14, Block.leaves.blockID, 2);
+                                    int var16 = par1World.getBlockId(var12, var17, var14);
+
+                                    if (var16 == 0 || var16 == Block.leaves.blockID)
+                                    {
+                                        this.setBlockAndMetadata(par1World, var12, var17, var14, Block.leaves.blockID, 2);
+                                    }
                                 }
                             }
                         }
                     }
 
-                    for (var16 = 0; var16 < var6; ++var16)
+                    for (var17 = 0; var17 < var6; ++var17)
                     {
-                        var10 = par1World.getBlockId(par3, par4 + var16, par5);
+                        var10 = par1World.getBlockId(par3, par4 + var17, par5);
 
                         if (var10 == 0 || var10 == Block.leaves.blockID)
                         {
-                            this.setBlockAndMetadata(par1World, par3, par4 + var16, par5, Block.wood.blockID, 2);
+                            this.setBlockAndMetadata(par1World, par3, par4 + var17, par5, Block.wood.blockID, 2);
                         }
                     }
 

@@ -4,9 +4,9 @@ import java.util.Random;
 
 public class BlockStone extends Block
 {
-    public BlockStone(int par1, int par2)
+    public BlockStone(int par1)
     {
-        super(par1, par2, Material.rock);
+        super(par1, Material.rock);
         this.setCreativeTab(CreativeTabs.tabBlock);
     }
 

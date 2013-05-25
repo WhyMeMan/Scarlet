@@ -10,8 +10,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class CrashReport
 {
@@ -190,7 +188,7 @@ public class CrashReport
     /**
      * Saves the complete crash report to the given File.
      */
-    public boolean saveToFile(File par1File)
+    public boolean saveToFile(File par1File, ILogAgent par2ILogAgent)
     {
         if (this.crashReportFile != null)
         {
@@ -205,15 +203,15 @@ public class CrashReport
 
             try
             {
-                FileWriter var2 = new FileWriter(par1File);
-                var2.write(this.getCompleteReport());
-                var2.close();
+                FileWriter var3 = new FileWriter(par1File);
+                var3.write(this.getCompleteReport());
+                var3.close();
                 this.crashReportFile = par1File;
                 return true;
             }
-            catch (Throwable var3)
+            catch (Throwable var4)
             {
-                Logger.getLogger("Minecraft").log(Level.SEVERE, "Could not save crash report to " + par1File, var3);
+                par2ILogAgent.logSevereException("Could not save crash report to " + par1File, var4);
                 return false;
             }
         }

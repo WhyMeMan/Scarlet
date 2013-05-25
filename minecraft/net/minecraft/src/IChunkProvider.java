@@ -32,10 +32,9 @@ public interface IChunkProvider
     boolean saveChunks(boolean var1, IProgressUpdate var2);
 
     /**
-     * Unloads the 100 oldest chunks from memory, due to a bug with chunkSet.add() never being called it thinks the list
-     * is always empty and will not remove any chunks.
+     * Unloads chunks that are marked to be unloaded. This is not guaranteed to unload every such chunk.
      */
-    boolean unload100OldestChunks();
+    boolean unloadQueuedChunks();
 
     /**
      * Returns if the IChunkProvider supports saving.
@@ -60,4 +59,6 @@ public interface IChunkProvider
     int getLoadedChunkCount();
 
     void recreateStructures(int var1, int var2);
+
+    void func_104112_b();
 }

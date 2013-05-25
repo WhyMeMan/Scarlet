@@ -1,6 +1,7 @@
 package net.minecraft.src;
 
 import java.awt.image.BufferedImage;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -31,6 +32,7 @@ public class CustomColorizer
     private static int[] redstoneColors = null;
     private static int[] stemColors = null;
     private static int[] myceliumParticleColors = null;
+    private static boolean useDefaultColorMultiplier = true;
     private static int particleWaterColor = -1;
     private static int particlePortalColor = -1;
     private static int lilyPadColor = -1;
@@ -67,6 +69,7 @@ public class CustomColorizer
         skyColorEnd = null;
         blockPalettes = (int[][])null;
         paletteColors = (int[][])null;
+        useDefaultColorMultiplier = true;
         grassColors = getCustomColors("/misc/grasscolor.png", var0, 65536);
         foliageColors = getCustomColors("/misc/foliagecolor.png", var0, 65536);
         waterColors = getCustomColors("/misc/watercolorX.png", var0, 65536);
@@ -101,6 +104,7 @@ public class CustomColorizer
             }
 
             readColorProperties("/color.properties", var0);
+            updateUseDefaultColorMultiplier();
         }
     }
 
@@ -138,27 +142,33 @@ public class CustomColorizer
 
     private static void readColorProperties(String var0, RenderEngine var1)
     {
-        InputStream var2 = var1.getTexturePack().getSelectedTexturePack().getResourceAsStream(var0);
-
-        if (var2 != null)
+        try
         {
-            try
+            InputStream var2 = var1.getTexturePack().getSelectedTexturePack().getResourceAsStream(var0);
+
+            if (var2 == null)
             {
-                Config.log("Loading " + var0);
-                Properties var3 = new Properties();
-                var3.load(var2);
-                lilyPadColor = readColor(var3, "lilypad");
-                particleWaterColor = readColor(var3, new String[] {"particle.water", "drop.water"});
-                particlePortalColor = readColor(var3, "particle.portal");
-                fogColorNether = readColorVec3(var3, "fog.nether");
-                fogColorEnd = readColorVec3(var3, "fog.end");
-                skyColorEnd = readColorVec3(var3, "sky.end");
-                readCustomPalettes(var3, var1);
+                return;
             }
-            catch (IOException var4)
-            {
-                var4.printStackTrace();
-            }
+
+            Config.log("Loading " + var0);
+            Properties var3 = new Properties();
+            var3.load(var2);
+            lilyPadColor = readColor(var3, "lilypad");
+            particleWaterColor = readColor(var3, new String[] {"particle.water", "drop.water"});
+            particlePortalColor = readColor(var3, "particle.portal");
+            fogColorNether = readColorVec3(var3, "fog.nether");
+            fogColorEnd = readColorVec3(var3, "fog.end");
+            skyColorEnd = readColorVec3(var3, "sky.end");
+            readCustomPalettes(var3, var1);
+        }
+        catch (FileNotFoundException var4)
+        {
+            return;
+        }
+        catch (IOException var5)
+        {
+            var5.printStackTrace();
         }
     }
 
@@ -312,36 +322,53 @@ public class CustomColorizer
 
     private static int[] getCustomColors(String var0, RenderEngine var1, int var2)
     {
-        InputStream var3 = var1.getTexturePack().getSelectedTexturePack().getResourceAsStream(var0);
-
-        if (var3 == null)
+        try
         {
-            return null;
-        }
-        else
-        {
-            int[] var4 = var1.getTextureContents(var0);
+            InputStream var3 = var1.getTexturePack().getSelectedTexturePack().getResourceAsStream(var0);
 
-            if (var4 == null)
+            if (var3 == null)
             {
-                return null;
-            }
-            else if (var2 > 0 && var4.length != var2)
-            {
-                Config.log("Invalid custom colors length: " + var4.length + ", path: " + var0);
                 return null;
             }
             else
             {
-                Config.log("Loading custom colors: " + var0);
-                return var4;
+                int[] var4 = var1.getTextureContents(var0);
+
+                if (var4 == null)
+                {
+                    return null;
+                }
+                else if (var2 > 0 && var4.length != var2)
+                {
+                    Config.log("Invalid custom colors length: " + var4.length + ", path: " + var0);
+                    return null;
+                }
+                else
+                {
+                    Config.log("Loading custom colors: " + var0);
+                    return var4;
+                }
             }
         }
+        catch (FileNotFoundException var5)
+        {
+            return null;
+        }
+        catch (IOException var6)
+        {
+            var6.printStackTrace();
+            return null;
+        }
+    }
+
+    public static void updateUseDefaultColorMultiplier()
+    {
+        useDefaultColorMultiplier = foliageBirchColors == null && foliagePineColors == null && swampGrassColors == null && swampFoliageColors == null && blockPalettes == null && Config.isSwampColors() && Config.isSmoothBiomes();
     }
 
     public static int getColorMultiplier(Block var0, IBlockAccess var1, int var2, int var3, int var4)
     {
-        if (foliageBirchColors == null && foliagePineColors == null && swampGrassColors == null && swampFoliageColors == null && blockPalettes == null && Config.isSwampColors() && Config.isSmoothBiomes())
+        if (useDefaultColorMultiplier)
         {
             return var0.colorMultiplier(var1, var2, var3, var4);
         }
@@ -381,7 +408,7 @@ public class CustomColorizer
                 {
                     if (Config.isSmoothBiomes())
                     {
-                        return getSmoothColorMultiplier(var0, var1, var2, var3, var4, var5, var6, 0, 0);
+                        return getSmoothColorMultiplier(var0, var1, var2, var3, var4, var5, var5, 0, 0);
                     }
 
                     return getCustomColor(var5, var1, var2, var3, var4);
@@ -902,7 +929,7 @@ public class CustomColorizer
                             var10 = Config.limitTo1(var10);
                             float var11 = var10 * (float)(var8 - 1);
                             float var12 = Config.limitTo1(var1.torchFlickerX + 0.5F) * (float)(var8 - 1);
-                            float var13 = Config.limitTo1(Config.getMinecraft().gameSettings.gammaSetting);
+                            float var13 = Config.limitTo1(Config.getGameSettings().gammaSetting);
                             boolean var14 = var13 > 1.0E-4F;
                             getLightMapColumn(var6, var11, var9, var8, sunRgbs);
                             getLightMapColumn(var6, var12, var9 + 16 * var8, var8, torchRgbs);

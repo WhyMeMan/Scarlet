@@ -22,7 +22,7 @@ public class WorldGenFlowers extends WorldGenerator
 
             if (par1World.isAirBlock(var7, var8, var9) && (!par1World.provider.hasNoSky || var8 < 127) && Block.blocksList[this.plantBlockId].canBlockStay(par1World, var7, var8, var9))
             {
-                par1World.setBlock(var7, var8, var9, this.plantBlockId);
+                par1World.setBlock(var7, var8, var9, this.plantBlockId, 0, 2);
             }
         }
 

@@ -7,14 +7,14 @@ public class ItemSlab extends ItemBlock
     /** Instance of BlockHalfSlab. */
     private final BlockHalfSlab theHalfSlab;
 
-    /** Instance of BlockHalfSlab. */
-    private final BlockHalfSlab theHalfSlab2;
+    /** The double-slab block corresponding to this item. */
+    private final BlockHalfSlab doubleSlab;
 
     public ItemSlab(int par1, BlockHalfSlab par2BlockHalfSlab, BlockHalfSlab par3BlockHalfSlab, boolean par4)
     {
         super(par1);
         this.theHalfSlab = par2BlockHalfSlab;
-        this.theHalfSlab2 = par3BlockHalfSlab;
+        this.doubleSlab = par3BlockHalfSlab;
         this.isFullBlock = par4;
         this.setMaxDamage(0);
         this.setHasSubtypes(true);
@@ -23,9 +23,9 @@ public class ItemSlab extends ItemBlock
     /**
      * Gets an icon index based on an item's damage value
      */
-    public int getIconFromDamage(int par1)
+    public Icon getIconFromDamage(int par1)
     {
-        return Block.blocksList[this.itemID].getBlockTextureFromSideAndMetadata(2, par1);
+        return Block.blocksList[this.itemID].getIcon(2, par1);
     }
 
     /**
@@ -36,7 +36,11 @@ public class ItemSlab extends ItemBlock
         return par1;
     }
 
-    public String getItemNameIS(ItemStack par1ItemStack)
+    /**
+     * Returns the unlocalized name of this item. This version accepts an ItemStack so different stacks can have
+     * different names based on their damage or NBT.
+     */
+    public String getUnlocalizedName(ItemStack par1ItemStack)
     {
         return this.theHalfSlab.getFullSlabName(par1ItemStack.getItemDamage());
     }
@@ -68,9 +72,9 @@ public class ItemSlab extends ItemBlock
 
             if ((par7 == 1 && !var14 || par7 == 0 && var14) && var11 == this.theHalfSlab.blockID && var13 == par1ItemStack.getItemDamage())
             {
-                if (par3World.checkIfAABBIsClear(this.theHalfSlab2.getCollisionBoundingBoxFromPool(par3World, par4, par5, par6)) && par3World.setBlockAndMetadataWithNotify(par4, par5, par6, this.theHalfSlab2.blockID, var13))
+                if (par3World.checkNoEntityCollision(this.doubleSlab.getCollisionBoundingBoxFromPool(par3World, par4, par5, par6)) && par3World.setBlock(par4, par5, par6, this.doubleSlab.blockID, var13, 3))
                 {
-                    par3World.playSoundEffect((double)((float)par4 + 0.5F), (double)((float)par5 + 0.5F), (double)((float)par6 + 0.5F), this.theHalfSlab2.stepSound.getPlaceSound(), (this.theHalfSlab2.stepSound.getVolume() + 1.0F) / 2.0F, this.theHalfSlab2.stepSound.getPitch() * 0.8F);
+                    par3World.playSoundEffect((double)((float)par4 + 0.5F), (double)((float)par5 + 0.5F), (double)((float)par6 + 0.5F), this.doubleSlab.stepSound.getPlaceSound(), (this.doubleSlab.stepSound.getVolume() + 1.0F) / 2.0F, this.doubleSlab.stepSound.getPitch() * 0.8F);
                     --par1ItemStack.stackSize;
                 }
 
@@ -178,9 +182,9 @@ public class ItemSlab extends ItemBlock
 
         if (var8 == this.theHalfSlab.blockID && var10 == par1ItemStack.getItemDamage())
         {
-            if (par3World.checkIfAABBIsClear(this.theHalfSlab2.getCollisionBoundingBoxFromPool(par3World, par4, par5, par6)) && par3World.setBlockAndMetadataWithNotify(par4, par5, par6, this.theHalfSlab2.blockID, var10))
+            if (par3World.checkNoEntityCollision(this.doubleSlab.getCollisionBoundingBoxFromPool(par3World, par4, par5, par6)) && par3World.setBlock(par4, par5, par6, this.doubleSlab.blockID, var10, 3))
             {
-                par3World.playSoundEffect((double)((float)par4 + 0.5F), (double)((float)par5 + 0.5F), (double)((float)par6 + 0.5F), this.theHalfSlab2.stepSound.getPlaceSound(), (this.theHalfSlab2.stepSound.getVolume() + 1.0F) / 2.0F, this.theHalfSlab2.stepSound.getPitch() * 0.8F);
+                par3World.playSoundEffect((double)((float)par4 + 0.5F), (double)((float)par5 + 0.5F), (double)((float)par6 + 0.5F), this.doubleSlab.stepSound.getPlaceSound(), (this.doubleSlab.stepSound.getVolume() + 1.0F) / 2.0F, this.doubleSlab.stepSound.getPitch() * 0.8F);
                 --par1ItemStack.stackSize;
             }
 

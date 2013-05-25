@@ -61,7 +61,7 @@ public class CommandServerBanIp extends CommandBase
                     throw new PlayerNotFoundException("commands.banip.invalid", new Object[0]);
                 }
 
-                this.banIP(par1ICommandSender, var5.func_71114_r(), var4);
+                this.banIP(par1ICommandSender, var5.getPlayerIP(), var4);
             }
         }
         else

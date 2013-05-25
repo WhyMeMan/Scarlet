@@ -5,8 +5,6 @@ import java.io.FileWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import net.minecraft.server.MinecraftServer;
 
 public class CommandDebug extends CommandBase
@@ -77,7 +75,7 @@ public class CommandDebug extends CommandBase
         }
         catch (Throwable var6)
         {
-            Logger.getLogger("Minecraft").log(Level.SEVERE, "Could not save profiler results to " + var4, var6);
+            MinecraftServer.getServer().getLogAgent().logSevereException("Could not save profiler results to " + var4, var6);
         }
     }
 

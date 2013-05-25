@@ -4,9 +4,9 @@ import java.util.Random;
 
 public class BlockObsidian extends BlockStone
 {
-    public BlockObsidian(int par1, int par2)
+    public BlockObsidian(int par1)
     {
-        super(par1, par2);
+        super(par1);
     }
 
     /**

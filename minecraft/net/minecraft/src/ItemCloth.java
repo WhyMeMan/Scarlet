@@ -12,9 +12,9 @@ public class ItemCloth extends ItemBlock
     /**
      * Gets an icon index based on an item's damage value
      */
-    public int getIconFromDamage(int par1)
+    public Icon getIconFromDamage(int par1)
     {
-        return Block.cloth.getBlockTextureFromSideAndMetadata(2, BlockCloth.getBlockFromDye(par1));
+        return Block.cloth.getIcon(2, BlockCloth.getBlockFromDye(par1));
     }
 
     /**
@@ -25,8 +25,12 @@ public class ItemCloth extends ItemBlock
         return par1;
     }
 
-    public String getItemNameIS(ItemStack par1ItemStack)
+    /**
+     * Returns the unlocalized name of this item. This version accepts an ItemStack so different stacks can have
+     * different names based on their damage or NBT.
+     */
+    public String getUnlocalizedName(ItemStack par1ItemStack)
     {
-        return super.getItemName() + "." + ItemDye.dyeColorNames[BlockCloth.getBlockFromDye(par1ItemStack.getItemDamage())];
+        return super.getUnlocalizedName() + "." + ItemDye.dyeColorNames[BlockCloth.getBlockFromDye(par1ItemStack.getItemDamage())];
     }
 }

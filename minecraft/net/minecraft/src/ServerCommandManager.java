@@ -17,6 +17,7 @@ public class ServerCommandManager extends CommandHandler implements IAdminComman
         this.registerCommand(new CommandXP());
         this.registerCommand(new CommandServerTp());
         this.registerCommand(new CommandGive());
+        this.registerCommand(new CommandEffect());
         this.registerCommand(new CommandEnchant());
         this.registerCommand(new CommandServerEmote());
         this.registerCommand(new CommandShowSeed());
@@ -27,6 +28,8 @@ public class ServerCommandManager extends CommandHandler implements IAdminComman
         this.registerCommand(new CommandSetSpawnpoint());
         this.registerCommand(new CommandGameRule());
         this.registerCommand(new CommandClearInventory());
+        this.registerCommand(new ServerCommandTestFor());
+        this.registerCommand(new ServerCommandScoreboard());
 
         if (MinecraftServer.getServer().isDedicatedServer())
         {
@@ -76,14 +79,14 @@ public class ServerCommandManager extends CommandHandler implements IAdminComman
 
                 if (var7 != par1ICommandSender && MinecraftServer.getServer().getConfigurationManager().areCommandsAllowed(var7.username))
                 {
-                    var7.sendChatToPlayer("\u00a77\u00a7o[" + par1ICommandSender.getCommandSenderName() + ": " + var7.translateString(par3Str, par4ArrayOfObj) + "]");
+                    var7.sendChatToPlayer("" + EnumChatFormatting.GRAY + "" + EnumChatFormatting.ITALIC + "[" + par1ICommandSender.getCommandSenderName() + ": " + var7.translateString(par3Str, par4ArrayOfObj) + "]");
                 }
             }
         }
 
         if (par1ICommandSender != MinecraftServer.getServer())
         {
-            MinecraftServer.logger.info("[" + par1ICommandSender.getCommandSenderName() + ": " + MinecraftServer.getServer().translateString(par3Str, par4ArrayOfObj) + "]");
+            MinecraftServer.getServer().getLogAgent().logInfo("[" + par1ICommandSender.getCommandSenderName() + ": " + MinecraftServer.getServer().translateString(par3Str, par4ArrayOfObj) + "]");
         }
 
         if ((par2 & 1) != 1)

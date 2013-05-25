@@ -4,16 +4,8 @@ public class BlockNote extends BlockContainer
 {
     public BlockNote(int par1)
     {
-        super(par1, 74, Material.wood);
+        super(par1, Material.wood);
         this.setCreativeTab(CreativeTabs.tabRedstone);
-    }
-
-    /**
-     * Returns the block texture based on the side being looked at.  Args: side
-     */
-    public int getBlockTextureFromSide(int par1)
-    {
-        return this.blockIndexInTexture;
     }
 
     /**
@@ -22,20 +14,17 @@ public class BlockNote extends BlockContainer
      */
     public void onNeighborBlockChange(World par1World, int par2, int par3, int par4, int par5)
     {
-        if (par5 > 0)
+        boolean var6 = par1World.isBlockIndirectlyGettingPowered(par2, par3, par4);
+        TileEntityNote var7 = (TileEntityNote)par1World.getBlockTileEntity(par2, par3, par4);
+
+        if (var7 != null && var7.previousRedstoneState != var6)
         {
-            boolean var6 = par1World.isBlockIndirectlyGettingPowered(par2, par3, par4);
-            TileEntityNote var7 = (TileEntityNote)par1World.getBlockTileEntity(par2, par3, par4);
-
-            if (var7 != null && var7.previousRedstoneState != var6)
+            if (var6)
             {
-                if (var6)
-                {
-                    var7.triggerNote(par1World, par2, par3, par4);
-                }
-
-                var7.previousRedstoneState = var6;
+                var7.triggerNote(par1World, par2, par3, par4);
             }
+
+            var7.previousRedstoneState = var6;
         }
     }
 
@@ -90,7 +79,7 @@ public class BlockNote extends BlockContainer
      * Called when the block receives a BlockEvent - see World.addBlockEvent. By default, passes it on to the tile
      * entity at this location. Args: world, x, y, z, blockID, EventID, event parameter
      */
-    public void onBlockEventReceived(World par1World, int par2, int par3, int par4, int par5, int par6)
+    public boolean onBlockEventReceived(World par1World, int par2, int par3, int par4, int par5, int par6)
     {
         float var7 = (float)Math.pow(2.0D, (double)(par6 - 12) / 12.0D);
         String var8 = "harp";
@@ -117,5 +106,6 @@ public class BlockNote extends BlockContainer
 
         par1World.playSoundEffect((double)par2 + 0.5D, (double)par3 + 0.5D, (double)par4 + 0.5D, "note." + var8, 3.0F, var7);
         par1World.spawnParticle("note", (double)par2 + 0.5D, (double)par3 + 1.2D, (double)par4 + 0.5D, (double)par6 / 24.0D, 0.0D, 0.0D);
+        return true;
     }
 }

@@ -2,9 +2,11 @@ package net.minecraft.src;
 
 public class BlockBeacon extends BlockContainer
 {
+    private Icon theIcon;
+
     public BlockBeacon(int par1)
     {
-        super(par1, 41, Material.glass);
+        super(par1, Material.glass);
         this.setHardness(3.0F);
         this.setCreativeTab(CreativeTabs.tabMisc);
     }
@@ -62,5 +64,33 @@ public class BlockBeacon extends BlockContainer
     public int getRenderType()
     {
         return 34;
+    }
+
+    /**
+     * When this method is called, your block should register all the icons it needs with the given IconRegister. This
+     * is the only chance you get to register icons.
+     */
+    public void registerIcons(IconRegister par1IconRegister)
+    {
+        super.registerIcons(par1IconRegister);
+        this.theIcon = par1IconRegister.registerIcon("beacon");
+    }
+
+    public Icon getBeaconIcon()
+    {
+        return this.theIcon;
+    }
+
+    /**
+     * Called when the block is placed in the world.
+     */
+    public void onBlockPlacedBy(World par1World, int par2, int par3, int par4, EntityLiving par5EntityLiving, ItemStack par6ItemStack)
+    {
+        super.onBlockPlacedBy(par1World, par2, par3, par4, par5EntityLiving, par6ItemStack);
+
+        if (par6ItemStack.hasDisplayName())
+        {
+            ((TileEntityBeacon)par1World.getBlockTileEntity(par2, par3, par4)).func_94047_a(par6ItemStack.getDisplayName());
+        }
     }
 }

@@ -70,7 +70,7 @@ class SlotCreativeInventory extends Slot
     /**
      * Returns the icon index on items.png that is used as background image of the slot.
      */
-    public int getBackgroundIconIndex()
+    public Icon getBackgroundIconIndex()
     {
         return this.theSlot.getBackgroundIconIndex();
     }

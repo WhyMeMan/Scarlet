@@ -12,13 +12,15 @@ public class GuiDisconnected extends GuiScreen
     private String errorDetail;
     private Object[] field_74247_c;
     private List field_74245_d;
+    private final GuiScreen field_98095_n;
 
-    public GuiDisconnected(String par1Str, String par2Str, Object ... par3ArrayOfObj)
+    public GuiDisconnected(GuiScreen par1GuiScreen, String par2Str, String par3Str, Object ... par4ArrayOfObj)
     {
-        StringTranslate var4 = StringTranslate.getInstance();
-        this.errorMessage = var4.translateKey(par1Str);
-        this.errorDetail = par2Str;
-        this.field_74247_c = par3ArrayOfObj;
+        StringTranslate var5 = StringTranslate.getInstance();
+        this.field_98095_n = par1GuiScreen;
+        this.errorMessage = var5.translateKey(par2Str);
+        this.errorDetail = par3Str;
+        this.field_74247_c = par4ArrayOfObj;
     }
 
     /**
@@ -32,8 +34,8 @@ public class GuiDisconnected extends GuiScreen
     public void initGui()
     {
         StringTranslate var1 = StringTranslate.getInstance();
-        this.controlList.clear();
-        this.controlList.add(new GuiButton(0, this.width / 2 - 100, this.height / 4 + 120 + 12, var1.translateKey("gui.toMenu")));
+        this.buttonList.clear();
+        this.buttonList.add(new GuiButton(0, this.width / 2 - 100, this.height / 4 + 120 + 12, var1.translateKey("gui.toMenu")));
 
         if (this.field_74247_c != null)
         {
@@ -52,7 +54,7 @@ public class GuiDisconnected extends GuiScreen
     {
         if (par1GuiButton.id == 0)
         {
-            this.mc.displayGuiScreen(new GuiMainMenu());
+            this.mc.displayGuiScreen(this.field_98095_n);
         }
     }
 

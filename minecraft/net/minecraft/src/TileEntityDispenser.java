@@ -10,6 +10,7 @@ public class TileEntityDispenser extends TileEntity implements IInventory
      * random number generator for instance. Used in random item stack selection.
      */
     private Random dispenserRandom = new Random();
+    protected String customName;
 
     /**
      * Returns the number of slots in the inventory.
@@ -121,7 +122,7 @@ public class TileEntityDispenser extends TileEntity implements IInventory
         {
             if (this.dispenserContents[var2] == null || this.dispenserContents[var2].itemID == 0)
             {
-                this.dispenserContents[var2] = par1ItemStack;
+                this.setInventorySlotContents(var2, par1ItemStack);
                 return var2;
             }
         }
@@ -134,7 +135,21 @@ public class TileEntityDispenser extends TileEntity implements IInventory
      */
     public String getInvName()
     {
-        return "container.dispenser";
+        return this.isInvNameLocalized() ? this.customName : "container.dispenser";
+    }
+
+    public void setCustomName(String par1Str)
+    {
+        this.customName = par1Str;
+    }
+
+    /**
+     * If this returns false, the inventory name will be used as an unlocalized name, and translated into the player's
+     * language. Otherwise it will be used directly.
+     */
+    public boolean isInvNameLocalized()
+    {
+        return this.customName != null;
     }
 
     /**
@@ -155,6 +170,11 @@ public class TileEntityDispenser extends TileEntity implements IInventory
             {
                 this.dispenserContents[var5] = ItemStack.loadItemStackFromNBT(var4);
             }
+        }
+
+        if (par1NBTTagCompound.hasKey("CustomName"))
+        {
+            this.customName = par1NBTTagCompound.getString("CustomName");
         }
     }
 
@@ -178,6 +198,11 @@ public class TileEntityDispenser extends TileEntity implements IInventory
         }
 
         par1NBTTagCompound.setTag("Items", var2);
+
+        if (this.isInvNameLocalized())
+        {
+            par1NBTTagCompound.setString("CustomName", this.customName);
+        }
     }
 
     /**
@@ -200,4 +225,12 @@ public class TileEntityDispenser extends TileEntity implements IInventory
     public void openChest() {}
 
     public void closeChest() {}
+
+    /**
+     * Returns true if automation is allowed to insert the given stack (ignoring stack size) into the given slot.
+     */
+    public boolean isStackValidForSlot(int par1, ItemStack par2ItemStack)
+    {
+        return true;
+    }
 }

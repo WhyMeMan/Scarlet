@@ -29,7 +29,7 @@ public abstract class Enchantment
 
     /** Increases underwater mining rate */
     public static final Enchantment aquaAffinity = new EnchantmentWaterWorker(6, 2);
-    public static final Enchantment field_92091_k = new EnchantmentThorns(7, 1);
+    public static final Enchantment thorns = new EnchantmentThorns(7, 1);
 
     /** Extra damage to mobs */
     public static final Enchantment sharpness = new EnchantmentDamage(16, 10, 0);
@@ -196,7 +196,7 @@ public abstract class Enchantment
         return var2 + " " + StatCollector.translateToLocal("enchantment.level." + par1);
     }
 
-    public boolean func_92089_a(ItemStack par1ItemStack)
+    public boolean canApply(ItemStack par1ItemStack)
     {
         return this.type.canEnchantItem(par1ItemStack.getItem());
     }

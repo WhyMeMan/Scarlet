@@ -8,12 +8,14 @@ public class InventoryBasic implements IInventory
     private int slotsCount;
     private ItemStack[] inventoryContents;
     private List field_70480_d;
+    private boolean field_94051_e;
 
-    public InventoryBasic(String par1Str, int par2)
+    public InventoryBasic(String par1Str, boolean par2, int par3)
     {
         this.inventoryTitle = par1Str;
-        this.slotsCount = par2;
-        this.inventoryContents = new ItemStack[par2];
+        this.field_94051_e = par2;
+        this.slotsCount = par3;
+        this.inventoryContents = new ItemStack[par3];
     }
 
     /**
@@ -110,6 +112,15 @@ public class InventoryBasic implements IInventory
     }
 
     /**
+     * If this returns false, the inventory name will be used as an unlocalized name, and translated into the player's
+     * language. Otherwise it will be used directly.
+     */
+    public boolean isInvNameLocalized()
+    {
+        return this.field_94051_e;
+    }
+
+    /**
      * Returns the maximum stack size for a inventory slot. Seems to always be 64, possibly will be extended. *Isn't
      * this more of a set than a get?*
      */
@@ -143,4 +154,12 @@ public class InventoryBasic implements IInventory
     public void openChest() {}
 
     public void closeChest() {}
+
+    /**
+     * Returns true if automation is allowed to insert the given stack (ignoring stack size) into the given slot.
+     */
+    public boolean isStackValidForSlot(int par1, ItemStack par2ItemStack)
+    {
+        return true;
+    }
 }

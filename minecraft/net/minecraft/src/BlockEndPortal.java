@@ -12,7 +12,7 @@ public class BlockEndPortal extends BlockContainer
 
     protected BlockEndPortal(int par1, Material par2Material)
     {
-        super(par1, 0, par2Material);
+        super(par1, par2Material);
         this.setLightValue(1.0F);
     }
 
@@ -43,9 +43,10 @@ public class BlockEndPortal extends BlockContainer
     }
 
     /**
-     * if the specified block is in the given AABB, add its collision bounding box to the given list
+     * Adds all intersecting collision boxes to a list. (Be sure to only add boxes to the list if they intersect the
+     * mask.) Parameters: World, X, Y, Z, mask, list, colliding entity
      */
-    public void addCollidingBlockToList(World par1World, int par2, int par3, int par4, AxisAlignedBB par5AxisAlignedBB, List par6List, Entity par7Entity) {}
+    public void addCollisionBoxesToList(World par1World, int par2, int par3, int par4, AxisAlignedBB par5AxisAlignedBB, List par6List, Entity par7Entity) {}
 
     /**
      * Is this block (a) opaque and (b) a full 1m cube?  This determines whether or not to render the shared face of two
@@ -114,7 +115,7 @@ public class BlockEndPortal extends BlockContainer
         {
             if (par1World.provider.dimensionId != 0)
             {
-                par1World.setBlockWithNotify(par2, par3, par4, 0);
+                par1World.setBlockToAir(par2, par3, par4);
             }
         }
     }
@@ -125,5 +126,14 @@ public class BlockEndPortal extends BlockContainer
     public int idPicked(World par1World, int par2, int par3, int par4)
     {
         return 0;
+    }
+
+    /**
+     * When this method is called, your block should register all the icons it needs with the given IconRegister. This
+     * is the only chance you get to register icons.
+     */
+    public void registerIcons(IconRegister par1IconRegister)
+    {
+        this.blockIcon = par1IconRegister.registerIcon("portal");
     }
 }

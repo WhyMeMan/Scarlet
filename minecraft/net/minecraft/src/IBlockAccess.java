@@ -78,5 +78,5 @@ public interface IBlockAccess
     /**
      * Is this block powering in the specified direction Args: x, y, z, direction
      */
-    boolean isBlockProvidingPowerTo(int var1, int var2, int var3, int var4);
+    int isBlockProvidingPowerTo(int var1, int var2, int var3, int var4);
 }

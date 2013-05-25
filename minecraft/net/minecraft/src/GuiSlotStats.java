@@ -214,7 +214,7 @@ abstract class GuiSlotStats extends GuiSlot
         if (par1StatCrafting != null)
         {
             Item var4 = Item.itemsList[par1StatCrafting.getItemID()];
-            String var5 = ("" + StringTranslate.getInstance().translateNamedKey(var4.getItemName())).trim();
+            String var5 = ("" + StringTranslate.getInstance().translateNamedKey(var4.getUnlocalizedName())).trim();
 
             if (var5.length() > 0)
             {

@@ -6,13 +6,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.logging.Logger;
+import net.minecraft.server.MinecraftServer;
 
 public class SaveHandler implements ISaveHandler, IPlayerFileData
 {
-    /** Reference to the logger. */
-    private static final Logger logger = Logger.getLogger("Minecraft");
-
     /** The directory in which to save world data. */
     private final File worldDirectory;
 
@@ -72,9 +69,9 @@ public class SaveHandler implements ISaveHandler, IPlayerFileData
     }
 
     /**
-     * gets the File object corresponding to the base directory of this save (saves/404 for a save called 404 etc)
+     * Gets the File object corresponding to the base directory of this world.
      */
-    protected File getSaveDirectory()
+    protected File getWorldDirectory()
     {
         return this.worldDirectory;
     }
@@ -261,14 +258,14 @@ public class SaveHandler implements ISaveHandler, IPlayerFileData
         }
         catch (Exception var5)
         {
-            logger.warning("Failed to save player data for " + par1EntityPlayer.username);
+            MinecraftServer.getServer().getLogAgent().logWarning("Failed to save player data for " + par1EntityPlayer.username);
         }
     }
 
     /**
      * Reads the player data from disk into the specified PlayerEntityMP.
      */
-    public void readPlayerData(EntityPlayer par1EntityPlayer)
+    public NBTTagCompound readPlayerData(EntityPlayer par1EntityPlayer)
     {
         NBTTagCompound var2 = this.getPlayerData(par1EntityPlayer.username);
 
@@ -276,6 +273,8 @@ public class SaveHandler implements ISaveHandler, IPlayerFileData
         {
             par1EntityPlayer.readFromNBT(var2);
         }
+
+        return var2;
     }
 
     /**
@@ -294,7 +293,7 @@ public class SaveHandler implements ISaveHandler, IPlayerFileData
         }
         catch (Exception var3)
         {
-            logger.warning("Failed to load player data for " + par1Str);
+            MinecraftServer.getServer().getLogAgent().logWarning("Failed to load player data for " + par1Str);
         }
 
         return null;
@@ -342,7 +341,7 @@ public class SaveHandler implements ISaveHandler, IPlayerFileData
     /**
      * Returns the name of the directory where world information is saved.
      */
-    public String getSaveDirectoryName()
+    public String getWorldDirectoryName()
     {
         return this.saveDirectoryName;
     }

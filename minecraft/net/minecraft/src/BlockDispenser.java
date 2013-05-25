@@ -6,29 +6,23 @@ public class BlockDispenser extends BlockContainer
 {
     /** Registry for all dispense behaviors. */
     public static final IRegistry dispenseBehaviorRegistry = new RegistryDefaulted(new BehaviorDefaultDispenseItem());
-    private Random random = new Random();
+    protected Random random = new Random();
+    protected Icon furnaceTopIcon;
+    protected Icon furnaceFrontIcon;
+    protected Icon field_96473_e;
 
     protected BlockDispenser(int par1)
     {
         super(par1, Material.rock);
-        this.blockIndexInTexture = 45;
         this.setCreativeTab(CreativeTabs.tabRedstone);
     }
 
     /**
      * How many world ticks before ticking
      */
-    public int tickRate()
+    public int tickRate(World par1World)
     {
         return 4;
-    }
-
-    /**
-     * Returns the ID of the items to drop on destruction.
-     */
-    public int idDropped(int par1, Random par2Random, int par3)
-    {
-        return Block.dispenser.blockID;
     }
 
     /**
@@ -74,36 +68,29 @@ public class BlockDispenser extends BlockContainer
                 var9 = 4;
             }
 
-            par1World.setBlockMetadataWithNotify(par2, par3, par4, var9);
+            par1World.setBlockMetadataWithNotify(par2, par3, par4, var9, 2);
         }
     }
 
     /**
-     * Retrieves the block texture to use based on the display side. Args: iBlockAccess, x, y, z, side
+     * From the specified side and block metadata retrieves the blocks texture. Args: side, metadata
      */
-    public int getBlockTexture(IBlockAccess par1IBlockAccess, int par2, int par3, int par4, int par5)
+    public Icon getIcon(int par1, int par2)
     {
-        if (par5 == 1)
-        {
-            return this.blockIndexInTexture + 17;
-        }
-        else if (par5 == 0)
-        {
-            return this.blockIndexInTexture + 17;
-        }
-        else
-        {
-            int var6 = par1IBlockAccess.getBlockMetadata(par2, par3, par4);
-            return par5 == var6 ? this.blockIndexInTexture + 1 : this.blockIndexInTexture;
-        }
+        int var3 = par2 & 7;
+        return par1 == var3 ? (var3 != 1 && var3 != 0 ? this.furnaceFrontIcon : this.field_96473_e) : (var3 != 1 && var3 != 0 ? (par1 != 1 && par1 != 0 ? this.blockIcon : this.furnaceTopIcon) : this.furnaceTopIcon);
     }
 
     /**
-     * Returns the block texture based on the side being looked at.  Args: side
+     * When this method is called, your block should register all the icons it needs with the given IconRegister. This
+     * is the only chance you get to register icons.
      */
-    public int getBlockTextureFromSide(int par1)
+    public void registerIcons(IconRegister par1IconRegister)
     {
-        return par1 == 1 ? this.blockIndexInTexture + 17 : (par1 == 0 ? this.blockIndexInTexture + 17 : (par1 == 3 ? this.blockIndexInTexture + 1 : this.blockIndexInTexture));
+        this.blockIcon = par1IconRegister.registerIcon("furnace_side");
+        this.furnaceTopIcon = par1IconRegister.registerIcon("furnace_top");
+        this.furnaceFrontIcon = par1IconRegister.registerIcon("dispenser_front");
+        this.field_96473_e = par1IconRegister.registerIcon("dispenser_front_vertical");
     }
 
     /**
@@ -128,10 +115,10 @@ public class BlockDispenser extends BlockContainer
         }
     }
 
-    private void dispense(World par1World, int par2, int par3, int par4)
+    protected void dispense(World par1World, int par2, int par3, int par4)
     {
         BlockSourceImpl var5 = new BlockSourceImpl(par1World, par2, par3, par4);
-        TileEntityDispenser var6 = (TileEntityDispenser)var5.func_82619_j();
+        TileEntityDispenser var6 = (TileEntityDispenser)var5.getBlockTileEntity();
 
         if (var6 != null)
         {
@@ -144,7 +131,7 @@ public class BlockDispenser extends BlockContainer
             else
             {
                 ItemStack var8 = var6.getStackInSlot(var7);
-                IBehaviorDispenseItem var9 = (IBehaviorDispenseItem)dispenseBehaviorRegistry.func_82594_a(var8.getItem());
+                IBehaviorDispenseItem var9 = this.getBehaviorForItemStack(var8);
 
                 if (var9 != IBehaviorDispenseItem.itemDispenseBehaviorProvider)
                 {
@@ -156,19 +143,31 @@ public class BlockDispenser extends BlockContainer
     }
 
     /**
+     * Returns the behavior for the given ItemStack.
+     */
+    protected IBehaviorDispenseItem getBehaviorForItemStack(ItemStack par1ItemStack)
+    {
+        return (IBehaviorDispenseItem)dispenseBehaviorRegistry.func_82594_a(par1ItemStack.getItem());
+    }
+
+    /**
      * Lets the block know when one of its neighbor changes. Doesn't know which neighbor changed (coordinates passed are
      * their own) Args: x, y, z, neighbor blockID
      */
     public void onNeighborBlockChange(World par1World, int par2, int par3, int par4, int par5)
     {
-        if (par5 > 0 && Block.blocksList[par5].canProvidePower())
-        {
-            boolean var6 = par1World.isBlockIndirectlyGettingPowered(par2, par3, par4) || par1World.isBlockIndirectlyGettingPowered(par2, par3 + 1, par4);
+        boolean var6 = par1World.isBlockIndirectlyGettingPowered(par2, par3, par4) || par1World.isBlockIndirectlyGettingPowered(par2, par3 + 1, par4);
+        int var7 = par1World.getBlockMetadata(par2, par3, par4);
+        boolean var8 = (var7 & 8) != 0;
 
-            if (var6)
-            {
-                par1World.scheduleBlockUpdate(par2, par3, par4, this.blockID, this.tickRate());
-            }
+        if (var6 && !var8)
+        {
+            par1World.scheduleBlockUpdate(par2, par3, par4, this.blockID, this.tickRate(par1World));
+            par1World.setBlockMetadataWithNotify(par2, par3, par4, var7 | 8, 4);
+        }
+        else if (!var6 && var8)
+        {
+            par1World.setBlockMetadataWithNotify(par2, par3, par4, var7 & -9, 4);
         }
     }
 
@@ -177,7 +176,7 @@ public class BlockDispenser extends BlockContainer
      */
     public void updateTick(World par1World, int par2, int par3, int par4, Random par5Random)
     {
-        if (!par1World.isRemote && (par1World.isBlockIndirectlyGettingPowered(par2, par3, par4) || par1World.isBlockIndirectlyGettingPowered(par2, par3 + 1, par4)))
+        if (!par1World.isRemote)
         {
             this.dispense(par1World, par2, par3, par4);
         }
@@ -194,28 +193,14 @@ public class BlockDispenser extends BlockContainer
     /**
      * Called when the block is placed in the world.
      */
-    public void onBlockPlacedBy(World par1World, int par2, int par3, int par4, EntityLiving par5EntityLiving)
+    public void onBlockPlacedBy(World par1World, int par2, int par3, int par4, EntityLiving par5EntityLiving, ItemStack par6ItemStack)
     {
-        int var6 = MathHelper.floor_double((double)(par5EntityLiving.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
+        int var7 = BlockPistonBase.determineOrientation(par1World, par2, par3, par4, par5EntityLiving);
+        par1World.setBlockMetadataWithNotify(par2, par3, par4, var7, 2);
 
-        if (var6 == 0)
+        if (par6ItemStack.hasDisplayName())
         {
-            par1World.setBlockMetadataWithNotify(par2, par3, par4, 2);
-        }
-
-        if (var6 == 1)
-        {
-            par1World.setBlockMetadataWithNotify(par2, par3, par4, 5);
-        }
-
-        if (var6 == 2)
-        {
-            par1World.setBlockMetadataWithNotify(par2, par3, par4, 3);
-        }
-
-        if (var6 == 3)
-        {
-            par1World.setBlockMetadataWithNotify(par2, par3, par4, 4);
+            ((TileEntityDispenser)par1World.getBlockTileEntity(par2, par3, par4)).setCustomName(par6ItemStack.getDisplayName());
         }
     }
 
@@ -263,17 +248,42 @@ public class BlockDispenser extends BlockContainer
                     }
                 }
             }
+
+            par1World.func_96440_m(par2, par3, par4, par5);
         }
 
         super.breakBlock(par1World, par2, par3, par4, par5, par6);
     }
 
-    public static IPosition func_82525_a(IBlockSource par0IBlockSource)
+    public static IPosition getIPositionFromBlockSource(IBlockSource par0IBlockSource)
     {
-        EnumFacing var1 = EnumFacing.getFront(par0IBlockSource.func_82620_h());
+        EnumFacing var1 = getFacing(par0IBlockSource.getBlockMetadata());
         double var2 = par0IBlockSource.getX() + 0.7D * (double)var1.getFrontOffsetX();
-        double var4 = par0IBlockSource.getY();
+        double var4 = par0IBlockSource.getY() + 0.7D * (double)var1.getFrontOffsetY();
         double var6 = par0IBlockSource.getZ() + 0.7D * (double)var1.getFrontOffsetZ();
         return new PositionImpl(var2, var4, var6);
+    }
+
+    public static EnumFacing getFacing(int par0)
+    {
+        return EnumFacing.getFront(par0 & 7);
+    }
+
+    /**
+     * If this returns true, then comparators facing away from this block will use the value from
+     * getComparatorInputOverride instead of the actual redstone signal strength.
+     */
+    public boolean hasComparatorInputOverride()
+    {
+        return true;
+    }
+
+    /**
+     * If hasComparatorInputOverride returns true, the return value from this is used instead of the redstone signal
+     * strength when this block inputs to a comparator.
+     */
+    public int getComparatorInputOverride(World par1World, int par2, int par3, int par4, int par5)
+    {
+        return Container.calcRedstoneFromInventory((IInventory)par1World.getBlockTileEntity(par2, par3, par4));
     }
 }

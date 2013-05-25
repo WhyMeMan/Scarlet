@@ -30,19 +30,26 @@ public class GLAllocation
     /**
      * Generates texture names and stores them in the specified buffer.
      */
-    public static synchronized void generateTextureNames(IntBuffer par0IntBuffer)
+    public static synchronized int generateTextureNames()
     {
-        GL11.glGenTextures(par0IntBuffer);
-
-        for (int var1 = par0IntBuffer.position(); var1 < par0IntBuffer.limit(); ++var1)
-        {
-            field_74530_b.add(Integer.valueOf(par0IntBuffer.get(var1)));
-        }
+        int var0 = GL11.glGenTextures();
+        field_74530_b.add(Integer.valueOf(var0));
+        return var0;
     }
 
     public static synchronized void deleteDisplayLists(int par0)
     {
         GL11.glDeleteLists(par0, ((Integer)field_74531_a.remove(Integer.valueOf(par0))).intValue());
+    }
+
+    public static synchronized void func_98302_b()
+    {
+        for (int var0 = 0; var0 < field_74530_b.size(); ++var0)
+        {
+            GL11.glDeleteTextures(((Integer)field_74530_b.get(var0)).intValue());
+        }
+
+        field_74530_b.clear();
     }
 
     /**
@@ -59,13 +66,7 @@ public class GLAllocation
         }
 
         field_74531_a.clear();
-
-        for (int var2 = 0; var2 < field_74530_b.size(); ++var2)
-        {
-            GL11.glDeleteTextures(((Integer)field_74530_b.get(var2)).intValue());
-        }
-
-        field_74530_b.clear();
+        func_98302_b();
     }
 
     /**

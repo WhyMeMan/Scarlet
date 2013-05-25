@@ -37,7 +37,7 @@ public class ReflectorConstructor
 
                 if (this.targetConstructor == null)
                 {
-                    Config.dbg("(Reflector) Constructor not present: " + var1.getName() + ", params: " + Config.arrayToString(this.parameterTypes));
+                    Config.dbg("(Reflector) Constructor not present: " + var1.getName() + ", params: " + Config.arrayToString((Object[])this.parameterTypes));
                 }
 
                 return this.targetConstructor;

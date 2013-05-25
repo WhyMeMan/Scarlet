@@ -22,6 +22,14 @@ public class ItemRecord extends Item
     }
 
     /**
+     * Gets an icon index based on an item's damage value
+     */
+    public Icon getIconFromDamage(int par1)
+    {
+        return this.itemIcon;
+    }
+
+    /**
      * Callback for item usage. If the item does something special on right clicking, he will have one of those. Return
      * True if something happen and false if it don't. This is for ITEMS, not BLOCKS
      */
@@ -77,5 +85,10 @@ public class ItemRecord extends Item
     public static ItemRecord getRecord(String par0Str)
     {
         return (ItemRecord)records.get(par0Str);
+    }
+
+    public void registerIcons(IconRegister par1IconRegister)
+    {
+        this.itemIcon = par1IconRegister.registerIcon("record_" + this.recordName);
     }
 }

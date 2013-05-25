@@ -68,7 +68,7 @@ public class EntityAIMate extends EntityAIBase
         this.theAnimal.getNavigator().tryMoveToEntityLiving(this.targetMate, this.moveSpeed);
         ++this.spawnBabyDelay;
 
-        if (this.spawnBabyDelay == 60)
+        if (this.spawnBabyDelay >= 60 && this.theAnimal.getDistanceSqToEntity(this.targetMate) < 9.0D)
         {
             this.spawnBaby();
         }
@@ -82,21 +82,22 @@ public class EntityAIMate extends EntityAIBase
     {
         float var1 = 8.0F;
         List var2 = this.theWorld.getEntitiesWithinAABB(this.theAnimal.getClass(), this.theAnimal.boundingBox.expand((double)var1, (double)var1, (double)var1));
-        Iterator var3 = var2.iterator();
-        EntityAnimal var4;
+        double var3 = Double.MAX_VALUE;
+        EntityAnimal var5 = null;
+        Iterator var6 = var2.iterator();
 
-        do
+        while (var6.hasNext())
         {
-            if (!var3.hasNext())
+            EntityAnimal var7 = (EntityAnimal)var6.next();
+
+            if (this.theAnimal.canMateWith(var7) && this.theAnimal.getDistanceSqToEntity(var7) < var3)
             {
-                return null;
+                var5 = var7;
+                var3 = this.theAnimal.getDistanceSqToEntity(var7);
             }
-
-            var4 = (EntityAnimal)var3.next();
         }
-        while (!this.theAnimal.canMateWith(var4));
 
-        return var4;
+        return var5;
     }
 
     /**

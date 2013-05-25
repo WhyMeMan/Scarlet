@@ -34,7 +34,7 @@ public class ItemSeeds extends Item
 
             if (var11 == this.soilBlockID && par3World.isAirBlock(par4, par5 + 1, par6))
             {
-                par3World.setBlockWithNotify(par4, par5 + 1, par6, this.blockType);
+                par3World.setBlock(par4, par5 + 1, par6, this.blockType);
                 --par1ItemStack.stackSize;
                 return true;
             }

@@ -36,16 +36,16 @@ public class EntityWitherSkull extends EntityFireball
         return false;
     }
 
-    public float func_82146_a(Explosion par1Explosion, Block par2Block, int par3, int par4, int par5)
+    public float func_82146_a(Explosion par1Explosion, World par2World, int par3, int par4, int par5, Block par6Block)
     {
-        float var6 = super.func_82146_a(par1Explosion, par2Block, par3, par4, par5);
+        float var7 = super.func_82146_a(par1Explosion, par2World, par3, par4, par5, par6Block);
 
-        if (this.isInvulnerable() && par2Block != Block.bedrock && par2Block != Block.endPortal && par2Block != Block.endPortalFrame)
+        if (this.isInvulnerable() && par6Block != Block.bedrock && par6Block != Block.endPortal && par6Block != Block.endPortalFrame)
         {
-            var6 = Math.min(0.8F, var6);
+            var7 = Math.min(0.8F, var7);
         }
 
-        return var6;
+        return var7;
     }
 
     /**

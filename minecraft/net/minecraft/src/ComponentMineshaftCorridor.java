@@ -186,6 +186,29 @@ public class ComponentMineshaftCorridor extends StructureComponent
     }
 
     /**
+     * Used to generate chests with items in it. ex: Temple Chests, Village Blacksmith Chests, Mineshaft Chests.
+     */
+    protected boolean generateStructureChestContents(World par1World, StructureBoundingBox par2StructureBoundingBox, Random par3Random, int par4, int par5, int par6, WeightedRandomChestContent[] par7ArrayOfWeightedRandomChestContent, int par8)
+    {
+        int var9 = this.getXWithOffset(par4, par6);
+        int var10 = this.getYWithOffset(par5);
+        int var11 = this.getZWithOffset(par4, par6);
+
+        if (par2StructureBoundingBox.isVecInside(var9, var10, var11) && par1World.getBlockId(var9, var10, var11) == 0)
+        {
+            par1World.setBlock(var9, var10, var11, Block.rail.blockID, this.getMetadataWithOffset(Block.rail.blockID, par3Random.nextBoolean() ? 1 : 0), 2);
+            EntityMinecartChest var12 = new EntityMinecartChest(par1World, (double)((float)var9 + 0.5F), (double)((float)var10 + 0.5F), (double)((float)var11 + 0.5F));
+            WeightedRandomChestContent.generateChestContents(par3Random, par7ArrayOfWeightedRandomChestContent, var12, par8);
+            par1World.spawnEntityInWorld(var12);
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    /**
      * second Part of Structure generating, this for example places Spiderwebs, Mob Spawners, it closes Mineshafts at
      * the end, it adds Fences...
      */
@@ -257,12 +280,12 @@ public class ComponentMineshaftCorridor extends StructureComponent
                     if (par3StructureBoundingBox.isVecInside(var13, var11, var12))
                     {
                         this.spawnerPlaced = true;
-                        par1World.setBlockWithNotify(var13, var11, var12, Block.mobSpawner.blockID);
+                        par1World.setBlock(var13, var11, var12, Block.mobSpawner.blockID, 0, 2);
                         TileEntityMobSpawner var14 = (TileEntityMobSpawner)par1World.getBlockTileEntity(var13, var11, var12);
 
                         if (var14 != null)
                         {
-                            var14.setMobID("CaveSpider");
+                            var14.func_98049_a().setMobID("CaveSpider");
                         }
                     }
                 }

@@ -5,20 +5,20 @@ import net.minecraft.client.Minecraft;
 
 public class CallableTexturePack implements Callable
 {
-    final Minecraft field_90051_a;
+    final Minecraft theMinecraft;
 
     public CallableTexturePack(Minecraft par1Minecraft)
     {
-        this.field_90051_a = par1Minecraft;
+        this.theMinecraft = par1Minecraft;
     }
 
-    public String func_90050_a()
+    public String callTexturePack()
     {
-        return this.field_90051_a.gameSettings.skin;
+        return this.theMinecraft.gameSettings.skin;
     }
 
     public Object call()
     {
-        return this.func_90050_a();
+        return this.callTexturePack();
     }
 }

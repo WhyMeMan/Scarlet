@@ -4,12 +4,10 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import net.minecraft.client.Minecraft;
 
 public class ThreadLanServerPing extends Thread
 {
-    private static Logger logger = Logger.getLogger("Minecraft");
     private final String motd;
 
     /** The socket we're using to send packets on. */
@@ -41,7 +39,7 @@ public class ThreadLanServerPing extends Thread
             }
             catch (IOException var6)
             {
-                logger.log(Level.WARNING, "LanServerPinger: " + var6.getMessage());
+                Minecraft.getMinecraft().getLogAgent().logWarning("LanServerPinger: " + var6.getMessage());
                 break;
             }
 

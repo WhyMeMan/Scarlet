@@ -39,7 +39,7 @@ class GuiSlotLanguage extends GuiSlot
      */
     protected void elementClicked(int par1, boolean par2)
     {
-        StringTranslate.getInstance().setLanguage((String)this.field_77251_g.get(par1));
+        StringTranslate.getInstance().setLanguage((String)this.field_77251_g.get(par1), false);
         this.languageGui.mc.fontRenderer.setUnicodeFlag(StringTranslate.getInstance().isUnicode());
         GuiLanguage.getGameSettings(this.languageGui).language = (String)this.field_77251_g.get(par1);
         this.languageGui.fontRenderer.setBidiFlag(StringTranslate.isBidirectional(GuiLanguage.getGameSettings(this.languageGui).language));

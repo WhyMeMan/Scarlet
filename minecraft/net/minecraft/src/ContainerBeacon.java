@@ -63,12 +63,12 @@ public class ContainerBeacon extends Container
 
         if (par1 == 1)
         {
-            this.theBeacon.func_82128_d(par2);
+            this.theBeacon.setPrimaryEffect(par2);
         }
 
         if (par1 == 2)
         {
-            this.theBeacon.func_82127_e(par2);
+            this.theBeacon.setSecondaryEffect(par2);
         }
     }
 

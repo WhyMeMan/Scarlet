@@ -5,7 +5,10 @@ import net.minecraft.server.MinecraftServer;
 
 public class IntegratedPlayerList extends ServerConfigurationManager
 {
-    private NBTTagCompound tagsForLastWrittenPlayer = null;
+    /**
+     * Holds the NBT data for the host player's save file, so this can be written to level.dat.
+     */
+    private NBTTagCompound hostPlayerData = null;
 
     public IntegratedPlayerList(IntegratedServer par1IntegratedServer)
     {
@@ -20,8 +23,8 @@ public class IntegratedPlayerList extends ServerConfigurationManager
     {
         if (par1EntityPlayerMP.getCommandSenderName().equals(this.getIntegratedServer().getServerOwner()))
         {
-            this.tagsForLastWrittenPlayer = new NBTTagCompound();
-            par1EntityPlayerMP.writeToNBT(this.tagsForLastWrittenPlayer);
+            this.hostPlayerData = new NBTTagCompound();
+            par1EntityPlayerMP.writeToNBT(this.hostPlayerData);
         }
 
         super.writePlayerData(par1EntityPlayerMP);
@@ -44,11 +47,11 @@ public class IntegratedPlayerList extends ServerConfigurationManager
     }
 
     /**
-     * gets the tags created in the last writePlayerData call
+     * On integrated servers, returns the host's player data to be written to level.dat.
      */
-    public NBTTagCompound getTagsFromLastWrite()
+    public NBTTagCompound getHostPlayerData()
     {
-        return this.tagsForLastWrittenPlayer;
+        return this.hostPlayerData;
     }
 
     public MinecraftServer getServerInstance()

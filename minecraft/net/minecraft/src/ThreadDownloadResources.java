@@ -109,7 +109,7 @@ public class ThreadDownloadResources extends Thread
                 }
                 catch (Exception var6)
                 {
-                    System.out.println("Failed to add " + par2Str + var3[var4].getName());
+                    this.mc.getLogAgent().logWarning("Failed to add " + par2Str + var3[var4].getName() + " in resources");
                 }
             }
         }

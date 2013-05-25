@@ -78,12 +78,12 @@ class SlotRepair extends Slot
 
             if (var5 > 2)
             {
-                this.theWorld.setBlockWithNotify(this.blockPosX, this.blockPosY, this.blockPosZ, 0);
+                this.theWorld.setBlockToAir(this.blockPosX, this.blockPosY, this.blockPosZ);
                 this.theWorld.playAuxSFX(1020, this.blockPosX, this.blockPosY, this.blockPosZ, 0);
             }
             else
             {
-                this.theWorld.setBlockMetadataWithNotify(this.blockPosX, this.blockPosY, this.blockPosZ, var4 | var5 << 2);
+                this.theWorld.setBlockMetadataWithNotify(this.blockPosX, this.blockPosY, this.blockPosZ, var4 | var5 << 2, 2);
                 this.theWorld.playAuxSFX(1021, this.blockPosX, this.blockPosY, this.blockPosZ, 0);
             }
         }

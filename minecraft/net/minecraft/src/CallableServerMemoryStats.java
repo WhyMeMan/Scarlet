@@ -5,20 +5,21 @@ import net.minecraft.server.MinecraftServer;
 
 public class CallableServerMemoryStats implements Callable
 {
-    final MinecraftServer field_92075_a;
+    /** Reference to the MinecraftServer object. */
+    final MinecraftServer mcServer;
 
-    public CallableServerMemoryStats(MinecraftServer par1MinecraftServer)
+    public CallableServerMemoryStats(MinecraftServer par1)
     {
-        this.field_92075_a = par1MinecraftServer;
+        this.mcServer = par1;
     }
 
-    public String func_92074_a()
+    public String callServerMemoryStats()
     {
-        return MinecraftServer.getServerConfigurationManager(this.field_92075_a).getCurrentPlayerCount() + " / " + MinecraftServer.getServerConfigurationManager(this.field_92075_a).getMaxPlayers() + "; " + MinecraftServer.getServerConfigurationManager(this.field_92075_a).playerEntityList;
+        return MinecraftServer.getServerConfigurationManager(this.mcServer).getCurrentPlayerCount() + " / " + MinecraftServer.getServerConfigurationManager(this.mcServer).getMaxPlayers() + "; " + MinecraftServer.getServerConfigurationManager(this.mcServer).playerEntityList;
     }
 
     public Object call()
     {
-        return this.func_92074_a();
+        return this.callServerMemoryStats();
     }
 }

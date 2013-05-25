@@ -4,8 +4,13 @@ import net.minecraft.server.MinecraftServer;
 
 public class TileEntityCommandBlock extends TileEntity implements ICommandSender
 {
+    private int succesCount = 0;
+
     /** The command this block will execute when powered. */
     private String command = "";
+
+    /** The name of command sender (usually username, but possibly "Rcon") */
+    private String commandSenderName = "@";
 
     /**
      * Sets the command this block will execute when powered.
@@ -27,16 +32,24 @@ public class TileEntityCommandBlock extends TileEntity implements ICommandSender
     /**
      * Execute the command, called when the command block is powered.
      */
-    public void executeCommandOnPowered(World par1World)
+    public int executeCommandOnPowered(World par1World)
     {
-        if (!par1World.isRemote)
+        if (par1World.isRemote)
+        {
+            return 0;
+        }
+        else
         {
             MinecraftServer var2 = MinecraftServer.getServer();
 
             if (var2 != null && var2.isCommandBlockEnabled())
             {
                 ICommandManager var3 = var2.getCommandManager();
-                var3.executeCommand(this, this.command);
+                return var3.executeCommand(this, this.command);
+            }
+            else
+            {
+                return 0;
             }
         }
     }
@@ -46,7 +59,15 @@ public class TileEntityCommandBlock extends TileEntity implements ICommandSender
      */
     public String getCommandSenderName()
     {
-        return "@";
+        return this.commandSenderName;
+    }
+
+    /**
+     * Sets the name of the command sender
+     */
+    public void setCommandSenderName(String par1Str)
+    {
+        this.commandSenderName = par1Str;
     }
 
     public void sendChatToPlayer(String par1Str) {}
@@ -74,6 +95,8 @@ public class TileEntityCommandBlock extends TileEntity implements ICommandSender
     {
         super.writeToNBT(par1NBTTagCompound);
         par1NBTTagCompound.setString("Command", this.command);
+        par1NBTTagCompound.setInteger("SuccessCount", this.succesCount);
+        par1NBTTagCompound.setString("CustomName", this.commandSenderName);
     }
 
     /**
@@ -83,6 +106,12 @@ public class TileEntityCommandBlock extends TileEntity implements ICommandSender
     {
         super.readFromNBT(par1NBTTagCompound);
         this.command = par1NBTTagCompound.getString("Command");
+        this.succesCount = par1NBTTagCompound.getInteger("SuccessCount");
+
+        if (par1NBTTagCompound.hasKey("CustomName"))
+        {
+            this.commandSenderName = par1NBTTagCompound.getString("CustomName");
+        }
     }
 
     /**
@@ -101,5 +130,15 @@ public class TileEntityCommandBlock extends TileEntity implements ICommandSender
         NBTTagCompound var1 = new NBTTagCompound();
         this.writeToNBT(var1);
         return new Packet132TileEntityData(this.xCoord, this.yCoord, this.zCoord, 2, var1);
+    }
+
+    public int func_96103_d()
+    {
+        return this.succesCount;
+    }
+
+    public void func_96102_a(int par1)
+    {
+        this.succesCount = par1;
     }
 }

@@ -58,8 +58,8 @@ public class ComponentVillageHouse3 extends ComponentVillage
         this.placeBlockAtCurrentPosition(par1World, Block.planks.blockID, 0, 8, 4, 2, par3StructureBoundingBox);
         this.placeBlockAtCurrentPosition(par1World, Block.planks.blockID, 0, 8, 4, 3, par3StructureBoundingBox);
         this.placeBlockAtCurrentPosition(par1World, Block.planks.blockID, 0, 8, 4, 4, par3StructureBoundingBox);
-        int var4 = this.getMetadataWithOffset(Block.stairCompactPlanks.blockID, 3);
-        int var5 = this.getMetadataWithOffset(Block.stairCompactPlanks.blockID, 2);
+        int var4 = this.getMetadataWithOffset(Block.stairsWoodOak.blockID, 3);
+        int var5 = this.getMetadataWithOffset(Block.stairsWoodOak.blockID, 2);
         int var6;
         int var7;
 
@@ -67,11 +67,11 @@ public class ComponentVillageHouse3 extends ComponentVillage
         {
             for (var7 = 0; var7 <= 8; ++var7)
             {
-                this.placeBlockAtCurrentPosition(par1World, Block.stairCompactPlanks.blockID, var4, var7, 4 + var6, var6, par3StructureBoundingBox);
+                this.placeBlockAtCurrentPosition(par1World, Block.stairsWoodOak.blockID, var4, var7, 4 + var6, var6, par3StructureBoundingBox);
 
                 if ((var6 > -1 || var7 <= 1) && (var6 > 0 || var7 <= 3) && (var6 > 1 || var7 <= 4 || var7 >= 6))
                 {
-                    this.placeBlockAtCurrentPosition(par1World, Block.stairCompactPlanks.blockID, var5, var7, 4 + var6, 5 - var6, par3StructureBoundingBox);
+                    this.placeBlockAtCurrentPosition(par1World, Block.stairsWoodOak.blockID, var5, var7, 4 + var6, 5 - var6, par3StructureBoundingBox);
                 }
             }
         }
@@ -81,7 +81,7 @@ public class ComponentVillageHouse3 extends ComponentVillage
         this.fillWithBlocks(par1World, par3StructureBoundingBox, 4, 5, 4, 4, 5, 10, Block.planks.blockID, Block.planks.blockID, false);
         this.fillWithBlocks(par1World, par3StructureBoundingBox, 6, 5, 4, 6, 5, 10, Block.planks.blockID, Block.planks.blockID, false);
         this.fillWithBlocks(par1World, par3StructureBoundingBox, 5, 6, 3, 5, 6, 10, Block.planks.blockID, Block.planks.blockID, false);
-        var6 = this.getMetadataWithOffset(Block.stairCompactPlanks.blockID, 0);
+        var6 = this.getMetadataWithOffset(Block.stairsWoodOak.blockID, 0);
         int var8;
 
         for (var7 = 4; var7 >= 1; --var7)
@@ -90,21 +90,21 @@ public class ComponentVillageHouse3 extends ComponentVillage
 
             for (var8 = 8 - var7; var8 <= 10; ++var8)
             {
-                this.placeBlockAtCurrentPosition(par1World, Block.stairCompactPlanks.blockID, var6, var7, 2 + var7, var8, par3StructureBoundingBox);
+                this.placeBlockAtCurrentPosition(par1World, Block.stairsWoodOak.blockID, var6, var7, 2 + var7, var8, par3StructureBoundingBox);
             }
         }
 
-        var7 = this.getMetadataWithOffset(Block.stairCompactPlanks.blockID, 1);
+        var7 = this.getMetadataWithOffset(Block.stairsWoodOak.blockID, 1);
         this.placeBlockAtCurrentPosition(par1World, Block.planks.blockID, 0, 6, 6, 3, par3StructureBoundingBox);
         this.placeBlockAtCurrentPosition(par1World, Block.planks.blockID, 0, 7, 5, 4, par3StructureBoundingBox);
-        this.placeBlockAtCurrentPosition(par1World, Block.stairCompactPlanks.blockID, var7, 6, 6, 4, par3StructureBoundingBox);
+        this.placeBlockAtCurrentPosition(par1World, Block.stairsWoodOak.blockID, var7, 6, 6, 4, par3StructureBoundingBox);
         int var9;
 
         for (var8 = 6; var8 <= 8; ++var8)
         {
             for (var9 = 5; var9 <= 10; ++var9)
             {
-                this.placeBlockAtCurrentPosition(par1World, Block.stairCompactPlanks.blockID, var7, var8, 12 - var8, var9, par3StructureBoundingBox);
+                this.placeBlockAtCurrentPosition(par1World, Block.stairsWoodOak.blockID, var7, var8, 12 - var8, var9, par3StructureBoundingBox);
             }
         }
 
@@ -140,7 +140,7 @@ public class ComponentVillageHouse3 extends ComponentVillage
 
         if (this.getBlockIdAtCurrentPosition(par1World, 2, 0, -1, par3StructureBoundingBox) == 0 && this.getBlockIdAtCurrentPosition(par1World, 2, -1, -1, par3StructureBoundingBox) != 0)
         {
-            this.placeBlockAtCurrentPosition(par1World, Block.stairCompactCobblestone.blockID, this.getMetadataWithOffset(Block.stairCompactCobblestone.blockID, 3), 2, 0, -1, par3StructureBoundingBox);
+            this.placeBlockAtCurrentPosition(par1World, Block.stairsCobblestone.blockID, this.getMetadataWithOffset(Block.stairsCobblestone.blockID, 3), 2, 0, -1, par3StructureBoundingBox);
         }
 
         for (var8 = 0; var8 < 5; ++var8)

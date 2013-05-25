@@ -17,6 +17,9 @@ public class PotionEffect
     /** Whether the potion effect came from a beacon */
     private boolean isAmbient;
 
+    /** True if potion effect duration is at maximum, false otherwise. */
+    private boolean isPotionDurationMax;
+
     public PotionEffect(int par1, int par2)
     {
         this(par1, par2, 0);
@@ -84,6 +87,11 @@ public class PotionEffect
     public int getAmplifier()
     {
         return this.amplifier;
+    }
+
+    public boolean isSplashPotionEffect()
+    {
+        return this.isSplashPotion;
     }
 
     /**
@@ -196,5 +204,18 @@ public class PotionEffect
         int var3 = par0NBTTagCompound.getInteger("Duration");
         boolean var4 = par0NBTTagCompound.getBoolean("Ambient");
         return new PotionEffect(var1, var3, var2, var4);
+    }
+
+    /**
+     * Toggle the isPotionDurationMax field.
+     */
+    public void setPotionDurationMax(boolean par1)
+    {
+        this.isPotionDurationMax = par1;
+    }
+
+    public boolean getIsPotionDurationMax()
+    {
+        return this.isPotionDurationMax;
     }
 }

@@ -11,8 +11,15 @@ public class Teleporter
 
     /** A private Random() function in Teleporter */
     private final Random random;
-    private final LongHashMap field_85191_c = new LongHashMap();
-    private final List field_85190_d = new ArrayList();
+
+    /** Stores successful portal placement locations for rapid lookup. */
+    private final LongHashMap destinationCoordinateCache = new LongHashMap();
+
+    /**
+     * A list of valid keys for the destinationCoordainteCache. These are based on the X & Z of the players initial
+     * location.
+     */
+    private final List destinationCoordinateKeys = new ArrayList();
 
     public Teleporter(WorldServer par1WorldServer)
     {
@@ -29,7 +36,7 @@ public class Teleporter
         {
             if (!this.placeInExistingPortal(par1Entity, par2, par4, par6, par8))
             {
-                this.func_85188_a(par1Entity);
+                this.makePortal(par1Entity);
                 this.placeInExistingPortal(par1Entity, par2, par4, par6, par8);
             }
         }
@@ -51,7 +58,7 @@ public class Teleporter
                         int var18 = var10 + var16;
                         int var19 = var11 + var15 * var13 - var14 * var12;
                         boolean var20 = var16 < 0;
-                        this.worldServerInstance.setBlockWithNotify(var17, var18, var19, var20 ? Block.obsidian.blockID : 0);
+                        this.worldServerInstance.setBlock(var17, var18, var19, var20 ? Block.obsidian.blockID : 0);
                     }
                 }
             }
@@ -78,14 +85,14 @@ public class Teleporter
         double var27;
         int var48;
 
-        if (this.field_85191_c.containsItem(var17))
+        if (this.destinationCoordinateCache.containsItem(var17))
         {
-            PortalPosition var20 = (PortalPosition)this.field_85191_c.getValueByKey(var17);
+            PortalPosition var20 = (PortalPosition)this.destinationCoordinateCache.getValueByKey(var17);
             var10 = 0.0D;
             var12 = var20.posX;
             var13 = var20.posY;
             var14 = var20.posZ;
-            var20.field_85087_d = this.worldServerInstance.getTotalWorldTime();
+            var20.lastUpdateTime = this.worldServerInstance.getTotalWorldTime();
             var19 = false;
         }
         else
@@ -127,8 +134,8 @@ public class Teleporter
         {
             if (var19)
             {
-                this.field_85191_c.add(var17, new PortalPosition(this, var12, var13, var14, this.worldServerInstance.getTotalWorldTime()));
-                this.field_85190_d.add(Long.valueOf(var17));
+                this.destinationCoordinateCache.add(var17, new PortalPosition(this, var12, var13, var14, this.worldServerInstance.getTotalWorldTime()));
+                this.destinationCoordinateKeys.add(Long.valueOf(var17));
             }
 
             double var49 = (double)var12 + 0.5D;
@@ -156,11 +163,11 @@ public class Teleporter
                 var50 = 1;
             }
 
-            int var30 = par1Entity.func_82148_at();
+            int var30 = par1Entity.getTeleportDirection();
 
             if (var50 > -1)
             {
-                int var31 = Direction.field_71578_g[var50];
+                int var31 = Direction.rotateLeft[var50];
                 int var32 = Direction.offsetX[var50];
                 int var33 = Direction.offsetZ[var50];
                 int var34 = Direction.offsetX[var31];
@@ -170,8 +177,8 @@ public class Teleporter
 
                 if (var36 && var37)
                 {
-                    var50 = Direction.footInvisibleFaceRemap[var50];
-                    var31 = Direction.footInvisibleFaceRemap[var31];
+                    var50 = Direction.rotateOpposite[var50];
+                    var31 = Direction.rotateOpposite[var31];
                     var32 = Direction.offsetX[var50];
                     var33 = Direction.offsetZ[var50];
                     var34 = Direction.offsetX[var31];
@@ -212,12 +219,12 @@ public class Teleporter
                     var40 = 1.0F;
                     var41 = 1.0F;
                 }
-                else if (var50 == Direction.footInvisibleFaceRemap[var30])
+                else if (var50 == Direction.rotateOpposite[var30])
                 {
                     var40 = -1.0F;
                     var41 = -1.0F;
                 }
-                else if (var50 == Direction.enderEyeMetaToDirection[var30])
+                else if (var50 == Direction.rotateRight[var30])
                 {
                     var42 = 1.0F;
                     var43 = -1.0F;
@@ -248,7 +255,7 @@ public class Teleporter
         }
     }
 
-    public boolean func_85188_a(Entity par1Entity)
+    public boolean makePortal(Entity par1Entity)
     {
         byte var2 = 16;
         double var3 = -1.0D;
@@ -436,7 +443,7 @@ public class Teleporter
                         var23 = var15 + var21;
                         var24 = var16 + (var20 - 1) * var18 - var19 * var30;
                         var33 = var21 < 0;
-                        this.worldServerInstance.setBlockWithNotify(var22, var23, var24, var33 ? Block.obsidian.blockID : 0);
+                        this.worldServerInstance.setBlock(var22, var23, var24, var33 ? Block.obsidian.blockID : 0);
                     }
                 }
             }
@@ -444,8 +451,6 @@ public class Teleporter
 
         for (var19 = 0; var19 < 4; ++var19)
         {
-            this.worldServerInstance.editingBlocks = true;
-
             for (var20 = 0; var20 < 4; ++var20)
             {
                 for (var21 = -1; var21 < 4; ++var21)
@@ -454,11 +459,9 @@ public class Teleporter
                     var23 = var15 + var21;
                     var24 = var16 + (var20 - 1) * var18;
                     var33 = var20 == 0 || var20 == 3 || var21 == -1 || var21 == 3;
-                    this.worldServerInstance.setBlockWithNotify(var22, var23, var24, var33 ? Block.obsidian.blockID : Block.portal.blockID);
+                    this.worldServerInstance.setBlock(var22, var23, var24, var33 ? Block.obsidian.blockID : Block.portal.blockID, 0, 2);
                 }
             }
-
-            this.worldServerInstance.editingBlocks = false;
 
             for (var20 = 0; var20 < 4; ++var20)
             {
@@ -475,22 +478,26 @@ public class Teleporter
         return true;
     }
 
-    public void func_85189_a(long par1)
+    /**
+     * called periodically to remove out-of-date portal locations from the cache list. Argument par1 is a
+     * WorldServer.getTotalWorldTime() value.
+     */
+    public void removeStalePortalLocations(long par1)
     {
         if (par1 % 100L == 0L)
         {
-            Iterator var3 = this.field_85190_d.iterator();
+            Iterator var3 = this.destinationCoordinateKeys.iterator();
             long var4 = par1 - 600L;
 
             while (var3.hasNext())
             {
                 Long var6 = (Long)var3.next();
-                PortalPosition var7 = (PortalPosition)this.field_85191_c.getValueByKey(var6.longValue());
+                PortalPosition var7 = (PortalPosition)this.destinationCoordinateCache.getValueByKey(var6.longValue());
 
-                if (var7 == null || var7.field_85087_d < var4)
+                if (var7 == null || var7.lastUpdateTime < var4)
                 {
                     var3.remove();
-                    this.field_85191_c.remove(var6.longValue());
+                    this.destinationCoordinateCache.remove(var6.longValue());
                 }
             }
         }

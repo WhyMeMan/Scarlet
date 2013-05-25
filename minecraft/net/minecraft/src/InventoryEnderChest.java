@@ -6,7 +6,7 @@ public class InventoryEnderChest extends InventoryBasic
 
     public InventoryEnderChest()
     {
-        super("container.enderchest", 27);
+        super("container.enderchest", false, 27);
     }
 
     public void setAssociatedChest(TileEntityEnderChest par1TileEntityEnderChest)
@@ -82,5 +82,13 @@ public class InventoryEnderChest extends InventoryBasic
 
         super.closeChest();
         this.associatedChest = null;
+    }
+
+    /**
+     * Returns true if automation is allowed to insert the given stack (ignoring stack size) into the given slot.
+     */
+    public boolean isStackValidForSlot(int par1, ItemStack par2ItemStack)
+    {
+        return true;
     }
 }

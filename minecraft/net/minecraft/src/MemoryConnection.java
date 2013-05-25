@@ -1,6 +1,5 @@
 package net.minecraft.src;
 
-import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.util.ArrayList;
@@ -11,6 +10,7 @@ public class MemoryConnection implements INetworkManager
 {
     private static final SocketAddress mySocketAddress = new InetSocketAddress("127.0.0.1", 0);
     private final List readPacketCache = Collections.synchronizedList(new ArrayList());
+    private final ILogAgent field_98214_c;
     private MemoryConnection pairedConnection;
     private NetHandler myNetHandler;
 
@@ -20,9 +20,10 @@ public class MemoryConnection implements INetworkManager
     private Object[] field_74439_g;
     private boolean gamePaused = false;
 
-    public MemoryConnection(NetHandler par1NetHandler) throws IOException
+    public MemoryConnection(ILogAgent par1ILogAgent, NetHandler par2NetHandler)
     {
-        this.myNetHandler = par1NetHandler;
+        this.myNetHandler = par2NetHandler;
+        this.field_98214_c = par1ILogAgent;
     }
 
     /**
@@ -75,7 +76,7 @@ public class MemoryConnection implements INetworkManager
 
         if (this.readPacketCache.size() > var1)
         {
-            System.out.println("Memory connection overburdened; after processing 2500 packets, we still have " + this.readPacketCache.size() + " to go!");
+            this.field_98214_c.logWarning("Memory connection overburdened; after processing 2500 packets, we still have " + this.readPacketCache.size() + " to go!");
         }
 
         if (this.shuttingDown && this.readPacketCache.isEmpty())
@@ -145,8 +146,6 @@ public class MemoryConnection implements INetworkManager
      */
     public void processOrCachePacket(Packet par1Packet)
     {
-        String var2 = this.myNetHandler.isServerHandler() ? ">" : "<";
-
         if (par1Packet.canProcessAsync() && this.myNetHandler.canProcessPacketsAsync())
         {
             par1Packet.processPacket(this.myNetHandler);

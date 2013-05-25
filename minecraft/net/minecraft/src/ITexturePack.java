@@ -1,5 +1,6 @@
 package net.minecraft.src;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 public interface ITexturePack
@@ -14,10 +15,12 @@ public interface ITexturePack
      */
     void bindThumbnailTexture(RenderEngine var1);
 
+    InputStream func_98137_a(String var1, boolean var2) throws IOException;
+
     /**
      * Gives a texture resource as InputStream.
      */
-    InputStream getResourceAsStream(String var1);
+    InputStream getResourceAsStream(String var1) throws IOException;
 
     /**
      * Get the texture pack ID
@@ -39,9 +42,7 @@ public interface ITexturePack
      */
     String getSecondDescriptionLine();
 
-    /**
-     * Return the texture pack's resolution (16 by default). Used only by PlayerUsageSnooper. Presumably meant to be
-     * overriden by HD texture mods.
-     */
-    int getTexturePackResolution();
+    boolean func_98138_b(String var1, boolean var2);
+
+    boolean isCompatible();
 }

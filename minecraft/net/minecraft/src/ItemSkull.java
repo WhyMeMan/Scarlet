@@ -5,7 +5,8 @@ import java.util.List;
 public class ItemSkull extends Item
 {
     private static final String[] skullTypes = new String[] {"skeleton", "wither", "zombie", "char", "creeper"};
-    private static final int[] field_82806_b = new int[] {224, 225, 226, 227, 228};
+    public static final String[] field_94587_a = new String[] {"skull_skeleton", "skull_wither", "skull_zombie", "skull_char", "skull_creeper"};
+    private Icon[] field_94586_c;
 
     public ItemSkull(int par1)
     {
@@ -66,7 +67,7 @@ public class ItemSkull extends Item
             }
             else
             {
-                par3World.setBlockAndMetadataWithNotify(par4, par5, par6, Block.skull.blockID, par7);
+                par3World.setBlock(par4, par5, par6, Block.skull.blockID, par7, 2);
                 int var11 = 0;
 
                 if (par7 == 1)
@@ -110,14 +111,14 @@ public class ItemSkull extends Item
     /**
      * Gets an icon index based on an item's damage value
      */
-    public int getIconFromDamage(int par1)
+    public Icon getIconFromDamage(int par1)
     {
         if (par1 < 0 || par1 >= skullTypes.length)
         {
             par1 = 0;
         }
 
-        return field_82806_b[par1];
+        return this.field_94586_c[par1];
     }
 
     /**
@@ -128,7 +129,11 @@ public class ItemSkull extends Item
         return par1;
     }
 
-    public String getItemNameIS(ItemStack par1ItemStack)
+    /**
+     * Returns the unlocalized name of this item. This version accepts an ItemStack so different stacks can have
+     * different names based on their damage or NBT.
+     */
+    public String getUnlocalizedName(ItemStack par1ItemStack)
     {
         int var2 = par1ItemStack.getItemDamage();
 
@@ -137,11 +142,21 @@ public class ItemSkull extends Item
             var2 = 0;
         }
 
-        return super.getItemName() + "." + skullTypes[var2];
+        return super.getUnlocalizedName() + "." + skullTypes[var2];
     }
 
     public String getItemDisplayName(ItemStack par1ItemStack)
     {
         return par1ItemStack.getItemDamage() == 3 && par1ItemStack.hasTagCompound() && par1ItemStack.getTagCompound().hasKey("SkullOwner") ? StatCollector.translateToLocalFormatted("item.skull.player.name", new Object[] {par1ItemStack.getTagCompound().getString("SkullOwner")}): super.getItemDisplayName(par1ItemStack);
+    }
+
+    public void registerIcons(IconRegister par1IconRegister)
+    {
+        this.field_94586_c = new Icon[field_94587_a.length];
+
+        for (int var2 = 0; var2 < field_94587_a.length; ++var2)
+        {
+            this.field_94586_c[var2] = par1IconRegister.registerIcon(field_94587_a[var2]);
+        }
     }
 }

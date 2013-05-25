@@ -51,7 +51,7 @@ public class ItemBucket extends Item
 
                     if (par2World.getBlockMaterial(var13, var14, var15) == Material.water && par2World.getBlockMetadata(var13, var14, var15) == 0)
                     {
-                        par2World.setBlockWithNotify(var13, var14, var15, 0);
+                        par2World.setBlockToAir(var13, var14, var15);
 
                         if (par3EntityPlayer.capabilities.isCreativeMode)
                         {
@@ -73,7 +73,7 @@ public class ItemBucket extends Item
 
                     if (par2World.getBlockMaterial(var13, var14, var15) == Material.lava && par2World.getBlockMetadata(var13, var14, var15) == 0)
                     {
-                        par2World.setBlockWithNotify(var13, var14, var15, 0);
+                        par2World.setBlockToAir(var13, var14, var15);
 
                         if (par3EntityPlayer.capabilities.isCreativeMode)
                         {
@@ -176,7 +176,7 @@ public class ItemBucket extends Item
             }
             else
             {
-                par1World.setBlockAndMetadataWithNotify(par8, par9, par10, this.isFull, 0);
+                par1World.setBlock(par8, par9, par10, this.isFull, 0, 3);
             }
 
             return true;

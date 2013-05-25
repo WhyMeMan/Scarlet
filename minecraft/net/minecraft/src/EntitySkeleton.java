@@ -4,7 +4,7 @@ import java.util.Calendar;
 
 public class EntitySkeleton extends EntityMob implements IRangedAttackMob
 {
-    private EntityAIArrowAttack aiArrowAttack = new EntityAIArrowAttack(this, 0.25F, 60, 10.0F);
+    private EntityAIArrowAttack aiArrowAttack = new EntityAIArrowAttack(this, 0.25F, 20, 60, 15.0F);
     private EntityAIAttackOnCollide aiAttackOnCollide = new EntityAIAttackOnCollide(this, EntityPlayer.class, 0.31F, false);
 
     public EntitySkeleton(World par1World)
@@ -23,7 +23,7 @@ public class EntitySkeleton extends EntityMob implements IRangedAttackMob
 
         if (par1World != null && !par1World.isRemote)
         {
-            this.func_85036_m();
+            this.setCombatTask();
         }
     }
 
@@ -164,6 +164,11 @@ public class EntitySkeleton extends EntityMob implements IRangedAttackMob
             }
         }
 
+        if (this.worldObj.isRemote && this.getSkeletonType() == 1)
+        {
+            this.setSize(0.72F, 2.34F);
+        }
+
         super.onLivingUpdate();
     }
 
@@ -239,9 +244,12 @@ public class EntitySkeleton extends EntityMob implements IRangedAttackMob
         }
     }
 
-    protected void func_82164_bB()
+    /**
+     * Makes entity wear random armor based on difficulty
+     */
+    protected void addRandomArmor()
     {
-        super.func_82164_bB();
+        super.addRandomArmor();
         this.setCurrentItemOrArmor(0, new ItemStack(Item.bow));
     }
 
@@ -267,11 +275,11 @@ public class EntitySkeleton extends EntityMob implements IRangedAttackMob
         else
         {
             this.tasks.addTask(4, this.aiArrowAttack);
-            this.func_82164_bB();
+            this.addRandomArmor();
             this.func_82162_bC();
         }
 
-        this.canPickUpLoot = this.rand.nextFloat() < pickUpLootProability[this.worldObj.difficultySetting];
+        this.setCanPickUpLoot(this.rand.nextFloat() < pickUpLootProability[this.worldObj.difficultySetting]);
 
         if (this.getCurrentItemOrArmor(4) == null)
         {
@@ -285,10 +293,13 @@ public class EntitySkeleton extends EntityMob implements IRangedAttackMob
         }
     }
 
-    public void func_85036_m()
+    /**
+     * sets this entity's combat AI.
+     */
+    public void setCombatTask()
     {
-        this.tasks.func_85156_a(this.aiAttackOnCollide);
-        this.tasks.func_85156_a(this.aiArrowAttack);
+        this.tasks.removeTask(this.aiAttackOnCollide);
+        this.tasks.removeTask(this.aiArrowAttack);
         ItemStack var1 = this.getHeldItem();
 
         if (var1 != null && var1.itemID == Item.bow.itemID)
@@ -304,29 +315,30 @@ public class EntitySkeleton extends EntityMob implements IRangedAttackMob
     /**
      * Attack the specified entity using a ranged attack.
      */
-    public void attackEntityWithRangedAttack(EntityLiving par1EntityLiving)
+    public void attackEntityWithRangedAttack(EntityLiving par1EntityLiving, float par2)
     {
-        EntityArrow var2 = new EntityArrow(this.worldObj, this, par1EntityLiving, 1.6F, 12.0F);
-        int var3 = EnchantmentHelper.getEnchantmentLevel(Enchantment.power.effectId, this.getHeldItem());
-        int var4 = EnchantmentHelper.getEnchantmentLevel(Enchantment.punch.effectId, this.getHeldItem());
-
-        if (var3 > 0)
-        {
-            var2.setDamage(var2.getDamage() + (double)var3 * 0.5D + 0.5D);
-        }
+        EntityArrow var3 = new EntityArrow(this.worldObj, this, par1EntityLiving, 1.6F, (float)(14 - this.worldObj.difficultySetting * 4));
+        int var4 = EnchantmentHelper.getEnchantmentLevel(Enchantment.power.effectId, this.getHeldItem());
+        int var5 = EnchantmentHelper.getEnchantmentLevel(Enchantment.punch.effectId, this.getHeldItem());
+        var3.setDamage((double)(par2 * 2.0F) + this.rand.nextGaussian() * 0.25D + (double)((float)this.worldObj.difficultySetting * 0.11F));
 
         if (var4 > 0)
         {
-            var2.setKnockbackStrength(var4);
+            var3.setDamage(var3.getDamage() + (double)var4 * 0.5D + 0.5D);
+        }
+
+        if (var5 > 0)
+        {
+            var3.setKnockbackStrength(var5);
         }
 
         if (EnchantmentHelper.getEnchantmentLevel(Enchantment.flame.effectId, this.getHeldItem()) > 0 || this.getSkeletonType() == 1)
         {
-            var2.setFire(100);
+            var3.setFire(100);
         }
 
         this.playSound("random.bow", 1.0F, 1.0F / (this.getRNG().nextFloat() * 0.4F + 0.8F));
-        this.worldObj.spawnEntityInWorld(var2);
+        this.worldObj.spawnEntityInWorld(var3);
     }
 
     /**
@@ -347,7 +359,7 @@ public class EntitySkeleton extends EntityMob implements IRangedAttackMob
 
         if (par1 == 1)
         {
-            this.setSize(0.72F, 2.16F);
+            this.setSize(0.72F, 2.34F);
         }
         else
         {
@@ -368,7 +380,7 @@ public class EntitySkeleton extends EntityMob implements IRangedAttackMob
             this.setSkeletonType(var2);
         }
 
-        this.func_85036_m();
+        this.setCombatTask();
     }
 
     /**
@@ -389,7 +401,7 @@ public class EntitySkeleton extends EntityMob implements IRangedAttackMob
 
         if (!this.worldObj.isRemote && par1 == 0)
         {
-            this.func_85036_m();
+            this.setCombatTask();
         }
     }
 }

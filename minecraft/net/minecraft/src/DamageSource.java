@@ -12,8 +12,6 @@ public class DamageSource
     public static DamageSource fall = (new DamageSource("fall")).setDamageBypassesArmor();
     public static DamageSource outOfWorld = (new DamageSource("outOfWorld")).setDamageBypassesArmor().setDamageAllowedInCreativeMode();
     public static DamageSource generic = (new DamageSource("generic")).setDamageBypassesArmor();
-    public static DamageSource explosion = (new DamageSource("explosion")).setDifficultyScaled();
-    public static DamageSource explosion2 = new DamageSource("explosion");
     public static DamageSource magic = (new DamageSource("magic")).setDamageBypassesArmor().setMagicDamage();
     public static DamageSource wither = (new DamageSource("wither")).setDamageBypassesArmor();
     public static DamageSource anvil = new DamageSource("anvil");
@@ -35,6 +33,7 @@ public class DamageSource
      */
     private boolean difficultyScaled;
     private boolean magicDamage = false;
+    private boolean explosion = false;
     public String damageType;
 
     public static DamageSource causeMobDamage(EntityLiving par0EntityLiving)
@@ -76,9 +75,17 @@ public class DamageSource
         return (new EntityDamageSourceIndirect("indirectMagic", par0Entity, par1Entity)).setDamageBypassesArmor().setMagicDamage();
     }
 
-    public static DamageSource func_92087_a(Entity par0Entity)
+    /**
+     * Returns the EntityDamageSource of the Thorns enchantment
+     */
+    public static DamageSource causeThornsDamage(Entity par0Entity)
     {
         return (new EntityDamageSource("thorns", par0Entity)).setMagicDamage();
+    }
+
+    public static DamageSource setExplosionSource(Explosion par0Explosion)
+    {
+        return par0Explosion != null && par0Explosion.func_94613_c() != null ? (new EntityDamageSource("explosion.player", par0Explosion.func_94613_c())).setDifficultyScaled().setExplosion() : (new DamageSource("explosion")).setDifficultyScaled().setExplosion();
     }
 
     /**
@@ -95,6 +102,17 @@ public class DamageSource
     public DamageSource setProjectile()
     {
         this.projectile = true;
+        return this;
+    }
+
+    public boolean isExplosion()
+    {
+        return this.explosion;
+    }
+
+    public DamageSource setExplosion()
+    {
+        this.explosion = true;
         return this;
     }
 
@@ -156,9 +174,12 @@ public class DamageSource
     /**
      * Returns the message to be displayed on player death.
      */
-    public String getDeathMessage(EntityPlayer par1EntityPlayer)
+    public String getDeathMessage(EntityLiving par1EntityLiving)
     {
-        return StatCollector.translateToLocalFormatted("death." + this.damageType, new Object[] {par1EntityPlayer.username});
+        EntityLiving var2 = par1EntityLiving.func_94060_bK();
+        String var3 = "death.attack." + this.damageType;
+        String var4 = var3 + ".player";
+        return var2 != null && StatCollector.func_94522_b(var4) ? StatCollector.translateToLocalFormatted(var4, new Object[] {par1EntityLiving.getTranslatedEntityName(), var2.getTranslatedEntityName()}): StatCollector.translateToLocalFormatted(var3, new Object[] {par1EntityLiving.getTranslatedEntityName()});
     }
 
     /**

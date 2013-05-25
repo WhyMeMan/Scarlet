@@ -30,9 +30,9 @@ public class WorldClient extends World
     private final Minecraft mc = Minecraft.getMinecraft();
     private final Set previousActiveChunkSet = new HashSet();
 
-    public WorldClient(NetClientHandler par1NetClientHandler, WorldSettings par2WorldSettings, int par3, int par4, Profiler par5Profiler)
+    public WorldClient(NetClientHandler par1NetClientHandler, WorldSettings par2WorldSettings, int par3, int par4, Profiler par5Profiler, ILogAgent par6ILogAgent)
     {
-        super(new SaveHandlerMP(), "MpServer", WorldProvider.getProviderForDimension(par3), par2WorldSettings, par5Profiler);
+        super(new SaveHandlerMP(), "MpServer", WorldProvider.getProviderForDimension(par3), par2WorldSettings, par5Profiler, par6ILogAgent);
         this.sendQueue = par1NetClientHandler;
         this.difficultySetting = par4;
         this.setSpawnLocation(8, 64, 8);
@@ -63,7 +63,7 @@ public class WorldClient extends World
         this.theProfiler.endStartSection("connection");
         this.sendQueue.processReadPackets();
         this.theProfiler.endStartSection("chunkCache");
-        this.clientChunkProvider.unload100OldestChunks();
+        this.clientChunkProvider.unloadQueuedChunks();
         this.theProfiler.endStartSection("tiles");
         this.tickBlocksAndAmbiance();
         this.theProfiler.endSection();
@@ -246,7 +246,7 @@ public class WorldClient extends World
     public boolean setBlockAndMetadataAndInvalidate(int par1, int par2, int par3, int par4, int par5)
     {
         this.invalidateBlockReceiveRegion(par1, par2, par3, par1, par2, par3);
-        return super.setBlockAndMetadataWithNotify(par1, par2, par3, par4, par5);
+        return super.setBlock(par1, par2, par3, par4, par5, 3);
     }
 
     /**
@@ -313,7 +313,7 @@ public class WorldClient extends World
         }
     }
 
-    public void func_73029_E(int par1, int par2, int par3)
+    public void doVoidFogParticles(int par1, int par2, int par3)
     {
         byte var4 = 16;
         Random var5 = new Random();
@@ -439,6 +439,11 @@ public class WorldClient extends World
     public void func_92088_a(double par1, double par3, double par5, double par7, double par9, double par11, NBTTagCompound par13NBTTagCompound)
     {
         this.mc.effectRenderer.addEffect(new EntityFireworkStarterFX(this, par1, par3, par5, par7, par9, par11, this.mc.effectRenderer, par13NBTTagCompound));
+    }
+
+    public void func_96443_a(Scoreboard par1Scoreboard)
+    {
+        this.worldScoreboard = par1Scoreboard;
     }
 
     static Set getEntityList(WorldClient par0WorldClient)

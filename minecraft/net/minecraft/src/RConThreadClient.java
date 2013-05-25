@@ -43,9 +43,9 @@ public class RConThreadClient extends RConThreadBase
 
     public void run()
     {
-        while (true)
+        try
         {
-            try
+            while (true)
             {
                 if (!this.running)
                 {
@@ -114,25 +114,20 @@ public class RConThreadClient extends RConThreadBase
                     }
                 }
             }
-            catch (SocketTimeoutException var17)
-            {
-                break;
-            }
-            catch (IOException var18)
-            {
-                break;
-            }
-            catch (Exception var19)
-            {
-                System.out.println(var19);
-                break;
-            }
-            finally
-            {
-                this.closeSocket();
-            }
-
-            return;
+        }
+        catch (SocketTimeoutException var17)
+        {
+        }
+        catch (IOException var18)
+        {
+        }
+        catch (Exception var19)
+        {
+            System.out.println(var19);
+        }
+        finally
+        {
+            this.closeSocket();
         }
     }
 

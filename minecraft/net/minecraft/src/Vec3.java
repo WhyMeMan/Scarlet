@@ -2,7 +2,10 @@ package net.minecraft.src;
 
 public class Vec3
 {
-    public static final Vec3Pool vec3dPool = new Vec3Pool(-1, -1);
+    /**
+     * A global Vec3Pool that always creates new vectors instead of reusing them and is thread-safe.
+     */
+    public static final Vec3Pool fakePool = new Vec3Pool(-1, -1);
     public final Vec3Pool myVec3LocalPool;
 
     /** X coordinate of Vec3D */
@@ -20,7 +23,7 @@ public class Vec3
      */
     public static Vec3 createVectorHelper(double par0, double par2, double par4)
     {
-        return new Vec3(vec3dPool, par0, par2, par4);
+        return new Vec3(fakePool, par0, par2, par4);
     }
 
     protected Vec3(Vec3Pool par1Vec3Pool, double par2, double par4, double par6)

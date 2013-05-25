@@ -1,7 +1,11 @@
 package net.minecraft.src;
 
-public class TileEntityFurnace extends TileEntity implements IInventory
+public class TileEntityFurnace extends TileEntity implements ISidedInventory
 {
+    private static final int[] field_102010_d = new int[] {0};
+    private static final int[] field_102011_e = new int[] {2, 1};
+    private static final int[] field_102009_f = new int[] {1};
+
     /**
      * The ItemStacks that hold the items currently being used in the furnace
      */
@@ -17,6 +21,7 @@ public class TileEntityFurnace extends TileEntity implements IInventory
 
     /** The number of ticks that the current item has been cooking for */
     public int furnaceCookTime = 0;
+    private String field_94130_e;
 
     /**
      * Returns the number of slots in the inventory.
@@ -104,7 +109,21 @@ public class TileEntityFurnace extends TileEntity implements IInventory
      */
     public String getInvName()
     {
-        return "container.furnace";
+        return this.isInvNameLocalized() ? this.field_94130_e : "container.furnace";
+    }
+
+    /**
+     * If this returns false, the inventory name will be used as an unlocalized name, and translated into the player's
+     * language. Otherwise it will be used directly.
+     */
+    public boolean isInvNameLocalized()
+    {
+        return this.field_94130_e != null && this.field_94130_e.length() > 0;
+    }
+
+    public void func_94129_a(String par1Str)
+    {
+        this.field_94130_e = par1Str;
     }
 
     /**
@@ -130,6 +149,11 @@ public class TileEntityFurnace extends TileEntity implements IInventory
         this.furnaceBurnTime = par1NBTTagCompound.getShort("BurnTime");
         this.furnaceCookTime = par1NBTTagCompound.getShort("CookTime");
         this.currentItemBurnTime = getItemBurnTime(this.furnaceItemStacks[1]);
+
+        if (par1NBTTagCompound.hasKey("CustomName"))
+        {
+            this.field_94130_e = par1NBTTagCompound.getString("CustomName");
+        }
     }
 
     /**
@@ -154,6 +178,11 @@ public class TileEntityFurnace extends TileEntity implements IInventory
         }
 
         par1NBTTagCompound.setTag("Items", var2);
+
+        if (this.isInvNameLocalized())
+        {
+            par1NBTTagCompound.setString("CustomName", this.field_94130_e);
+        }
     }
 
     /**
@@ -335,7 +364,7 @@ public class TileEntityFurnace extends TileEntity implements IInventory
                 }
             }
 
-            return var2 instanceof ItemTool && ((ItemTool)var2).getToolMaterialName().equals("WOOD") ? 200 : (var2 instanceof ItemSword && ((ItemSword)var2).getToolMaterialName().equals("WOOD") ? 200 : (var2 instanceof ItemHoe && ((ItemHoe)var2).func_77842_f().equals("WOOD") ? 200 : (var1 == Item.stick.itemID ? 100 : (var1 == Item.coal.itemID ? 1600 : (var1 == Item.bucketLava.itemID ? 20000 : (var1 == Block.sapling.blockID ? 100 : (var1 == Item.blazeRod.itemID ? 2400 : 0)))))));
+            return var2 instanceof ItemTool && ((ItemTool)var2).getToolMaterialName().equals("WOOD") ? 200 : (var2 instanceof ItemSword && ((ItemSword)var2).getToolMaterialName().equals("WOOD") ? 200 : (var2 instanceof ItemHoe && ((ItemHoe)var2).getMaterialName().equals("WOOD") ? 200 : (var1 == Item.stick.itemID ? 100 : (var1 == Item.coal.itemID ? 1600 : (var1 == Item.bucketLava.itemID ? 20000 : (var1 == Block.sapling.blockID ? 100 : (var1 == Item.blazeRod.itemID ? 2400 : 0)))))));
         }
     }
 
@@ -358,4 +387,39 @@ public class TileEntityFurnace extends TileEntity implements IInventory
     public void openChest() {}
 
     public void closeChest() {}
+
+    /**
+     * Returns true if automation is allowed to insert the given stack (ignoring stack size) into the given slot.
+     */
+    public boolean isStackValidForSlot(int par1, ItemStack par2ItemStack)
+    {
+        return par1 == 2 ? false : (par1 == 1 ? isItemFuel(par2ItemStack) : true);
+    }
+
+    /**
+     * Returns an array containing the indices of the slots that can be accessed by automation on the given side of this
+     * block.
+     */
+    public int[] getAccessibleSlotsFromSide(int par1)
+    {
+        return par1 == 0 ? field_102011_e : (par1 == 1 ? field_102010_d : field_102009_f);
+    }
+
+    /**
+     * Returns true if automation can insert the given item in the given slot from the given side. Args: Slot, item,
+     * side
+     */
+    public boolean canInsertItem(int par1, ItemStack par2ItemStack, int par3)
+    {
+        return this.isStackValidForSlot(par1, par2ItemStack);
+    }
+
+    /**
+     * Returns true if automation can extract the given item in the given slot from the given side. Args: Slot, item,
+     * side
+     */
+    public boolean canExtractItem(int par1, ItemStack par2ItemStack, int par3)
+    {
+        return par3 != 0 || par1 != 1 || par2ItemStack.itemID == Item.bucketEmpty.itemID;
+    }
 }

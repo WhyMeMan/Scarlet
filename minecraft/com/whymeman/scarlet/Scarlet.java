@@ -27,7 +27,6 @@ public class Scarlet
 		managers.add(new ScarletGuiManager());
 		managers.add(new ConsoleManager());
 		managers.add(new IOManager());
-		managers.add(new IRCManager());
 	}
 	public void update()
 	{	

@@ -6,10 +6,12 @@ public class WorldGenHellLava extends WorldGenerator
 {
     /** Stores the ID for WorldGenHellLava */
     private int hellLavaID;
+    private boolean field_94524_b = false;
 
-    public WorldGenHellLava(int par1)
+    public WorldGenHellLava(int par1, boolean par2)
     {
         this.hellLavaID = par1;
+        this.field_94524_b = par2;
     }
 
     public boolean generate(World par1World, Random par2Random, int par3, int par4, int par5)
@@ -78,9 +80,9 @@ public class WorldGenHellLava extends WorldGenerator
                 ++var7;
             }
 
-            if (var6 == 4 && var7 == 1)
+            if (!this.field_94524_b && var6 == 4 && var7 == 1 || var6 == 5)
             {
-                par1World.setBlockWithNotify(par3, par4, par5, this.hellLavaID);
+                par1World.setBlock(par3, par4, par5, this.hellLavaID, 0, 2);
                 par1World.scheduledUpdatesAreImmediate = true;
                 Block.blocksList[this.hellLavaID].updateTick(par1World, par3, par4, par5, par2Random);
                 par1World.scheduledUpdatesAreImmediate = false;

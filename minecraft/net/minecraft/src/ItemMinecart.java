@@ -2,6 +2,7 @@ package net.minecraft.src;
 
 public class ItemMinecart extends Item
 {
+    private static final IBehaviorDispenseItem dispenserMinecartBehavior = new BehaviorDispenseMinecart();
     public int minecartType;
 
     public ItemMinecart(int par1, int par2)
@@ -10,6 +11,7 @@ public class ItemMinecart extends Item
         this.maxStackSize = 1;
         this.minecartType = par2;
         this.setCreativeTab(CreativeTabs.tabTransport);
+        BlockDispenser.dispenseBehaviorRegistry.putObject(this, dispenserMinecartBehavior);
     }
 
     /**
@@ -20,11 +22,18 @@ public class ItemMinecart extends Item
     {
         int var11 = par3World.getBlockId(par4, par5, par6);
 
-        if (BlockRail.isRailBlock(var11))
+        if (BlockRailBase.isRailBlock(var11))
         {
             if (!par3World.isRemote)
             {
-                par3World.spawnEntityInWorld(new EntityMinecart(par3World, (double)((float)par4 + 0.5F), (double)((float)par5 + 0.5F), (double)((float)par6 + 0.5F), this.minecartType));
+                EntityMinecart var12 = EntityMinecart.createMinecart(par3World, (double)((float)par4 + 0.5F), (double)((float)par5 + 0.5F), (double)((float)par6 + 0.5F), this.minecartType);
+
+                if (par1ItemStack.hasDisplayName())
+                {
+                    var12.func_96094_a(par1ItemStack.getDisplayName());
+                }
+
+                par3World.spawnEntityInWorld(var12);
             }
 
             --par1ItemStack.stackSize;

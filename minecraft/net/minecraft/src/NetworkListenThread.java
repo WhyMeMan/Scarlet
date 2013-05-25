@@ -4,15 +4,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import net.minecraft.server.MinecraftServer;
 
 public abstract class NetworkListenThread
 {
-    /** Reference to the logger. */
-    public static Logger logger = Logger.getLogger("Minecraft");
-
     /** Reference to the MinecraftServer object. */
     private final MinecraftServer mcServer;
     private final List connections = Collections.synchronizedList(new ArrayList());
@@ -60,7 +55,7 @@ public abstract class NetworkListenThread
                     throw new ReportedException(var4);
                 }
 
-                logger.log(Level.WARNING, "Failed to handle packet for " + var2.playerEntity.getEntityName() + "/" + var2.playerEntity.func_71114_r() + ": " + var5, var5);
+                this.mcServer.getLogAgent().logWarningException("Failed to handle packet for " + var2.playerEntity.getEntityName() + "/" + var2.playerEntity.getPlayerIP() + ": " + var5, var5);
                 var2.kickPlayerFromServer("Internal server error");
             }
 

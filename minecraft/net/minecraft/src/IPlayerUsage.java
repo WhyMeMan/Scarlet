@@ -10,4 +10,6 @@ public interface IPlayerUsage
      * Returns whether snooping is enabled or not.
      */
     boolean isSnooperEnabled();
+
+    ILogAgent getLogAgent();
 }

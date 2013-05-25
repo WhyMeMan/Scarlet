@@ -4,27 +4,20 @@ import java.util.Random;
 
 public class BlockMelon extends Block
 {
+    private Icon theIcon;
+
     protected BlockMelon(int par1)
     {
         super(par1, Material.pumpkin);
-        this.blockIndexInTexture = 136;
         this.setCreativeTab(CreativeTabs.tabBlock);
     }
 
     /**
      * From the specified side and block metadata retrieves the blocks texture. Args: side, metadata
      */
-    public int getBlockTextureFromSideAndMetadata(int par1, int par2)
+    public Icon getIcon(int par1, int par2)
     {
-        return par1 != 1 && par1 != 0 ? 136 : 137;
-    }
-
-    /**
-     * Returns the block texture based on the side being looked at.  Args: side
-     */
-    public int getBlockTextureFromSide(int par1)
-    {
-        return par1 != 1 && par1 != 0 ? 136 : 137;
+        return par1 != 1 && par1 != 0 ? this.blockIcon : this.theIcon;
     }
 
     /**
@@ -56,5 +49,15 @@ public class BlockMelon extends Block
         }
 
         return var3;
+    }
+
+    /**
+     * When this method is called, your block should register all the icons it needs with the given IconRegister. This
+     * is the only chance you get to register icons.
+     */
+    public void registerIcons(IconRegister par1IconRegister)
+    {
+        this.blockIcon = par1IconRegister.registerIcon("melon_side");
+        this.theIcon = par1IconRegister.registerIcon("melon_top");
     }
 }

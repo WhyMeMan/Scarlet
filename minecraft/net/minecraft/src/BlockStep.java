@@ -6,7 +6,8 @@ import java.util.Random;
 public class BlockStep extends BlockHalfSlab
 {
     /** The list of the types of step blocks. */
-    public static final String[] blockStepTypes = new String[] {"stone", "sand", "wood", "cobble", "brick", "smoothStoneBrick", "netherBrick"};
+    public static final String[] blockStepTypes = new String[] {"stone", "sand", "wood", "cobble", "brick", "smoothStoneBrick", "netherBrick", "quartz"};
+    private Icon theIcon;
 
     public BlockStep(int par1, boolean par2)
     {
@@ -17,18 +18,26 @@ public class BlockStep extends BlockHalfSlab
     /**
      * From the specified side and block metadata retrieves the blocks texture. Args: side, metadata
      */
-    public int getBlockTextureFromSideAndMetadata(int par1, int par2)
+    public Icon getIcon(int par1, int par2)
     {
         int var3 = par2 & 7;
-        return var3 == 0 ? (par1 <= 1 ? 6 : 5) : (var3 == 1 ? (par1 == 0 ? 208 : (par1 == 1 ? 176 : 192)) : (var3 == 2 ? 4 : (var3 == 3 ? 16 : (var3 == 4 ? Block.brick.blockIndexInTexture : (var3 == 5 ? Block.stoneBrick.blockIndexInTexture : (var3 == 6 ? Block.netherBrick.blockIndexInTexture : 6))))));
+
+        if (this.isDoubleSlab && (par2 & 8) != 0)
+        {
+            par1 = 1;
+        }
+
+        return var3 == 0 ? (par1 != 1 && par1 != 0 ? this.theIcon : this.blockIcon) : (var3 == 1 ? Block.sandStone.getBlockTextureFromSide(par1) : (var3 == 2 ? Block.planks.getBlockTextureFromSide(par1) : (var3 == 3 ? Block.cobblestone.getBlockTextureFromSide(par1) : (var3 == 4 ? Block.brick.getBlockTextureFromSide(par1) : (var3 == 5 ? Block.stoneBrick.getIcon(par1, 0) : (var3 == 6 ? Block.netherBrick.getBlockTextureFromSide(1) : (var3 == 7 ? Block.blockNetherQuartz.getBlockTextureFromSide(par1) : this.blockIcon)))))));
     }
 
     /**
-     * Returns the block texture based on the side being looked at.  Args: side
+     * When this method is called, your block should register all the icons it needs with the given IconRegister. This
+     * is the only chance you get to register icons.
      */
-    public int getBlockTextureFromSide(int par1)
+    public void registerIcons(IconRegister par1IconRegister)
     {
-        return this.getBlockTextureFromSideAndMetadata(par1, 0);
+        this.blockIcon = par1IconRegister.registerIcon("stoneslab_top");
+        this.theIcon = par1IconRegister.registerIcon("stoneslab_side");
     }
 
     /**
@@ -58,7 +67,7 @@ public class BlockStep extends BlockHalfSlab
             par1 = 0;
         }
 
-        return super.getBlockName() + "." + blockStepTypes[par1];
+        return super.getUnlocalizedName() + "." + blockStepTypes[par1];
     }
 
     /**
@@ -68,7 +77,7 @@ public class BlockStep extends BlockHalfSlab
     {
         if (par1 != Block.stoneDoubleSlab.blockID)
         {
-            for (int var4 = 0; var4 < 7; ++var4)
+            for (int var4 = 0; var4 <= 7; ++var4)
             {
                 if (var4 != 2)
                 {

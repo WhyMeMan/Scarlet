@@ -10,6 +10,7 @@ public class IntegratedServer extends MinecraftServer
     /** The Minecraft instance. */
     private final Minecraft mc;
     private final WorldSettings theWorldSettings;
+    private final ILogAgent serverLogAgent = new LogAgent("Minecraft-Server", " [SERVER]", (new File(Minecraft.getMinecraftDir(), "output-server.log")).getAbsolutePath());
 
     /** Instance of IntegratedServerListenThread. */
     private IntegratedServerListenThread theServerListeningThread;
@@ -47,7 +48,7 @@ public class IntegratedServer extends MinecraftServer
 
         if (Reflector.DimensionManager.exists())
         {
-            Object var8 = this.isDemo() ? new DemoWorldServer(this, var7, par2Str, 0, this.theProfiler) : new WorldServerOF(this, var7, par2Str, 0, this.theWorldSettings, this.theProfiler);
+            Object var8 = this.isDemo() ? new DemoWorldServer(this, var7, par2Str, 0, this.theProfiler, this.getLogAgent()) : new WorldServerOF(this, var7, par2Str, 0, this.theWorldSettings, this.theProfiler, this.getLogAgent());
             Integer[] var9 = (Integer[])((Integer[])Reflector.call(Reflector.DimensionManager_getStaticDimensionIDs, new Object[0]));
             Integer[] var10 = var9;
             int var11 = var9.length;
@@ -55,7 +56,7 @@ public class IntegratedServer extends MinecraftServer
             for (int var12 = 0; var12 < var11; ++var12)
             {
                 int var13 = var10[var12].intValue();
-                Object var14 = var13 == 0 ? var8 : new WorldServerMulti(this, var7, par2Str, var13, this.theWorldSettings, (WorldServer)var8, this.theProfiler);
+                Object var14 = var13 == 0 ? var8 : new WorldServerMulti(this, var7, par2Str, var13, this.theWorldSettings, (WorldServer)var8, this.theProfiler, this.getLogAgent());
                 ((WorldServer)var14).addWorldAccess(new WorldManager(this, (WorldServer)var14));
 
                 if (!this.isSinglePlayer())
@@ -94,16 +95,16 @@ public class IntegratedServer extends MinecraftServer
                 {
                     if (this.isDemo())
                     {
-                        this.worldServers[var15] = new DemoWorldServer(this, var7, par2Str, var16, this.theProfiler);
+                        this.worldServers[var15] = new DemoWorldServer(this, var7, par2Str, var16, this.theProfiler, this.getLogAgent());
                     }
                     else
                     {
-                        this.worldServers[var15] = new WorldServerOF(this, var7, par2Str, var16, this.theWorldSettings, this.theProfiler);
+                        this.worldServers[var15] = new WorldServerOF(this, var7, par2Str, var16, this.theWorldSettings, this.theProfiler, this.getLogAgent());
                     }
                 }
                 else
                 {
-                    this.worldServers[var15] = new WorldServerMulti(this, var7, par2Str, var16, this.theWorldSettings, this.worldServers[0], this.theProfiler);
+                    this.worldServers[var15] = new WorldServerMulti(this, var7, par2Str, var16, this.theWorldSettings, this.worldServers[0], this.theProfiler, this.getLogAgent());
                 }
 
                 this.worldServers[var15].addWorldAccess(new WorldManager(this, this.worldServers[var15]));
@@ -120,13 +121,13 @@ public class IntegratedServer extends MinecraftServer
      */
     protected boolean startServer() throws IOException
     {
-        logger.info("Starting integrated minecraft server version 1.4.6");
+        this.serverLogAgent.logInfo("Starting integrated minecraft server version 1.5.2");
         this.setOnlineMode(false);
         this.setCanSpawnAnimals(true);
         this.setCanSpawnNPCs(true);
         this.setAllowPvp(true);
         this.setAllowFlight(true);
-        logger.info("Generating keypair");
+        this.serverLogAgent.logInfo("Generating keypair");
         this.setKeyPair(CryptManager.createNewKeyPair());
         Object var1;
 
@@ -168,7 +169,7 @@ public class IntegratedServer extends MinecraftServer
 
         if (!var1 && this.isGamePaused)
         {
-            logger.info("Saving and pausing game...");
+            this.serverLogAgent.logInfo("Saving and pausing game...");
             this.getConfigurationManager().saveAllPlayerData();
             this.saveAllWorlds(false);
         }
@@ -264,7 +265,7 @@ public class IntegratedServer extends MinecraftServer
         try
         {
             String var3 = this.theServerListeningThread.func_71755_c();
-            System.out.println("Started on " + var3);
+            this.getLogAgent().logInfo("Started on " + var3);
             this.isPublic = true;
             this.lanServerPing = new ThreadLanServerPing(this.getMOTD(), var3);
             this.lanServerPing.start();
@@ -276,6 +277,11 @@ public class IntegratedServer extends MinecraftServer
         {
             return null;
         }
+    }
+
+    public ILogAgent getLogAgent()
+    {
+        return this.serverLogAgent;
     }
 
     /**

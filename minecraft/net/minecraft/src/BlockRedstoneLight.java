@@ -9,13 +9,28 @@ public class BlockRedstoneLight extends Block
 
     public BlockRedstoneLight(int par1, boolean par2)
     {
-        super(par1, 211, Material.redstoneLight);
+        super(par1, Material.redstoneLight);
         this.powered = par2;
 
         if (par2)
         {
             this.setLightValue(1.0F);
-            ++this.blockIndexInTexture;
+        }
+    }
+
+    /**
+     * When this method is called, your block should register all the icons it needs with the given IconRegister. This
+     * is the only chance you get to register icons.
+     */
+    public void registerIcons(IconRegister par1IconRegister)
+    {
+        if (this.powered)
+        {
+            this.blockIcon = par1IconRegister.registerIcon("redstoneLight_lit");
+        }
+        else
+        {
+            this.blockIcon = par1IconRegister.registerIcon("redstoneLight");
         }
     }
 
@@ -32,7 +47,7 @@ public class BlockRedstoneLight extends Block
             }
             else if (!this.powered && par1World.isBlockIndirectlyGettingPowered(par2, par3, par4))
             {
-                par1World.setBlockWithNotify(par2, par3, par4, Block.redstoneLampActive.blockID);
+                par1World.setBlock(par2, par3, par4, Block.redstoneLampActive.blockID, 0, 2);
             }
         }
     }
@@ -51,7 +66,7 @@ public class BlockRedstoneLight extends Block
             }
             else if (!this.powered && par1World.isBlockIndirectlyGettingPowered(par2, par3, par4))
             {
-                par1World.setBlockWithNotify(par2, par3, par4, Block.redstoneLampActive.blockID);
+                par1World.setBlock(par2, par3, par4, Block.redstoneLampActive.blockID, 0, 2);
             }
         }
     }
@@ -63,7 +78,7 @@ public class BlockRedstoneLight extends Block
     {
         if (!par1World.isRemote && this.powered && !par1World.isBlockIndirectlyGettingPowered(par2, par3, par4))
         {
-            par1World.setBlockWithNotify(par2, par3, par4, Block.redstoneLampIdle.blockID);
+            par1World.setBlock(par2, par3, par4, Block.redstoneLampIdle.blockID, 0, 2);
         }
     }
 

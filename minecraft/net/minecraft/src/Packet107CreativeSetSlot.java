@@ -14,7 +14,7 @@ public class Packet107CreativeSetSlot extends Packet
     public Packet107CreativeSetSlot(int par1, ItemStack par2ItemStack)
     {
         this.slot = par1;
-        this.itemStack = par2ItemStack;
+        this.itemStack = par2ItemStack != null ? par2ItemStack.copy() : null;
     }
 
     /**

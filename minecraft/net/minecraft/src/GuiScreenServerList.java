@@ -4,11 +4,6 @@ import org.lwjgl.input.Keyboard;
 
 public class GuiScreenServerList extends GuiScreen
 {
-    /**
-     * Remembers the last hostname or IP address entered into text field between invocations of the GUI.
-     */
-    private static String lastServerName = "";
-
     /** Needed a change as a local variable was conflicting on construct */
     private final GuiScreen guiScreen;
 
@@ -37,14 +32,14 @@ public class GuiScreenServerList extends GuiScreen
     {
         StringTranslate var1 = StringTranslate.getInstance();
         Keyboard.enableRepeatEvents(true);
-        this.controlList.clear();
-        this.controlList.add(new GuiButton(0, this.width / 2 - 100, this.height / 4 + 96 + 12, var1.translateKey("selectServer.select")));
-        this.controlList.add(new GuiButton(1, this.width / 2 - 100, this.height / 4 + 120 + 12, var1.translateKey("gui.cancel")));
+        this.buttonList.clear();
+        this.buttonList.add(new GuiButton(0, this.width / 2 - 100, this.height / 4 + 96 + 12, var1.translateKey("selectServer.select")));
+        this.buttonList.add(new GuiButton(1, this.width / 2 - 100, this.height / 4 + 120 + 12, var1.translateKey("gui.cancel")));
         this.serverTextField = new GuiTextField(this.fontRenderer, this.width / 2 - 100, 116, 200, 20);
         this.serverTextField.setMaxStringLength(128);
         this.serverTextField.setFocused(true);
-        this.serverTextField.setText(lastServerName);
-        ((GuiButton)this.controlList.get(0)).enabled = this.serverTextField.getText().length() > 0 && this.serverTextField.getText().split(":").length > 0;
+        this.serverTextField.setText(this.mc.gameSettings.lastServer);
+        ((GuiButton)this.buttonList.get(0)).enabled = this.serverTextField.getText().length() > 0 && this.serverTextField.getText().split(":").length > 0;
     }
 
     /**
@@ -53,7 +48,8 @@ public class GuiScreenServerList extends GuiScreen
     public void onGuiClosed()
     {
         Keyboard.enableRepeatEvents(false);
-        lastServerName = this.serverTextField.getText();
+        this.mc.gameSettings.lastServer = this.serverTextField.getText();
+        this.mc.gameSettings.saveOptions();
     }
 
     /**
@@ -82,11 +78,11 @@ public class GuiScreenServerList extends GuiScreen
     {
         if (this.serverTextField.textboxKeyTyped(par1, par2))
         {
-            ((GuiButton)this.controlList.get(0)).enabled = this.serverTextField.getText().length() > 0 && this.serverTextField.getText().split(":").length > 0;
+            ((GuiButton)this.buttonList.get(0)).enabled = this.serverTextField.getText().length() > 0 && this.serverTextField.getText().split(":").length > 0;
         }
         else if (par2 == 28)
         {
-            this.actionPerformed((GuiButton)this.controlList.get(0));
+            this.actionPerformed((GuiButton)this.buttonList.get(0));
         }
     }
 

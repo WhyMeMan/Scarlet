@@ -12,7 +12,11 @@ public class ItemCoal extends Item
         this.setCreativeTab(CreativeTabs.tabMaterials);
     }
 
-    public String getItemNameIS(ItemStack par1ItemStack)
+    /**
+     * Returns the unlocalized name of this item. This version accepts an ItemStack so different stacks can have
+     * different names based on their damage or NBT.
+     */
+    public String getUnlocalizedName(ItemStack par1ItemStack)
     {
         return par1ItemStack.getItemDamage() == 1 ? "item.charcoal" : "item.coal";
     }

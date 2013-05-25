@@ -10,8 +10,15 @@ public class RenderPig extends RenderLiving
 
     protected int renderSaddledPig(EntityPig par1EntityPig, int par2, float par3)
     {
-        this.loadTexture("/mob/saddle.png");
-        return par2 == 0 && par1EntityPig.getSaddled() ? 1 : -1;
+        if (par2 == 0 && par1EntityPig.getSaddled())
+        {
+            this.loadTexture("/mob/saddle.png");
+            return 1;
+        }
+        else
+        {
+            return -1;
+        }
     }
 
     public void renderLivingPig(EntityPig par1EntityPig, double par2, double par4, double par6, float par8, float par9)

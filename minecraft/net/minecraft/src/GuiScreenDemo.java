@@ -11,10 +11,10 @@ public class GuiScreenDemo extends GuiScreen
      */
     public void initGui()
     {
-        this.controlList.clear();
+        this.buttonList.clear();
         byte var1 = -16;
-        this.controlList.add(new GuiButton(1, this.width / 2 - 116, this.height / 2 + 62 + var1, 114, 20, StatCollector.translateToLocal("demo.help.buy")));
-        this.controlList.add(new GuiButton(2, this.width / 2 + 2, this.height / 2 + 62 + var1, 114, 20, StatCollector.translateToLocal("demo.help.later")));
+        this.buttonList.add(new GuiButton(1, this.width / 2 - 116, this.height / 2 + 62 + var1, 114, 20, StatCollector.translateToLocal("demo.help.buy")));
+        this.buttonList.add(new GuiButton(2, this.width / 2 + 2, this.height / 2 + 62 + var1, 114, 20, StatCollector.translateToLocal("demo.help.later")));
     }
 
     /**
@@ -60,12 +60,11 @@ public class GuiScreenDemo extends GuiScreen
     public void drawDefaultBackground()
     {
         super.drawDefaultBackground();
-        int var1 = this.mc.renderEngine.getTexture("/gui/demo_bg.png");
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        this.mc.renderEngine.bindTexture(var1);
-        int var2 = (this.width - 248) / 2;
-        int var3 = (this.height - 166) / 2;
-        this.drawTexturedModalRect(var2, var3, 0, 0, 248, 166);
+        this.mc.renderEngine.bindTexture("/gui/demo_bg.png");
+        int var1 = (this.width - 248) / 2;
+        int var2 = (this.height - 166) / 2;
+        this.drawTexturedModalRect(var1, var2, 0, 0, 248, 166);
     }
 
     /**

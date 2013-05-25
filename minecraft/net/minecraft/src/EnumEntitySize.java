@@ -13,7 +13,7 @@ public enum EnumEntitySize
     {
         double var3 = par1 - ((double)MathHelper.floor_double(par1) + 0.5D);
 
-        switch (EnumEntitySizeHelper.field_85153_a[this.ordinal()])
+        switch (EnumEntitySizeHelper.field_96565_a[this.ordinal()])
         {
             case 1:
                 if (var3 < 0.0D)

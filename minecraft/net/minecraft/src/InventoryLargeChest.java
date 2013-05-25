@@ -50,7 +50,16 @@ public class InventoryLargeChest implements IInventory
      */
     public String getInvName()
     {
-        return this.name;
+        return this.upperChest.isInvNameLocalized() ? this.upperChest.getInvName() : (this.lowerChest.isInvNameLocalized() ? this.lowerChest.getInvName() : this.name);
+    }
+
+    /**
+     * If this returns false, the inventory name will be used as an unlocalized name, and translated into the player's
+     * language. Otherwise it will be used directly.
+     */
+    public boolean isInvNameLocalized()
+    {
+        return this.upperChest.isInvNameLocalized() || this.lowerChest.isInvNameLocalized();
     }
 
     /**
@@ -130,5 +139,13 @@ public class InventoryLargeChest implements IInventory
     {
         this.upperChest.closeChest();
         this.lowerChest.closeChest();
+    }
+
+    /**
+     * Returns true if automation is allowed to insert the given stack (ignoring stack size) into the given slot.
+     */
+    public boolean isStackValidForSlot(int par1, ItemStack par2ItemStack)
+    {
+        return true;
     }
 }

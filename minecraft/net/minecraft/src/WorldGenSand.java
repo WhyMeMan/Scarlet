@@ -42,7 +42,7 @@ public class WorldGenSand extends WorldGenerator
 
                             if (var13 == Block.dirt.blockID || var13 == Block.grass.blockID)
                             {
-                                par1World.setBlock(var8, var12, var9, this.sandID);
+                                par1World.setBlock(var8, var12, var9, this.sandID, 0, 2);
                             }
                         }
                     }

@@ -68,7 +68,7 @@ public class EntitySmallFireball extends EntityFireball
 
                 if (this.worldObj.isAirBlock(var2, var3, var4))
                 {
-                    this.worldObj.setBlockWithNotify(var2, var3, var4, Block.fire.blockID);
+                    this.worldObj.setBlock(var2, var3, var4, Block.fire.blockID);
                 }
             }
 

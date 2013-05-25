@@ -82,11 +82,11 @@ public class Explosion
                             if (var25 > 0)
                             {
                                 Block var26 = Block.blocksList[var25];
-                                float var27 = this.exploder != null ? this.exploder.func_82146_a(this, var26, var22, var23, var24) : var26.getExplosionResistance(this.exploder);
+                                float var27 = this.exploder != null ? this.exploder.func_82146_a(this, this.worldObj, var22, var23, var24, var26) : var26.getExplosionResistance(this.exploder);
                                 var14 -= (var27 + 0.3F) * var21;
                             }
 
-                            if (var14 > 0.0F)
+                            if (var14 > 0.0F && (this.exploder == null || this.exploder.func_96091_a(this, this.worldObj, var22, var23, var24, var25, var14)))
                             {
                                 var2.add(new ChunkPosition(var22, var23, var24));
                             }
@@ -108,7 +108,7 @@ public class Explosion
         int var29 = MathHelper.floor_double(this.explosionY + (double)this.explosionSize + 1.0D);
         int var7 = MathHelper.floor_double(this.explosionZ - (double)this.explosionSize - 1.0D);
         int var30 = MathHelper.floor_double(this.explosionZ + (double)this.explosionSize + 1.0D);
-        List var9 = this.worldObj.getEntitiesWithinAABBExcludingEntity(this.exploder, AxisAlignedBB.getAABBPool().addOrModifyAABBInPool((double)var3, (double)var5, (double)var7, (double)var4, (double)var29, (double)var30));
+        List var9 = this.worldObj.getEntitiesWithinAABBExcludingEntity(this.exploder, AxisAlignedBB.getAABBPool().getAABB((double)var3, (double)var5, (double)var7, (double)var4, (double)var29, (double)var30));
         Vec3 var31 = this.worldObj.getWorldVec3Pool().getVecFromPool(this.explosionX, this.explosionY, this.explosionZ);
 
         for (int var11 = 0; var11 < var9.size(); ++var11)
@@ -130,7 +130,7 @@ public class Explosion
                     var19 /= var34;
                     double var33 = (double)this.worldObj.getBlockDensity(var31, var32.boundingBox);
                     double var35 = (1.0D - var13) * var33;
-                    var32.attackEntityFrom(DamageSource.explosion, (int)((var35 * var35 + var35) / 2.0D * 8.0D * (double)this.explosionSize + 1.0D));
+                    var32.attackEntityFrom(DamageSource.setExplosionSource(this), (int)((var35 * var35 + var35) / 2.0D * 8.0D * (double)this.explosionSize + 1.0D));
                     double var36 = EnchantmentProtection.func_92092_a(var32, var35);
                     var32.motionX += var15 * var36;
                     var32.motionY += var17 * var36;
@@ -209,15 +209,11 @@ public class Explosion
 
                     if (var25.canDropFromExplosion(this))
                     {
-                        var25.dropBlockAsItemWithChance(this.worldObj, var4, var5, var6, this.worldObj.getBlockMetadata(var4, var5, var6), 0.3F, 0);
+                        var25.dropBlockAsItemWithChance(this.worldObj, var4, var5, var6, this.worldObj.getBlockMetadata(var4, var5, var6), 1.0F / this.explosionSize, 0);
                     }
 
-                    if (this.worldObj.setBlockAndMetadataWithUpdate(var4, var5, var6, 0, 0, this.worldObj.isRemote))
-                    {
-                        this.worldObj.notifyBlocksOfNeighborChange(var4, var5, var6, 0);
-                    }
-
-                    var25.onBlockDestroyedByExplosion(this.worldObj, var4, var5, var6);
+                    this.worldObj.setBlock(var4, var5, var6, 0, 0, 3);
+                    var25.onBlockDestroyedByExplosion(this.worldObj, var4, var5, var6, this);
                 }
             }
         }
@@ -237,7 +233,7 @@ public class Explosion
 
                 if (var7 == 0 && Block.opaqueCubeLookup[var24] && this.explosionRNG.nextInt(3) == 0)
                 {
-                    this.worldObj.setBlockWithNotify(var4, var5, var6, Block.fire.blockID);
+                    this.worldObj.setBlock(var4, var5, var6, Block.fire.blockID);
                 }
             }
         }
@@ -246,5 +242,10 @@ public class Explosion
     public Map func_77277_b()
     {
         return this.field_77288_k;
+    }
+
+    public EntityLiving func_94613_c()
+    {
+        return this.exploder == null ? null : (this.exploder instanceof EntityTNTPrimed ? ((EntityTNTPrimed)this.exploder).getTntPlacedBy() : (this.exploder instanceof EntityLiving ? (EntityLiving)this.exploder : null));
     }
 }

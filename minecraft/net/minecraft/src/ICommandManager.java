@@ -5,7 +5,7 @@ import java.util.Map;
 
 public interface ICommandManager
 {
-    void executeCommand(ICommandSender var1, String var2);
+    int executeCommand(ICommandSender var1, String var2);
 
     /**
      * Performs a "begins with" string match on each token in par2. Only returns commands that par1 can use.

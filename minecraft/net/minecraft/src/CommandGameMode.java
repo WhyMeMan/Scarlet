@@ -75,8 +75,8 @@ public class CommandGameMode extends CommandBase
     /**
      * Return whether the specified command parameter index is a username parameter.
      */
-    public boolean isUsernameIndex(int par1)
+    public boolean isUsernameIndex(String[] par1ArrayOfStr, int par2)
     {
-        return par1 == 1;
+        return par2 == 1;
     }
 }

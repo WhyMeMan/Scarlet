@@ -83,4 +83,9 @@ public class BlockEventData
             return this.coordX == var2.coordX && this.coordY == var2.coordY && this.coordZ == var2.coordZ && this.eventID == var2.eventID && this.eventParameter == var2.eventParameter && this.blockID == var2.blockID;
         }
     }
+
+    public String toString()
+    {
+        return "TE(" + this.coordX + "," + this.coordY + "," + this.coordZ + ")," + this.eventID + "," + this.eventParameter + "," + this.blockID;
+    }
 }

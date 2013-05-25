@@ -255,8 +255,15 @@ public class Potion
 
     public static String getDurationString(PotionEffect par0PotionEffect)
     {
-        int var1 = par0PotionEffect.getDuration();
-        return StringUtils.ticksToElapsedTime(var1);
+        if (par0PotionEffect.getIsPotionDurationMax())
+        {
+            return "**:**";
+        }
+        else
+        {
+            int var1 = par0PotionEffect.getDuration();
+            return StringUtils.ticksToElapsedTime(var1);
+        }
     }
 
     protected Potion setEffectiveness(double par1)

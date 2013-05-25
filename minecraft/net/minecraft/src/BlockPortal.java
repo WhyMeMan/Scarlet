@@ -4,9 +4,9 @@ import java.util.Random;
 
 public class BlockPortal extends BlockBreakable
 {
-    public BlockPortal(int par1, int par2)
+    public BlockPortal(int par1)
     {
-        super(par1, par2, Material.portal, false);
+        super(par1, "portal", Material.portal, false);
         this.setTickRandomly(true);
     }
 
@@ -144,17 +144,14 @@ public class BlockPortal extends BlockBreakable
                 }
             }
 
-            par1World.editingBlocks = true;
-
             for (var7 = 0; var7 < 2; ++var7)
             {
                 for (var8 = 0; var8 < 3; ++var8)
                 {
-                    par1World.setBlockWithNotify(par2 + var5 * var7, par3 + var8, par4 + var6 * var7, Block.portal.blockID);
+                    par1World.setBlock(par2 + var5 * var7, par3 + var8, par4 + var6 * var7, Block.portal.blockID, 0, 2);
                 }
             }
 
-            par1World.editingBlocks = false;
             return true;
         }
     }
@@ -183,7 +180,7 @@ public class BlockPortal extends BlockBreakable
 
         if (par1World.getBlockId(par2, var8 - 1, par4) != Block.obsidian.blockID)
         {
-            par1World.setBlockWithNotify(par2, par3, par4, 0);
+            par1World.setBlockToAir(par2, par3, par4);
         }
         else
         {
@@ -201,19 +198,19 @@ public class BlockPortal extends BlockBreakable
 
                 if (var10 && var11)
                 {
-                    par1World.setBlockWithNotify(par2, par3, par4, 0);
+                    par1World.setBlockToAir(par2, par3, par4);
                 }
                 else
                 {
                     if ((par1World.getBlockId(par2 + var6, par3, par4 + var7) != Block.obsidian.blockID || par1World.getBlockId(par2 - var6, par3, par4 - var7) != this.blockID) && (par1World.getBlockId(par2 - var6, par3, par4 - var7) != Block.obsidian.blockID || par1World.getBlockId(par2 + var6, par3, par4 + var7) != this.blockID))
                     {
-                        par1World.setBlockWithNotify(par2, par3, par4, 0);
+                        par1World.setBlockToAir(par2, par3, par4);
                     }
                 }
             }
             else
             {
-                par1World.setBlockWithNotify(par2, par3, par4, 0);
+                par1World.setBlockToAir(par2, par3, par4);
             }
         }
     }

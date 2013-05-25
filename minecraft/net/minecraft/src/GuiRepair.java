@@ -29,7 +29,7 @@ public class GuiRepair extends GuiContainer implements ICrafting
         int var2 = (this.height - this.ySize) / 2;
         this.itemNameField = new GuiTextField(this.fontRenderer, var1 + 62, var2 + 24, 103, 12);
         this.itemNameField.setTextColor(-1);
-        this.itemNameField.func_82266_h(-1);
+        this.itemNameField.setDisabledTextColour(-1);
         this.itemNameField.setEnableBackgroundDrawing(false);
         this.itemNameField.setMaxStringLength(30);
         this.inventorySlots.removeCraftingFromCrafters(this);
@@ -139,17 +139,16 @@ public class GuiRepair extends GuiContainer implements ICrafting
      */
     protected void drawGuiContainerBackgroundLayer(float par1, int par2, int par3)
     {
-        int var4 = this.mc.renderEngine.getTexture("/gui/repair.png");
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        this.mc.renderEngine.bindTexture(var4);
-        int var5 = (this.width - this.xSize) / 2;
-        int var6 = (this.height - this.ySize) / 2;
-        this.drawTexturedModalRect(var5, var6, 0, 0, this.xSize, this.ySize);
-        this.drawTexturedModalRect(var5 + 59, var6 + 20, 0, this.ySize + (this.repairContainer.getSlot(0).getHasStack() ? 0 : 16), 110, 16);
+        this.mc.renderEngine.bindTexture("/gui/repair.png");
+        int var4 = (this.width - this.xSize) / 2;
+        int var5 = (this.height - this.ySize) / 2;
+        this.drawTexturedModalRect(var4, var5, 0, 0, this.xSize, this.ySize);
+        this.drawTexturedModalRect(var4 + 59, var5 + 20, 0, this.ySize + (this.repairContainer.getSlot(0).getHasStack() ? 0 : 16), 110, 16);
 
         if ((this.repairContainer.getSlot(0).getHasStack() || this.repairContainer.getSlot(1).getHasStack()) && !this.repairContainer.getSlot(2).getHasStack())
         {
-            this.drawTexturedModalRect(var5 + 99, var6 + 45, this.xSize, 0, 28, 21);
+            this.drawTexturedModalRect(var4 + 99, var5 + 45, this.xSize, 0, 28, 21);
         }
     }
 
@@ -167,7 +166,7 @@ public class GuiRepair extends GuiContainer implements ICrafting
         if (par2 == 0)
         {
             this.itemNameField.setText(par3ItemStack == null ? "" : par3ItemStack.getDisplayName());
-            this.itemNameField.func_82265_c(par3ItemStack != null);
+            this.itemNameField.setEnabled(par3ItemStack != null);
 
             if (par3ItemStack != null)
             {

@@ -137,7 +137,7 @@ public class EntityAIOcelotSit extends EntityAIBase
         }
         else
         {
-            if (var5 == Block.stoneOvenActive.blockID)
+            if (var5 == Block.furnaceBurning.blockID)
             {
                 return true;
             }

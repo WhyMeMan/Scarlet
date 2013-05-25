@@ -11,13 +11,7 @@ public class WrUpdateControl implements IWrUpdateControl
         this.renderPass = 0;
     }
 
-    public void resume()
-    {
-        if (this.hasForge)
-        {
-            Reflector.callVoid(Reflector.ForgeHooksClient_beforeRenderPass, new Object[] {Integer.valueOf(this.renderPass)});
-        }
-    }
+    public void resume() {}
 
     public void pause()
     {
@@ -27,11 +21,6 @@ public class WrUpdateControl implements IWrUpdateControl
         if (var1 != null)
         {
             var1.getWorldVec3Pool().clear();
-        }
-
-        if (this.hasForge)
-        {
-            Reflector.callVoid(Reflector.ForgeHooksClient_afterRenderPass, new Object[] {Integer.valueOf(this.renderPass)});
         }
     }
 
