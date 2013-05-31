@@ -558,7 +558,7 @@ public class Tessellator
     {
     	Wallhack wallhack = (Wallhack)ModManager.getModByName("Wallhack");
     	if (wallhack != null)
-    		this.setColorRGBA(par1, par2, par3, wallhack.getActive() ? 130 : 255);
+    		this.setColorRGBA(par1, par2, par3, wallhack.getActive() ? wallhack.getOpacity() : 255);
     	else
          this.setColorRGBA(par1, par2, par3, 255);
     }

@@ -37,8 +37,9 @@ public class Console
     	addCommand(new CreativeEnchant());
     	addCommand(new CommandNuker());
     	addCommand(new Friend());
-    	addCommand(new XrayAdd());
-    	addCommand(new XrayDel());
+    	addCommand(new Xray());
+    	//addCommand(new XrayAdd());
+    	//addCommand(new XrayDel());
     }
     
     public void update() 
