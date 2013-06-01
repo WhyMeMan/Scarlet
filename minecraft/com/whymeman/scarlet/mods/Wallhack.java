@@ -12,6 +12,7 @@ import com.whymeman.scarlet.modbase.mod.ModHack;
 public class Wallhack extends ModHack
 {
 	public ArrayList<Integer> enabledOres;
+	public int opacity;
 	
 	public Wallhack() 
 	{
@@ -19,6 +20,7 @@ public class Wallhack extends ModHack
 		this.setHackType(HackType.HACK_WORLD);
 		
 		enabledOres = new ArrayList<Integer>();
+		opacity = 130;
 		
 		enabledOres.add(Block.oreDiamond.blockID);
 		enabledOres.add(Block.oreEmerald.blockID);
@@ -43,6 +45,16 @@ public class Wallhack extends ModHack
         int z = (int)getPlayer().posZ;
         getMinecraft().renderGlobal.markBlockRangeForRenderUpdate(x-200, 0, z-200, x+200, 255, z+200);
         getMinecraft().renderGlobal.loadRenderers();
+	}
+	
+	public int getOpacity()
+	{
+		return this.opacity;
+	}
+
+	public void setOpacity(int newOpacity)
+	{
+		this.opacity = newOpacity;
 	}
 
 }
